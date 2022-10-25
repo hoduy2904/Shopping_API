@@ -6,11 +6,9 @@ D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\ShoppingAPI.runtimeconfig.
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\ShoppingAPI.dll
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\ShoppingAPI.pdb
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\Castle.Core.dll
-D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\Humanizer.dll
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\Microsoft.Data.SqlClient.dll
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.dll
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll
-D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Proxies.dll
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Relational.dll
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.SqlServer.dll
@@ -62,3 +60,13 @@ D:\TTS\Day16\ShoppingAPI\ShoppingAPI\obj\Debug\net6.0\refint\ShoppingAPI.dll
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI\obj\Debug\net6.0\ShoppingAPI.pdb
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI\obj\Debug\net6.0\ShoppingAPI.genruntimeconfig.cache
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI\obj\Debug\net6.0\ref\ShoppingAPI.dll
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\ShoppingAPI.Common.dll
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\ShoppingAPI.Data.dll
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\ShoppingAPI.REPO.dll
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\ShoppingAPI.Services.dll
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\ShoppingAPI.Services.pdb
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\ShoppingAPI.Common.pdb
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\ShoppingAPI.Data.pdb
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\ShoppingAPI.REPO.pdb
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\Humanizer.dll
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll

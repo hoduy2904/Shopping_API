@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ShoppingAPI.Models;
+using ShoppingAPI.Data.Models;
+using ShoppingAPI.Services.Interfaces;
 
 namespace ShoppingAPI.Controllers
 {
@@ -9,15 +9,15 @@ namespace ShoppingAPI.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ShoppingContext shoppingContext;
-        public CategoryController(ShoppingContext shoppingContext)
+        private readonly ICategoryServices categoryServices;
+        public CategoryController(ICategoryServices categoryServices)
         {
-            this.shoppingContext = shoppingContext;
+            this.categoryServices = categoryServices;
         }
         [HttpGet]
         public async Task<IActionResult> Categories()
         {
-            var categories = await shoppingContext.Categories.ToListAsync();
+            var categories = await categoryServices.GetCategoriesAsync();
             return Ok(new ResultApi
             {
                 Success = true,
@@ -29,7 +29,7 @@ namespace ShoppingAPI.Controllers
         {
             try
             {
-                var category = await shoppingContext.Categories.FindAsync(id);
+                var category = await categoryServices.GetCategoryAsync(id);
                 if (category != null)
                     return Ok(new ResultApi
                     {
@@ -53,16 +53,13 @@ namespace ShoppingAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Category(Category category)
+        public IActionResult Category(Category category)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    category.Created = DateTime.Now;
-                    await shoppingContext.Categories.AddAsync(category);
-
-                    await shoppingContext.SaveChangesAsync();
+                    categoryServices.InsertCategory(category);
                     return Ok(new ResultApi
                     {
                         Success = true,
@@ -91,15 +88,13 @@ namespace ShoppingAPI.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var CategoryDb = await shoppingContext.Categories.FindAsync(category.Id);
+                    var CategoryDb = await categoryServices.GetCategoryAsync(category.Id);
 
                     CategoryDb.Image = category.Image;
                     CategoryDb.Name = category.Name;
                     CategoryDb.CategoryId = category.CategoryId;
 
-                    shoppingContext.Categories.Update(CategoryDb);
-
-                    await shoppingContext.SaveChangesAsync();
+                    categoryServices.UpdateCategory(CategoryDb);
 
                     return Ok(new ResultApi
                     {
@@ -121,26 +116,23 @@ namespace ShoppingAPI.Controllers
         }
 
         [HttpDelete("Category")]
-        public async Task<IActionResult> DeleteCategory(int id)
+        public IActionResult DeleteCategory(int id)
         {
             try
             {
-                var category=await shoppingContext.Categories.FindAsync(id);
-                shoppingContext.Categories.Remove(category);
-
-                await shoppingContext.SaveChangesAsync();
+                categoryServices.DeleteCategory(id);
                 return Ok(new ResultApi
                 {
-                    Success=true,
-                    Data = category,
+                    Success = true,
                     Message = "Delete Success"
                 });
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
-                   Success=false,
-                   Message=ex.Message
+                    Success = false,
+                    Message = ex.Message
                 });
             }
         }

@@ -1,0 +1,12 @@
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.Common\bin\Debug\net6.0\ShoppingAPI.Common.deps.json
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.Common\bin\Debug\net6.0\ShoppingAPI.Common.dll
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.Common\bin\Debug\net6.0\ShoppingAPI.Common.pdb
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.Common\obj\Debug\net6.0\ShoppingAPI.Common.csproj.AssemblyReference.cache
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.Common\obj\Debug\net6.0\ShoppingAPI.Common.GeneratedMSBuildEditorConfig.editorconfig
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.Common\obj\Debug\net6.0\ShoppingAPI.Common.AssemblyInfoInputs.cache
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.Common\obj\Debug\net6.0\ShoppingAPI.Common.AssemblyInfo.cs
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.Common\obj\Debug\net6.0\ShoppingAPI.Common.csproj.CoreCompileInputs.cache
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.Common\obj\Debug\net6.0\ShoppingAPI.Common.dll
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.Common\obj\Debug\net6.0\refint\ShoppingAPI.Common.dll
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.Common\obj\Debug\net6.0\ShoppingAPI.Common.pdb
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.Common\obj\Debug\net6.0\ref\ShoppingAPI.Common.dll

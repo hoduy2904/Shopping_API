@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingAPI", "ShoppingAPI\ShoppingAPI.csproj", "{2C79B0C8-BFF3-41C0-AD30-9C648815966E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingAPI", "ShoppingAPI\ShoppingAPI.csproj", "{2C79B0C8-BFF3-41C0-AD30-9C648815966E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingAPI.Data", "ShoppingAPI.Models\ShoppingAPI.Data.csproj", "{2F382B82-83E1-46D5-86A2-C5F10EED8ED6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingAPI.REPO", "ShoppingAPI.REPO\ShoppingAPI.REPO.csproj", "{1F73834C-1BD9-41CB-86B9-71E34C8EDC7A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingAPI.Services", "ShoppingAPI.Services\ShoppingAPI.Services.csproj", "{10B19AEF-9FA5-488D-8F34-BF5D7D566A91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingAPI.Common", "ShoppingAPI.Common\ShoppingAPI.Common.csproj", "{B208A0C5-AF40-4CEA-8511-86D5B54338CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,22 @@ Global
 		{2C79B0C8-BFF3-41C0-AD30-9C648815966E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C79B0C8-BFF3-41C0-AD30-9C648815966E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C79B0C8-BFF3-41C0-AD30-9C648815966E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F382B82-83E1-46D5-86A2-C5F10EED8ED6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F382B82-83E1-46D5-86A2-C5F10EED8ED6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F382B82-83E1-46D5-86A2-C5F10EED8ED6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F382B82-83E1-46D5-86A2-C5F10EED8ED6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F73834C-1BD9-41CB-86B9-71E34C8EDC7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F73834C-1BD9-41CB-86B9-71E34C8EDC7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F73834C-1BD9-41CB-86B9-71E34C8EDC7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F73834C-1BD9-41CB-86B9-71E34C8EDC7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10B19AEF-9FA5-488D-8F34-BF5D7D566A91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10B19AEF-9FA5-488D-8F34-BF5D7D566A91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10B19AEF-9FA5-488D-8F34-BF5D7D566A91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10B19AEF-9FA5-488D-8F34-BF5D7D566A91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B208A0C5-AF40-4CEA-8511-86D5B54338CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B208A0C5-AF40-4CEA-8511-86D5B54338CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B208A0C5-AF40-4CEA-8511-86D5B54338CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B208A0C5-AF40-4CEA-8511-86D5B54338CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

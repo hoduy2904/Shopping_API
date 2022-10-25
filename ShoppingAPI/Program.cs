@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using ShoppingAPI.Models;
+using ShoppingAPI.REPO;
+using ShoppingAPI.REPO.Repository;
+using ShoppingAPI.Services.Interfaces;
+using ShoppingAPI.Services.Services;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +24,14 @@ builder.Services.AddControllersWithViews().AddJsonOptions(option =>
 {
     option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<ICartServices, CartServices>();
+builder.Services.AddScoped<ICategoryServices, CategoryServices>();
+builder.Services.AddScoped<IInfomationUserServices, InfomationUserServices>();
+builder.Services.AddScoped<IProductImageServices, ProductImageServices>();
+builder.Services.AddScoped<IProductServices, ProductServices>();
+builder.Services.AddScoped<IProductVariationServices, ProductVariationServices>();
+builder.Services.AddScoped<IUserServices, UserServices>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

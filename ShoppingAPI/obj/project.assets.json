@@ -2311,6 +2311,59 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XmlDocument.dll": {}
         }
+      },
+      "ShoppingAPI.Common/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/ShoppingAPI.Common.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ShoppingAPI.Common.dll": {}
+        }
+      },
+      "ShoppingAPI.Data/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.Abstractions": "6.0.10"
+        },
+        "compile": {
+          "bin/placeholder/ShoppingAPI.Data.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ShoppingAPI.Data.dll": {}
+        }
+      },
+      "ShoppingAPI.REPO/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "6.0.10",
+          "Microsoft.EntityFrameworkCore.Proxies": "6.0.10",
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.10",
+          "ShoppingAPI.Common": "1.0.0",
+          "ShoppingAPI.Data": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/ShoppingAPI.REPO.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ShoppingAPI.REPO.dll": {}
+        }
+      },
+      "ShoppingAPI.Services/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "ShoppingAPI.REPO": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/ShoppingAPI.Services.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ShoppingAPI.Services.dll": {}
+        }
       }
     }
   },
@@ -7281,15 +7334,32 @@
         "system.xml.xmldocument.4.3.0.nupkg.sha512",
         "system.xml.xmldocument.nuspec"
       ]
+    },
+    "ShoppingAPI.Common/1.0.0": {
+      "type": "project",
+      "path": "../ShoppingAPI.Common/ShoppingAPI.Common.csproj",
+      "msbuildProject": "../ShoppingAPI.Common/ShoppingAPI.Common.csproj"
+    },
+    "ShoppingAPI.Data/1.0.0": {
+      "type": "project",
+      "path": "../ShoppingAPI.Models/ShoppingAPI.Data.csproj",
+      "msbuildProject": "../ShoppingAPI.Models/ShoppingAPI.Data.csproj"
+    },
+    "ShoppingAPI.REPO/1.0.0": {
+      "type": "project",
+      "path": "../ShoppingAPI.REPO/ShoppingAPI.REPO.csproj",
+      "msbuildProject": "../ShoppingAPI.REPO/ShoppingAPI.REPO.csproj"
+    },
+    "ShoppingAPI.Services/1.0.0": {
+      "type": "project",
+      "path": "../ShoppingAPI.Services/ShoppingAPI.Services.csproj",
+      "msbuildProject": "../ShoppingAPI.Services/ShoppingAPI.Services.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "Microsoft.EntityFrameworkCore >= 6.0.10",
-      "Microsoft.EntityFrameworkCore.Design >= 6.0.10",
-      "Microsoft.EntityFrameworkCore.Proxies >= 6.0.10",
-      "Microsoft.EntityFrameworkCore.SqlServer >= 6.0.10",
       "Microsoft.EntityFrameworkCore.Tools >= 6.0.10",
+      "ShoppingAPI.Services >= 1.0.0",
       "Swashbuckle.AspNetCore >= 6.2.3"
     ]
   },
@@ -7319,7 +7389,11 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\TTS\\Day16\\ShoppingAPI\\ShoppingAPI.Services\\ShoppingAPI.Services.csproj": {
+              "projectPath": "D:\\TTS\\Day16\\ShoppingAPI\\ShoppingAPI.Services\\ShoppingAPI.Services.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -7332,24 +7406,6 @@
       "net6.0": {
         "targetAlias": "net6.0",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": {
-            "target": "Package",
-            "version": "[6.0.10, )"
-          },
-          "Microsoft.EntityFrameworkCore.Design": {
-            "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-            "suppressParent": "All",
-            "target": "Package",
-            "version": "[6.0.10, )"
-          },
-          "Microsoft.EntityFrameworkCore.Proxies": {
-            "target": "Package",
-            "version": "[6.0.10, )"
-          },
-          "Microsoft.EntityFrameworkCore.SqlServer": {
-            "target": "Package",
-            "version": "[6.0.10, )"
-          },
           "Microsoft.EntityFrameworkCore.Tools": {
             "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
             "suppressParent": "All",

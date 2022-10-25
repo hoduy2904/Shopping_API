@@ -8,11 +8,8 @@
     ".NETCoreApp,Version=v6.0": {
       "ShoppingAPI/1.0.0": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "6.0.10",
-          "Microsoft.EntityFrameworkCore.Design": "6.0.10",
-          "Microsoft.EntityFrameworkCore.Proxies": "6.0.10",
-          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.10",
           "Microsoft.EntityFrameworkCore.Tools": "6.0.10",
+          "ShoppingAPI.Services": "1.0.0",
           "Swashbuckle.AspNetCore": "6.2.3"
         },
         "runtime": {
@@ -1258,6 +1255,39 @@
           "System.Threading": "4.3.0",
           "System.Xml.ReaderWriter": "4.3.0"
         }
+      },
+      "ShoppingAPI.Common/1.0.0": {
+        "runtime": {
+          "ShoppingAPI.Common.dll": {}
+        }
+      },
+      "ShoppingAPI.Data/1.0.0": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.Abstractions": "6.0.10"
+        },
+        "runtime": {
+          "ShoppingAPI.Data.dll": {}
+        }
+      },
+      "ShoppingAPI.REPO/1.0.0": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "6.0.10",
+          "Microsoft.EntityFrameworkCore.Proxies": "6.0.10",
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.10",
+          "ShoppingAPI.Common": "1.0.0",
+          "ShoppingAPI.Data": "1.0.0"
+        },
+        "runtime": {
+          "ShoppingAPI.REPO.dll": {}
+        }
+      },
+      "ShoppingAPI.Services/1.0.0": {
+        "dependencies": {
+          "ShoppingAPI.REPO": "1.0.0"
+        },
+        "runtime": {
+          "ShoppingAPI.Services.dll": {}
+        }
       }
     }
   },
@@ -2169,6 +2199,26 @@
       "sha512": "sha512-lJ8AxvkX7GQxpC6GFCeBj8ThYVyQczx2+f/cWHJU8tjS7YfI6Cv6bon70jVEgs2CiFbmmM8b9j1oZVx0dSI2Ww==",
       "path": "system.xml.xmldocument/4.3.0",
       "hashPath": "system.xml.xmldocument.4.3.0.nupkg.sha512"
+    },
+    "ShoppingAPI.Common/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ShoppingAPI.Data/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ShoppingAPI.REPO/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ShoppingAPI.Services/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }
