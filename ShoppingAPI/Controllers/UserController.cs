@@ -39,7 +39,7 @@ namespace ShoppingAPI.Controllers
                 return NotFound(new ResultApi
                 {
                     Success = false,
-                    Message = "Not found category"
+                    Message = "Not found user"
                 });
             }
             catch (Exception ex)

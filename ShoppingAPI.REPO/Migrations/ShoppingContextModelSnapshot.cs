@@ -265,6 +265,10 @@ namespace ShoppingAPI.REPO.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TokenId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -301,7 +305,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 10, 25, 14, 25, 22, 980, DateTimeKind.Local).AddTicks(3907),
+                            Created = new DateTime(2022, 10, 25, 16, 26, 17, 794, DateTimeKind.Local).AddTicks(2154),
                             IsTrash = false,
                             Name = "SuperAdmin"
                         });
@@ -356,7 +360,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 10, 25, 14, 25, 22, 980, DateTimeKind.Local).AddTicks(4608),
+                            Created = new DateTime(2022, 10, 25, 16, 26, 17, 794, DateTimeKind.Local).AddTicks(2852),
                             IsTrash = false,
                             LastName = "Admin",
                             PasswordHash = "21232f297a57a5a743894a0e4a801fc3",
@@ -397,7 +401,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 10, 25, 14, 25, 22, 980, DateTimeKind.Local).AddTicks(4671),
+                            Created = new DateTime(2022, 10, 25, 16, 26, 17, 794, DateTimeKind.Local).AddTicks(2910),
                             IsTrash = false,
                             RoleId = 1,
                             UserId = 1

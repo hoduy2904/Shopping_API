@@ -9,6 +9,7 @@ namespace ShoppingAPI.Data.Models
 {
     public class RefreshToken : BaseModels
     {
+        public string TokenId { get; set; }
         public string Token { get; set; }
         public string Refresh { get; set; }
         public string IPAdress { get; set; }

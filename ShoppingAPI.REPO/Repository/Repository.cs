@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ShoppingAPI.Data.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,7 +29,7 @@ namespace ShoppingAPI.REPO.Repository
 
         public async Task<T> GetAsync(int id)
         {
-            var entity= await entities.FindAsync(id);
+            var entity = await entities.FindAsync(id);
             if (entity == null || entity.IsTrash == true)
                 return null;
             return entity;
@@ -46,7 +49,7 @@ namespace ShoppingAPI.REPO.Repository
 
         public async void SavechangesAsync()
         {
-           await db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
 
         public async void UpdateAsync(T entity)

@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ShoppingAPI.REPO;
 using ShoppingAPI.REPO.Repository;
 using ShoppingAPI.Services.Interfaces;
 using ShoppingAPI.Services.Services;
+using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +35,29 @@ builder.Services.AddScoped<IProductImageServices, ProductImageServices>();
 builder.Services.AddScoped<IProductServices, ProductServices>();
 builder.Services.AddScoped<IProductVariationServices, ProductVariationServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<IJwtServices, JwtServices>();
+
+//Jwt
+//Get Secret Key and Bytes
+var secretKey = builder.Configuration["JwtSettings:SecretKey"];
+var secretBytes = Encoding.UTF8.GetBytes(secretKey);
+//Setting Tokenvalidatetion Parameter
+var tokenParameters = new TokenValidationParameters
+{
+    ValidateIssuer = false,
+    ValidateAudience = false,
+
+    ValidateLifetime = true,
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKey = new SymmetricSecurityKey(secretBytes),
+
+    ClockSkew = TimeSpan.Zero
+};
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = tokenParameters;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -43,6 +69,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

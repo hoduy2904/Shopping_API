@@ -2,7 +2,9 @@ D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\bin\Debug\net6.0\ShoppingAPI.REPO.deps
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\bin\Debug\net6.0\ShoppingAPI.REPO.runtimeconfig.json
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\bin\Debug\net6.0\ShoppingAPI.REPO.dll
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\bin\Debug\net6.0\ShoppingAPI.REPO.pdb
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\bin\Debug\net6.0\ShoppingAPI.Common.dll
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\bin\Debug\net6.0\ShoppingAPI.Data.dll
+D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\bin\Debug\net6.0\ShoppingAPI.Common.pdb
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\bin\Debug\net6.0\ShoppingAPI.Data.pdb
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\obj\Debug\net6.0\ShoppingAPI.REPO.csproj.AssemblyReference.cache
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\obj\Debug\net6.0\ShoppingAPI.REPO.GeneratedMSBuildEditorConfig.editorconfig
@@ -15,5 +17,3 @@ D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\obj\Debug\net6.0\refint\ShoppingAPI.RE
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\obj\Debug\net6.0\ShoppingAPI.REPO.pdb
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\obj\Debug\net6.0\ShoppingAPI.REPO.genruntimeconfig.cache
 D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\obj\Debug\net6.0\ref\ShoppingAPI.REPO.dll
-D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\bin\Debug\net6.0\ShoppingAPI.Common.dll
-D:\TTS\Day16\ShoppingAPI\ShoppingAPI.REPO\bin\Debug\net6.0\ShoppingAPI.Common.pdb
