@@ -15,12 +15,15 @@ namespace ShoppingAPI.REPO.Repository
     {
         private readonly ShoppingContext db;
         private readonly DbSet<T> entities;
+
         public Repository(ShoppingContext _db)
         {
             this.db = _db;
             this.entities = db.Set<T>();
         }
-        public async void DeleteAsync(T entity)
+
+
+        public async Task DeleteAsync(T entity)
         {
             entity.IsTrash = true;
             entities.Update(entity);
@@ -37,25 +40,30 @@ namespace ShoppingAPI.REPO.Repository
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await entities.Where(x=>x.IsTrash==false).ToListAsync();
+            return await entities.Where(x => x.IsTrash == false).ToListAsync();
         }
 
-        public async void InsertAsync(T entity)
+        public async Task InsertAsync(T entity)
         {
             entity.Created = DateTime.Now;
             await entities.AddAsync(entity);
             await db.SaveChangesAsync();
         }
 
-        public async void SavechangesAsync()
+        public async Task SavechangesAsync()
         {
             await db.SaveChangesAsync();
         }
 
-        public async void UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity)
         {
             entities.Update(entity);
             await db.SaveChangesAsync();
+        }
+
+        public IEnumerable<T> Where(Func<T, bool> func)
+        {
+            return entities.Where(func).AsEnumerable();
         }
     }
 }

@@ -16,10 +16,10 @@ namespace ShoppingAPI.Services.Services
         {
             this.repository = repository;
         }
-        public async void DeleteUserRole(int id)
+        public async Task DeleteUserRole(int id)
         {
             var userRole = await repository.GetAsync(id);
-            repository.DeleteAsync(userRole);
+            await repository.DeleteAsync(userRole);
         }
 
         public async Task<UserRole> GetUserRoleAsync(int id)
@@ -32,14 +32,14 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAllAsync();
         }
 
-        public void InsertUserRole(UserRole userRole)
+        public async Task InsertUserRole(UserRole userRole)
         {
-            repository.InsertAsync(userRole);
+           await repository.InsertAsync(userRole);
         }
 
-        public void UpdateUserRole(UserRole userRole)
+        public async Task UpdateUserRole(UserRole userRole)
         {
-            repository.UpdateAsync(userRole);
+           await repository.UpdateAsync(userRole);
         }
     }
 }

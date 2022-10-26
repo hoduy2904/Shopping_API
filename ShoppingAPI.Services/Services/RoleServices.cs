@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace ShoppingAPI.Services.Services
 {
-    internal class RoleServices : IRoleServices
+    public class RoleServices : IRoleServices
     {
         private readonly IRepository<Role> repository;
         public RoleServices(IRepository<Role> repository)
         {
             this.repository = repository;
         }
-        public async void DeleteRole(int id)
+        public async Task DeleteRole(int id)
         {
             var role=await repository.GetAsync(id);
-            repository.DeleteAsync(role);
+           await repository.DeleteAsync(role);
         }
 
         public async Task<Role> GetRoleAsync(int id)
@@ -32,14 +32,14 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAllAsync();
         }
 
-        public void InsertRole(Role role)
+        public async Task InsertRole(Role role)
         {
-            repository.InsertAsync(role);
+           await repository.InsertAsync(role);
         }
 
-        public void UpdateRole(Role role)
+        public async Task UpdateRole(Role role)
         {
-            repository.UpdateAsync(role);
+           await repository.UpdateAsync(role);
         }
     }
 }

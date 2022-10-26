@@ -11,8 +11,8 @@ namespace ShoppingAPI.Services.Interfaces
     {
         Task<ProductImage> GetProductImageAsync(int id);
         Task<IEnumerable<ProductImage>> GetProductImagesAsync();
-        void InsertProductImage(ProductImage productImage);
-        void UpdateProductImage(ProductImage productImage);
-        void DeleteProductImage(int id);
+        Task InsertProductImage(ProductImage productImage);
+        Task UpdateProductImage(ProductImage productImage);
+        Task DeleteProductImage(int id);
     }
 }

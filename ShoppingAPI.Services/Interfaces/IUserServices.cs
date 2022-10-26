@@ -11,8 +11,8 @@ namespace ShoppingAPI.Services.Interfaces
     {
         Task<User> GetUserAsync(int id);
         Task<IEnumerable<User>> GetUsersAsync();
-        void InsertUser(User user);
-        void UpdateUser(User user);
-        void DeleteUser(int id);
+        Task InsertUser(User user);
+        Task UpdateUser(User user);
+        Task DeleteUser(int id);
     }
 }

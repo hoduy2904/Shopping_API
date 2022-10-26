@@ -1,12 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
+using System.Net;
 
 namespace ShoppingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+
     public class UserController : ControllerBase
     {
         private readonly IUserServices userServices;
@@ -15,15 +20,18 @@ namespace ShoppingAPI.Controllers
             this.userServices = userServices;
         }
         [HttpGet]
+        [Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Users()
         {
             var users = await userServices.GetUsersAsync();
             return Ok(new ResultApi
             {
+                Status = 200,
                 Success = true,
                 Data = users
             });
         }
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> User(int id)
         {
@@ -33,37 +41,41 @@ namespace ShoppingAPI.Controllers
                 if (user != null)
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Data = user,
                         Success = true
                     });
                 return NotFound(new ResultApi
                 {
+                    Status = (int)HttpStatusCode.NotFound,
                     Success = false,
-                    Message = "Not found user"
+                    Message = new[] { "Not found user" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpPost]
-        public IActionResult User(User user)
+        public async Task<IActionResult> User(User user)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    userServices.InsertUser(user);
+                    await userServices.InsertUser(user);
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Add Success",
+                        Message = new[] { "Add Success" },
                         Data = user
                     });
 
@@ -74,8 +86,9 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message,
+                    Message = new[] { ex.Message },
                     Data = user
                 });
             }
@@ -95,14 +108,15 @@ namespace ShoppingAPI.Controllers
                     userDb.Email = user.Email;
                     userDb.IdentityCard = user.IdentityCard;
                     userDb.Sex = user.Sex;
-                  
 
-                    userServices.UpdateUser(userDb);
+
+                    await userServices.UpdateUser(userDb);
 
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Edit success",
+                        Message = new[] { "Edit success" },
                         Data = userDb
                     });
                 }
@@ -112,30 +126,33 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpDelete("User")]
-        public IActionResult DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             try
             {
-                userServices.DeleteUser(id);
+                await userServices.DeleteUser(id);
                 return Ok(new ResultApi
                 {
+                    Status = 200,
                     Success = true,
-                    Message = "Delete Success"
+                    Message = new[] { "Delete Success" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }

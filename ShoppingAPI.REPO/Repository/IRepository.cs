@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace ShoppingAPI.REPO.Repository
 {
-    public interface IRepository<T> where T:BaseModels
+    public interface IRepository<T> where T : BaseModels
     {
         Task<IEnumerable<T>> GetAllAsync();
         Task<T> GetAsync(int id);
-        void InsertAsync(T entity);
-        void UpdateAsync(T entity);
-        void DeleteAsync(T entity);
-        void SavechangesAsync();
+        Task InsertAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task DeleteAsync(T entity);
+        Task SavechangesAsync();
+        IEnumerable<T> Where(Func<T,bool> func);
     }
 }

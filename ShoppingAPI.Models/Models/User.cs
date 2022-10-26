@@ -12,7 +12,7 @@ namespace ShoppingAPI.Data.Models
         public string? Email { get; set; }
         public virtual IEnumerable<InfomationUser>? InfomationUsers { get; set; }
         public virtual IEnumerable<Cart>? Carts { get; set; }
-        public virtual IEnumerable<UserRole> UserRoles { get; set; }
+        public virtual IEnumerable<UserRole>? UserRoles { get; set; }
         public virtual IEnumerable<RefreshToken>? RefreshTokens { get; set; }
     }
 }

@@ -18,10 +18,10 @@ namespace ShoppingAPI.Services.Services
             this.repository = repository;
         }
 
-        public async void DeleteCart(int id)
+        public async Task DeleteCart(int id)
         {
            var cart=await repository.GetAsync(id);
-           repository.DeleteAsync(cart);
+           await repository.DeleteAsync(cart);
         }
 
         public async Task<Cart> GetCartAsync(int id)
@@ -34,14 +34,14 @@ namespace ShoppingAPI.Services.Services
            return await repository.GetAllAsync();
         }
 
-        public void InsertCart(Cart cart)
+        public async Task InsertCart(Cart cart)
         {
-            repository.InsertAsync(cart);
+           await repository.InsertAsync(cart);
         }
 
-        public void UpdateCart(Cart cart)
+        public async Task UpdateCart(Cart cart)
         {
-            repository.UpdateAsync(cart);
+            await repository.UpdateAsync(cart);
         }
     }
 }

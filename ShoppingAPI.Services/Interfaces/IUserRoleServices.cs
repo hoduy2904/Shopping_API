@@ -11,8 +11,8 @@ namespace ShoppingAPI.Services.Interfaces
     {
         Task<UserRole> GetUserRoleAsync(int id);
         Task<IEnumerable<UserRole>> GetUserRolesAsync();
-        void InsertUserRole(UserRole userRole);
-        void UpdateUserRole(UserRole userRole);
-        void DeleteUserRole(int id);
+        Task InsertUserRole(UserRole userRole);
+        Task UpdateUserRole(UserRole userRole);
+        Task DeleteUserRole(int id);
     }
 }

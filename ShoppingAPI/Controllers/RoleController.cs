@@ -1,12 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
+using System.Data;
+using System.Net;
 
 namespace ShoppingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+
     public class RoleController : ControllerBase
     {
         private readonly IRoleServices roleServices;
@@ -14,17 +19,18 @@ namespace ShoppingAPI.Controllers
         {
             this.roleServices = roleServices;
         }
-        [HttpGet]
+        [HttpGet,AllowAnonymous]
         public async Task<IActionResult> Roles()
         {
             var roles = await roleServices.GetRolesAsync();
             return Ok(new ResultApi
             {
+                Status = 200,
                 Success = true,
                 Data = roles
             });
         }
-        [HttpGet("{id}")]
+        [HttpGet("{id}"),AllowAnonymous]
         public async Task<IActionResult> Role(int id)
         {
             try
@@ -33,37 +39,41 @@ namespace ShoppingAPI.Controllers
                 if (Role != null)
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Data = Role,
                         Success = true
                     });
                 return NotFound(new ResultApi
                 {
+                    Status = (int)HttpStatusCode.NotFound,
                     Success = false,
-                    Message = "Not found Role"
+                    Message = new[] { "Not found Role" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpPost]
-        public IActionResult Role(Role role)
+        public async Task<IActionResult> Role(Role role)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    roleServices.InsertRole(role);
+                   await roleServices.InsertRole(role);
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Add Success",
+                        Message = new[] { "Add Success" },
                         Data = role
                     });
 
@@ -74,8 +84,9 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message,
+                    Message = new[] { ex.Message },
                     Data = role
                 });
             }
@@ -92,12 +103,13 @@ namespace ShoppingAPI.Controllers
 
                     RoleDb.Name = role.Name;
 
-                    roleServices.UpdateRole(RoleDb);
+                   await roleServices.UpdateRole(RoleDb);
 
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Edit success",
+                        Message = new[] { "Edit success" },
                         Data = RoleDb
                     });
                 }
@@ -107,30 +119,33 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpDelete("Role")]
-        public IActionResult DeleteRole(int id)
+        public async Task<IActionResult> DeleteRole(int id)
         {
             try
             {
-                roleServices.DeleteRole(id);
+               await roleServices.DeleteRole(id);
                 return Ok(new ResultApi
                 {
+                    Status = 200,
                     Success = true,
-                    Message = "Delete Success"
+                    Message = new[] { "Delete Success" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }

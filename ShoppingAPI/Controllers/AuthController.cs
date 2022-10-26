@@ -50,7 +50,7 @@ namespace ShoppingAPI.Controllers
                 return BadRequest(new ResultApi
                 {
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }

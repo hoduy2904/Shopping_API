@@ -1,20 +1,24 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
+using System.Data;
 
 namespace ShoppingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+
     public class UserRoleController : ControllerBase
     {
-        private readonly  IUserRoleServices userRoleServices;
+        private readonly IUserRoleServices userRoleServices;
         public UserRoleController(IUserRoleServices userRoleServices)
         {
             this.userRoleServices = userRoleServices;
         }
-        [HttpGet]
+        [HttpGet,AllowAnonymous]
         public async Task<IActionResult> UserRoles()
         {
             var userRoles = await userRoleServices.GetUserRolesAsync();
@@ -24,7 +28,7 @@ namespace ShoppingAPI.Controllers
                 Data = userRoles
             });
         }
-        [HttpGet("{id}")]
+        [HttpGet("{id}"),AllowAnonymous]
         public async Task<IActionResult> UserRole(int id)
         {
             try
@@ -33,37 +37,41 @@ namespace ShoppingAPI.Controllers
                 if (userRole != null)
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Data = userRole,
                         Success = true
                     });
                 return NotFound(new ResultApi
                 {
+                    Status = NotFound().StatusCode,
                     Success = false,
-                    Message = "Not found user Role"
+                    Message = new[] { "Not found user Role" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpPost]
-        public IActionResult UserRole(UserRole userRole)
+        public async Task<IActionResult> UserRole(UserRole userRole)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    userRoleServices.InsertUserRole(userRole);
+                   await userRoleServices.InsertUserRole(userRole);
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Add Success",
+                        Message = new[] { "Add Success" },
                         Data = userRole
                     });
 
@@ -74,8 +82,9 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message,
+                    Message = new[] { ex.Message },
                     Data = userRole
                 });
             }
@@ -94,8 +103,9 @@ namespace ShoppingAPI.Controllers
 
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Edit success",
+                        Message = new[] { "Edit success" },
                         Data = userRoleDb
                     });
                 }
@@ -105,30 +115,33 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpDelete("UserRole")]
-        public IActionResult DeleteUserRole(int id)
+        public async Task<IActionResult> DeleteUserRole(int id)
         {
             try
             {
-                userRoleServices.DeleteUserRole(id);
+               await userRoleServices.DeleteUserRole(id);
                 return Ok(new ResultApi
                 {
+                    Status = 200,
                     Success = true,
-                    Message = "Delete Success"
+                    Message = new[] { "Delete Success" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }

@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
+using System.Net;
 
 namespace ShoppingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles ="Admin,SuperAdmin")]
     public class InfomationUserController : ControllerBase
     {
         private readonly IInfomationUserServices infomationUserServices;
@@ -14,17 +17,18 @@ namespace ShoppingAPI.Controllers
         {
             this.infomationUserServices = infomationUserServices;
         }
-        [HttpGet]
+        [HttpGet,AllowAnonymous]
         public async Task<IActionResult> InfomationUsers()
         {
             var categories = await infomationUserServices.GetInfomationUsersAsync();
             return Ok(new ResultApi
             {
+                Status = 200,
                 Success = true,
                 Data = categories
             });
         }
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), AllowAnonymous]
         public async Task<IActionResult> InfomationUser(int id)
         {
             try
@@ -33,37 +37,41 @@ namespace ShoppingAPI.Controllers
                 if (infomationUser != null)
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Data = infomationUser,
                         Success = true
                     });
                 return NotFound(new ResultApi
                 {
+                    Status = (int)HttpStatusCode.NotFound,
                     Success = false,
-                    Message = "Not found infomation User"
+                    Message = new[] { "Not found infomation User" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpPost]
-        public IActionResult infomationUser(InfomationUser infomationUser)
+        public async Task<IActionResult> infomationUser(InfomationUser infomationUser)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    infomationUserServices.InsertInfomationUser(infomationUser);
+                   await infomationUserServices.InsertInfomationUser(infomationUser);
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Add Success",
+                        Message = new[] { "Add Success" },
                         Data = infomationUser
                     });
 
@@ -74,8 +82,9 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message,
+                    Message = new[] { ex.Message },
                     Data = infomationUser
                 });
             }
@@ -93,12 +102,13 @@ namespace ShoppingAPI.Controllers
                     infomationUserDb.PhoneNumber = infomationUser.PhoneNumber;
                     infomationUserDb.Address = infomationUser.Address;
 
-                    infomationUserServices.UpdateInfomationUser(infomationUserDb);
+                   await infomationUserServices.UpdateInfomationUser(infomationUserDb);
 
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Edit success",
+                        Message = new[] { "Edit success" },
                         Data = infomationUserDb
                     });
                 }
@@ -108,30 +118,32 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpDelete("InfomationUser")]
-        public IActionResult DeleteInfomationUser(int id)
+        public async Task<IActionResult> DeleteInfomationUser(int id)
         {
             try
             {
-                infomationUserServices.DeleteInfomationUser(id);
+               await infomationUserServices.DeleteInfomationUser(id);
                 return Ok(new ResultApi
                 {
                     Success = true,
-                    Message = "Delete Success"
+                    Message = new[] { "Delete Success" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }

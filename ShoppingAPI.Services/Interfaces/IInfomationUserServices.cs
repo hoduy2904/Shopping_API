@@ -11,8 +11,8 @@ namespace ShoppingAPI.Services.Interfaces
     {
         Task<InfomationUser> GetInfomationUserAsync(int id);
         Task<IEnumerable<InfomationUser>> GetInfomationUsersAsync();
-        void InsertInfomationUser(InfomationUser infomationUser);
-        void UpdateInfomationUser(InfomationUser infomationUser);
-        void DeleteInfomationUser(int id);
+        Task InsertInfomationUser(InfomationUser infomationUser);
+        Task UpdateInfomationUser(InfomationUser infomationUser);
+        Task DeleteInfomationUser(int id);
     }
 }

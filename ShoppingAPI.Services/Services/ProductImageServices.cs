@@ -19,10 +19,10 @@ namespace ShoppingAPI.Services.Services
             this.repository = repository;
         }
 
-        public async void DeleteProductImage(int id)
+        public async Task DeleteProductImage(int id)
         {
             var productImage =await repository.GetAsync(id);
-            repository.DeleteAsync(productImage);
+           await repository.DeleteAsync(productImage);
         }
 
         public async Task<ProductImage> GetProductImageAsync(int id)
@@ -35,14 +35,14 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAllAsync();
         }
 
-        public void InsertProductImage(ProductImage productImage)
+        public async Task InsertProductImage(ProductImage productImage)
         {
-            repository.InsertAsync(productImage);
+           await repository.InsertAsync(productImage);
         }
 
-        public void UpdateProductImage(ProductImage productImage)
+        public async Task UpdateProductImage(ProductImage productImage)
         {
-            repository.UpdateAsync(productImage);
+           await repository.UpdateAsync(productImage);
         }
     }
 }

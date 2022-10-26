@@ -1,12 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
+using System.Data;
+using System.Net;
 
 namespace ShoppingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+
     public class ProductVariationController : ControllerBase
     {
         private readonly IProductVariationServices productVariationServices;
@@ -14,7 +19,7 @@ namespace ShoppingAPI.Controllers
         {
             this.productVariationServices = productVariationServices;
         }
-        [HttpGet]
+        [HttpGet,AllowAnonymous]
         public async Task<IActionResult> ProductVariations()
         {
             var productVariations = await productVariationServices.GetProductVariatiesAsync();
@@ -24,7 +29,7 @@ namespace ShoppingAPI.Controllers
                 Data = productVariations
             });
         }
-        [HttpGet("{id}")]
+        [HttpGet("{id}"),AllowAnonymous]
         public async Task<IActionResult> ProductVariation(int id)
         {
             try
@@ -33,37 +38,41 @@ namespace ShoppingAPI.Controllers
                 if (productVariation != null)
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Data = productVariation,
                         Success = true
                     });
                 return NotFound(new ResultApi
                 {
+                    Status = (int)HttpStatusCode.NotFound,
                     Success = false,
-                    Message = "Not found product Variation"
+                    Message = new[] { "Not found product Variation" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpPost]
-        public IActionResult ProductVariation(ProductVariation productVariation)
+        public async Task<IActionResult> ProductVariation(ProductVariation productVariation)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    productVariationServices.InsertProductVariation(productVariation);
+                    await productVariationServices.InsertProductVariation(productVariation);
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Add Success",
+                        Message = new[] { "Add Success" },
                         Data = productVariation
                     });
 
@@ -74,8 +83,9 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message,
+                    Message = new[] { ex.Message },
                     Data = productVariation
                 });
             }
@@ -96,12 +106,13 @@ namespace ShoppingAPI.Controllers
                     ProductVariationDb.PriceOld = productVariation.PriceOld;
                     ProductVariationDb.Variation = productVariation.Variation;
 
-                    productVariationServices.UpdateProductVariation(ProductVariationDb);
+                    await productVariationServices.UpdateProductVariation(ProductVariationDb);
 
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Edit success",
+                        Message = new[] { "Edit success" },
                         Data = ProductVariationDb
                     });
                 }
@@ -111,30 +122,33 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpDelete("ProductVariation")]
-        public IActionResult DeleteProductVariation(int id)
+        public async Task<IActionResult> DeleteProductVariation(int id)
         {
             try
             {
-                productVariationServices.DeleteProductVariation(id);
+                await productVariationServices.DeleteProductVariation(id);
                 return Ok(new ResultApi
                 {
+                    Status = 200,
                     Success = true,
-                    Message = "Delete Success"
+                    Message = new[] { "Delete Success" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }

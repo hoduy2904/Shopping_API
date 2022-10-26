@@ -1,12 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
+using System.Data;
+using System.Net;
 
 namespace ShoppingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+
     public class ProductImageController : ControllerBase
     {
         private readonly IProductImageServices productImageServices;
@@ -14,7 +19,7 @@ namespace ShoppingAPI.Controllers
         {
             this.productImageServices = productImageServices;
         }
-        [HttpGet]
+        [HttpGet,AllowAnonymous]
         public async Task<IActionResult> ProductImages()
         {
             var productImages = await productImageServices.GetProductImagesAsync();
@@ -24,7 +29,7 @@ namespace ShoppingAPI.Controllers
                 Data = productImages
             });
         }
-        [HttpGet("{id}")]
+        [HttpGet("{id}"),AllowAnonymous]
         public async Task<IActionResult> ProductImage(int id)
         {
             try
@@ -33,37 +38,41 @@ namespace ShoppingAPI.Controllers
                 if (productImage != null)
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Data = productImage,
                         Success = true
                     });
                 return NotFound(new ResultApi
                 {
+                    Status = (int)HttpStatusCode.NotFound,
                     Success = false,
-                    Message = "Not found Product Image"
+                    Message = new[] { "Not found Product Image" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpPost]
-        public IActionResult ProductImage(ProductImage productImage)
+        public async Task<IActionResult> ProductImage(ProductImage productImage)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    productImageServices.InsertProductImage(productImage);
+                   await productImageServices.InsertProductImage(productImage);
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Add Success",
+                        Message = new[] { "Add Success" },
                         Data = productImage
                     });
 
@@ -74,8 +83,9 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message,
+                    Message = new[] { ex.Message },
                     Data = productImage
                 });
             }
@@ -92,12 +102,13 @@ namespace ShoppingAPI.Controllers
 
                     ProductImageDb.Image = productImage.Image;
 
-                    productImageServices.UpdateProductImage(ProductImageDb);
+                   await productImageServices.UpdateProductImage(ProductImageDb);
 
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Edit success",
+                        Message = new[] { "Edit success" },
                         Data = ProductImageDb
                     });
                 }
@@ -107,30 +118,33 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpDelete("ProductImage")]
-        public IActionResult DeleteProductImage(int id)
+        public async Task<IActionResult> DeleteProductImage(int id)
         {
             try
             {
-                productImageServices.DeleteProductImage(id);
+               await productImageServices.DeleteProductImage(id);
                 return Ok(new ResultApi
                 {
+                    Status = 200,
                     Success = true,
-                    Message = "Delete Success"
+                    Message = new[] { "Delete Success" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }

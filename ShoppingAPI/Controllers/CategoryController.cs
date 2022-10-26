@@ -1,12 +1,15 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
+using System.Net;
 
 namespace ShoppingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles ="Admin,SuperAdmin")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryServices categoryServices;
@@ -14,6 +17,7 @@ namespace ShoppingAPI.Controllers
         {
             this.categoryServices = categoryServices;
         }
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Categories()
         {
@@ -24,7 +28,7 @@ namespace ShoppingAPI.Controllers
                 Data = categories
             });
         }
-        [HttpGet("{id}")]
+        [HttpGet("{id}"),AllowAnonymous]
         public async Task<IActionResult> Category(int id)
         {
             try
@@ -38,32 +42,35 @@ namespace ShoppingAPI.Controllers
                     });
                 return NotFound(new ResultApi
                 {
+                    Status = (int)HttpStatusCode.NotFound,
                     Success = false,
-                    Message = "Not found category"
+                    Message = new[] { "Not found category" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpPost]
-        public IActionResult Category(Category category)
+        public async Task<IActionResult> Category(Category category)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    categoryServices.InsertCategory(category);
+                    await categoryServices.InsertCategory(category);
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Add Success",
+                        Message = new[] { "Add Success" },
                         Data = category
                     });
 
@@ -74,8 +81,9 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message,
+                    Message = new[] { ex.Message },
                     Data = category
                 });
             }
@@ -94,12 +102,13 @@ namespace ShoppingAPI.Controllers
                     CategoryDb.Name = category.Name;
                     CategoryDb.CategoryId = category.CategoryId;
 
-                    categoryServices.UpdateCategory(CategoryDb);
+                    await categoryServices.UpdateCategory(CategoryDb);
 
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Edit success",
+                        Message = new[] { "Edit success" },
                         Data = CategoryDb
                     });
                 }
@@ -109,30 +118,34 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpDelete("Category")]
-        public IActionResult DeleteCategory(int id)
+        public async Task<IActionResult> DeleteCategory(int id)
         {
             try
             {
-                categoryServices.DeleteCategory(id);
+               await categoryServices.DeleteCategory(id);
                 return Ok(new ResultApi
                 {
+                    Status = 200,
                     Success = true,
-                    Message = "Delete Success"
+                    Message = new[] { "Delete Success" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }

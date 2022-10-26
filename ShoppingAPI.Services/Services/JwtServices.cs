@@ -41,7 +41,7 @@ namespace ShoppingAPI.Services.Services
             return new ResultApi
             {
                 Success = false,
-                Message = "Incorrect Username or Password"
+                Message = new[] { "Incorrect Username or Password" }
             };
         }
         //Save Token Database
@@ -55,7 +55,7 @@ namespace ShoppingAPI.Services.Services
                 Token = accessToken,
                 UserId = UserId,
                 IPAdress = IPAdress,
-                Created=DateTime.UtcNow
+                Created = DateTime.UtcNow
             };
 
             shoppingContext.Add(refreshDb);
@@ -100,7 +100,7 @@ namespace ShoppingAPI.Services.Services
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claims,
-                Expires = DateTime.UtcNow.AddSeconds(30),
+                Expires = DateTime.UtcNow.AddMinutes(5),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretBytes), SecurityAlgorithms.HmacSha256)
             };
             //Write Token
@@ -135,28 +135,28 @@ namespace ShoppingAPI.Services.Services
                 return new ResultApi
                 {
                     Success = false,
-                    Message = "Refresh Token Not found"
+                    Message = new[] { "Refresh Token Not found" }
                 };
             //Check AccessToken Expired
             if (token.ValidTo > DateTime.UtcNow)
                 return new ResultApi
                 {
                     Success = false,
-                    Message = "Access token not expired"
+                    Message = new[] { "Access token not expired" }
                 };
             //Check RefreshToken expired
             if (refreshToken.IsExpired)
                 return new ResultApi
                 {
                     Success = false,
-                    Message = "Refresh Token Expired"
+                    Message = new[] { "Refresh Token Expired" }
                 };
             //Check Alg Access Token
             if (!token.SignatureAlgorithm.Equals(SecurityAlgorithms.HmacSha256))
                 return new ResultApi
                 {
                     Success = false,
-                    Message = "Not match Alg"
+                    Message = new[] { "Not match Alg" }
                 };
             return new ResultApi
             {
@@ -183,7 +183,7 @@ namespace ShoppingAPI.Services.Services
                 return new ResultApi
                 {
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 };
             }
         }

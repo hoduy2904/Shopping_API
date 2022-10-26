@@ -1,12 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
+using System.Data;
+using System.Net;
 
 namespace ShoppingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+
     public class ProductController : ControllerBase
     {
         private readonly IProductServices productServices;
@@ -14,17 +19,18 @@ namespace ShoppingAPI.Controllers
         {
             this.productServices = productServices;
         }
-        [HttpGet]
+        [HttpGet,AllowAnonymous]
         public async Task<IActionResult> Products()
         {
             var products = await productServices.GetProductsAsync();
             return Ok(new ResultApi
             {
+                Status = 200,
                 Success = true,
                 Data = products
             });
         }
-        [HttpGet("{id}")]
+        [HttpGet("{id}"),AllowAnonymous]
         public async Task<IActionResult> Product(int id)
         {
             try
@@ -33,37 +39,41 @@ namespace ShoppingAPI.Controllers
                 if (product != null)
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Data = product,
                         Success = true
                     });
                 return NotFound(new ResultApi
                 {
+                    Status = (int)HttpStatusCode.NotFound,
                     Success = false,
-                    Message = "Not found product"
+                    Message = new[] { "Not found product" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpPost]
-        public IActionResult Product(Product product)
+        public async Task<IActionResult> Product(Product product)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    productServices.InsertProduct(product);
+                   await productServices.InsertProduct(product);
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Add Success",
+                        Message = new[] { "Add Success" },
                         Data = product
                     });
 
@@ -74,8 +84,9 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message,
+                    Message = new[] { ex.Message },
                     Data = product
                 });
             }
@@ -93,12 +104,13 @@ namespace ShoppingAPI.Controllers
                     productDb.CategoryId = product.CategoryId;
                     productDb.Name = product.Name;
 
-                    productServices.UpdateProduct(productDb);
+                   await productServices.UpdateProduct(productDb);
 
                     return Ok(new ResultApi
                     {
+                        Status = 200,
                         Success = true,
-                        Message = "Edit success",
+                        Message = new[] { "Edit success" },
                         Data = productDb
                     });
                 }
@@ -108,30 +120,33 @@ namespace ShoppingAPI.Controllers
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }
 
         [HttpDelete("Product")]
-        public IActionResult DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
             try
             {
-                productServices.DeleteProduct(id);
+               await productServices.DeleteProduct(id);
                 return Ok(new ResultApi
                 {
+                    Status = 200,
                     Success = true,
-                    Message = "Delete Success"
+                    Message = new[] { "Delete Success" }
                 });
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResultApi
                 {
+                    Status = ex.HResult,
                     Success = false,
-                    Message = ex.Message
+                    Message = new[] { ex.Message }
                 });
             }
         }

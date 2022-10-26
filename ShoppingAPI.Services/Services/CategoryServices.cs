@@ -17,10 +17,10 @@ namespace ShoppingAPI.Services.Services
         {
             this.repository = repository;
         }
-        public async void DeleteCategory(int id)
+        public async Task DeleteCategory(int id)
         {
             var category =await repository.GetAsync(id);
-            repository.DeleteAsync(category);
+           await repository.DeleteAsync(category);
         }
 
         public async Task<IEnumerable<Category>> GetCategoriesAsync()
@@ -34,15 +34,15 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAsync(id);
         }
 
-        public void InsertCategory(Category category)
+        public async Task InsertCategory(Category category)
         {
-            repository.InsertAsync(category);
+            await repository.InsertAsync(category);
 
         }
 
-        public void UpdateCategory(Category category)
+        public async Task UpdateCategory(Category category)
         {
-            repository.UpdateAsync(category);
+            await repository.UpdateAsync(category);
 
         }
     }

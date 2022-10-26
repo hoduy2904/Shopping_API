@@ -11,8 +11,8 @@ namespace ShoppingAPI.Services.Interfaces
     {
         Task<Cart> GetCartAsync(int id);
         Task<IEnumerable<Cart>> GetCartsAsync();
-        void InsertCart(Cart cart);
-        void UpdateCart(Cart cart);
-        void DeleteCart(int id);
+        Task InsertCart(Cart cart);
+        Task UpdateCart(Cart cart);
+        Task DeleteCart(int id);
     }
 }

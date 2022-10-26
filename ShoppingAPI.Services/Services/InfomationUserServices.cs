@@ -16,10 +16,10 @@ namespace ShoppingAPI.Services.Services
         {
             this.repository = repository;
         }
-        public async void DeleteInfomationUser(int id)
+        public async Task DeleteInfomationUser(int id)
         {
             var infomationUser = await repository.GetAsync(id);
-            repository.DeleteAsync(infomationUser);
+           await repository.DeleteAsync(infomationUser);
         }
 
         public async Task<InfomationUser> GetInfomationUserAsync(int id)
@@ -32,14 +32,14 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAllAsync();
         }
 
-        public void InsertInfomationUser(InfomationUser infomationUser)
+        public async Task InsertInfomationUser(InfomationUser infomationUser)
         {
-            repository.InsertAsync(infomationUser);
+            await repository.InsertAsync(infomationUser);
         }
 
-        public void UpdateInfomationUser(InfomationUser infomationUser)
+        public async Task UpdateInfomationUser(InfomationUser infomationUser)
         {
-            repository.UpdateAsync(infomationUser);
+            await repository.UpdateAsync(infomationUser);
         }
     }
 }

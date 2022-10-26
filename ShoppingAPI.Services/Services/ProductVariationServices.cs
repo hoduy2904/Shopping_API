@@ -17,10 +17,10 @@ namespace ShoppingAPI.Services.Services
             this.repository = repository;
         }
 
-        public async void DeleteProductVariation(int id)
+        public async Task DeleteProductVariation(int id)
         {
             var productvariation = await repository.GetAsync(id);
-            repository.DeleteAsync(productvariation);
+           await repository.DeleteAsync(productvariation);
         }
 
         public async Task<IEnumerable<ProductVariation>> GetProductVariatiesAsync()
@@ -33,14 +33,14 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAsync(id);
         }
 
-        public void InsertProductVariation(ProductVariation productVariation)
+        public async Task InsertProductVariation(ProductVariation productVariation)
         {
-            repository.InsertAsync(productVariation);
+           await repository.InsertAsync(productVariation);
         }
 
-        public void UpdateProductVariation(ProductVariation productVariation)
+        public async Task UpdateProductVariation(ProductVariation productVariation)
         {
-            repository.UpdateAsync(productVariation);
+           await repository.UpdateAsync(productVariation);
         }
     }
 }
