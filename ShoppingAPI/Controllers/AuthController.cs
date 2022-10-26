@@ -39,9 +39,17 @@ namespace ShoppingAPI.Controllers
                 if (!isRevoked.Success)
                     return BadRequest(isRevoked);
                 var RefreshTokenDb = (result.Data as RefreshToken);
+                var userRole = RefreshTokenDb.User.UserRoles?.FirstOrDefault();
+                string roleName = "User";
+                if (userRole != null)
+                {
+                    var Role= userRole.Role;
+                    if (Role != null)
+                        roleName = Role.Name;
+                }
                 var response = await jwtServices.getRefreshTokenAsync(RefreshTokenDb.UserId,
                     remoteIP,
-                    RefreshTokenDb.User.UserRoles.FirstOrDefault().Role.Name);
+                    roleName);
 
                 return Ok(response);
             }
