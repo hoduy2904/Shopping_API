@@ -13,7 +13,7 @@ namespace ShoppingAPI.Data.Models
         public virtual ProductVariation? ProductVariate { get; set; }
         public virtual IEnumerable<ProductVariation>? ProductVariations { get; set; }
         [ForeignKey("ProductId")]
-        public virtual Product Product { get; set; }
+        public virtual Product? Product { get; set; }
         public virtual IEnumerable<ProductImage>? ProductImages { get; set; }
         public virtual IEnumerable<Cart>? Carts { get; set; }
     }
