@@ -14,5 +14,7 @@ namespace ShoppingAPI.Services.Interfaces
         Task<ResultApi> getRefreshTokenAsync(int UserId,string IPAdress,string roleName);
         ResultApi checkValidate(RefreshTokenRequest refreshTokenRequest);
         Task<ResultApi> RevokeRefreshToken(RefreshToken refreshToken);
+        Task<RefreshToken> getRefreshTokenDbAsync(string accessToken);
+        bool isTokenLive(string accessToken);
     }
 }

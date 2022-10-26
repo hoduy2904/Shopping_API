@@ -47,10 +47,11 @@ namespace ShoppingAPI.Services.Services
         //Save Token Database
         private async Task<ResultApi> SaveTokenDetails(string accessToken, string refreshToken, string IPAdress, int UserId)
         {
+            int.TryParse(configuration["JwtSettings:RefreshTokenTime"],out int RefreshTime);
             var refreshDb = new RefreshToken
             {
                 TokenId = GetJwtSecurity(accessToken).Id,
-                Expired = DateTime.UtcNow.AddDays(2),
+                Expired = DateTime.UtcNow.AddDays(RefreshTime),
                 Refresh = refreshToken,
                 Token = accessToken,
                 UserId = UserId,
@@ -84,6 +85,7 @@ namespace ShoppingAPI.Services.Services
 
         private string GenarateToken(int UserId, string IpAdress, string RoleName)
         {
+            int.TryParse(configuration["JwtSettings:AccessTokenTime"], out int AccessTime);
             //Get Secret and get bytes secret
             var secret = configuration["JwtSettings:SecretKey"];
             var secretBytes = Encoding.UTF8.GetBytes(secret);
@@ -100,7 +102,7 @@ namespace ShoppingAPI.Services.Services
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claims,
-                Expires = DateTime.UtcNow.AddMinutes(5),
+                Expires = DateTime.UtcNow.AddMinutes(AccessTime),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretBytes), SecurityAlgorithms.HmacSha256)
             };
             //Write Token
@@ -188,5 +190,22 @@ namespace ShoppingAPI.Services.Services
             }
         }
 
+        public async Task<RefreshToken> getRefreshTokenDbAsync(string accessToken)
+        {
+            return await shoppingContext.RefreshTokens.FirstOrDefaultAsync(x => x.Token.Equals(accessToken));
+        }
+
+        public bool isTokenLive(string accessToken)
+        {
+            var refreshToken = shoppingContext.RefreshTokens.FirstOrDefault(x =>
+            x.Token.Equals(accessToken)
+            && x.IsTrash == false
+            && x.IsExpired == false
+            );
+
+            if (refreshToken != null)
+                return true;
+            return false;
+        }
     }
 }

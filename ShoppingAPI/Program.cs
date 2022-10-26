@@ -6,6 +6,7 @@ using ShoppingAPI.REPO;
 using ShoppingAPI.REPO.Repository;
 using ShoppingAPI.Services.Interfaces;
 using ShoppingAPI.Services.Services;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -28,6 +29,7 @@ builder.Services.AddControllersWithViews().AddJsonOptions(option =>
 {
     option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+
 builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICartServices, CartServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
@@ -60,6 +62,17 @@ var tokenParameters = new TokenValidationParameters
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = tokenParameters;
+    options.Events = new JwtBearerEvents();
+    options.Events.OnTokenValidated = async (context) =>
+    {
+        var jwtServer = context.HttpContext.RequestServices.GetService<IJwtServices>();
+        var jwtToken = context.SecurityToken as JwtSecurityToken;
+        if (jwtServer.isTokenLive(jwtToken.RawData))
+        {
+            context.HttpContext.Response.Headers.Remove("Authorization");
+            context.Fail("Invalid Token");
+        }
+    };
 });
 
 //Config Swagger

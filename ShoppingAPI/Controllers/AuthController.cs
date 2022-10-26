@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
 
@@ -25,6 +26,35 @@ namespace ShoppingAPI.Controllers
             }
             return BadRequest();
         }
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                var AccessToken = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer", "");
+                var refreshToken = await jwtServices.getRefreshTokenDbAsync(AccessToken);
+                if (refreshToken == null)
+                    return Unauthorized();
+
+                Response.Headers.Remove("Authorization");
+                await jwtServices.RevokeRefreshToken(refreshToken);
+
+                return Ok(new ResultApi
+                {
+                    Success = true,
+                    Message = new[] { "Logout success " },
+                    Status = 200
+                });
+            }catch(Exception ex)
+            {
+                return BadRequest(new ResultApi
+                {
+                    Success = false,
+                    Message = new[] { ex.InnerException.Message },
+                    Status = BadRequest().StatusCode
+                });
+            }
+        }
         [HttpPost("[Action]")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest refreshTokenRequest)
         {
@@ -43,7 +73,7 @@ namespace ShoppingAPI.Controllers
                 string roleName = "User";
                 if (userRole != null)
                 {
-                    var Role= userRole.Role;
+                    var Role = userRole.Role;
                     if (Role != null)
                         roleName = Role.Name;
                 }

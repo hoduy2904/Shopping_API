@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
 using System.Net;
+using System.Security.Claims;
 
 namespace ShoppingAPI.Controllers
 {
@@ -17,9 +18,10 @@ namespace ShoppingAPI.Controllers
         {
             this.infomationUserServices = infomationUserServices;
         }
-        [HttpGet,AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> InfomationUsers()
         {
+            string roles = User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value??"";
             var categories = await infomationUserServices.GetInfomationUsersAsync();
             return Ok(new ResultApi
             {
@@ -33,6 +35,7 @@ namespace ShoppingAPI.Controllers
         {
             try
             {
+             
                 var infomationUser = await infomationUserServices.GetInfomationUserAsync(id);
                 if (infomationUser != null)
                     return Ok(new ResultApi
