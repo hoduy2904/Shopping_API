@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
 using System.Net;
+using System.Security.Claims;
 
 namespace ShoppingAPI.Controllers
 {
@@ -37,20 +38,26 @@ namespace ShoppingAPI.Controllers
         {
             try
             {
-                var user = await userServices.GetUserAsync(id);
-                if (user != null)
-                    return Ok(new ResultApi
-                    {
-                        Status = 200,
-                        Data = user,
-                        Success = true
-                    });
-                return NotFound(new ResultApi
+                string roles = HttpContext.User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
+                var UserId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value??"";
+                if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(id.ToString()))
                 {
-                    Status = (int)HttpStatusCode.NotFound,
-                    Success = false,
-                    Message = new[] { "Not found user" }
-                });
+                    var user = await userServices.GetUserAsync(id);
+                    if (user != null)
+                        return Ok(new ResultApi
+                        {
+                            Status = 200,
+                            Data = user,
+                            Success = true
+                        });
+                    return NotFound(new ResultApi
+                    {
+                        Status = (int)HttpStatusCode.NotFound,
+                        Success = false,
+                        Message = new[] { "Not found user" }
+                    });
+                }
+                return Unauthorized();
             }
             catch (Exception ex)
             {

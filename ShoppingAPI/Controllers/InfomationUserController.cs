@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 
@@ -10,7 +10,7 @@ namespace ShoppingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles ="Admin,SuperAdmin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class InfomationUserController : ControllerBase
     {
         private readonly IInfomationUserServices infomationUserServices;
@@ -21,7 +21,6 @@ namespace ShoppingAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> InfomationUsers()
         {
-            string roles = User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value??"";
             var categories = await infomationUserServices.GetInfomationUsersAsync();
             return Ok(new ResultApi
             {
@@ -35,21 +34,29 @@ namespace ShoppingAPI.Controllers
         {
             try
             {
-             
+                string roles = User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
+                var UserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
                 var infomationUser = await infomationUserServices.GetInfomationUserAsync(id);
                 if (infomationUser != null)
-                    return Ok(new ResultApi
-                    {
-                        Status = 200,
-                        Data = infomationUser,
-                        Success = true
-                    });
-                return NotFound(new ResultApi
                 {
-                    Status = (int)HttpStatusCode.NotFound,
-                    Success = false,
-                    Message = new[] { "Not found infomation User" }
-                });
+                    if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(infomationUser.UserId.ToString()))
+                    {
+                        if (infomationUser != null)
+                            return Ok(new ResultApi
+                            {
+                                Status = 200,
+                                Data = infomationUser,
+                                Success = true
+                            });
+                        return NotFound(new ResultApi
+                        {
+                            Status = (int)HttpStatusCode.NotFound,
+                            Success = false,
+                            Message = new[] { "Not found infomation User" }
+                        });
+                    }
+                }
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -69,7 +76,7 @@ namespace ShoppingAPI.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                   await infomationUserServices.InsertInfomationUser(infomationUser);
+                    await infomationUserServices.InsertInfomationUser(infomationUser);
                     return Ok(new ResultApi
                     {
                         Status = 200,
@@ -105,7 +112,7 @@ namespace ShoppingAPI.Controllers
                     infomationUserDb.PhoneNumber = infomationUser.PhoneNumber;
                     infomationUserDb.Address = infomationUser.Address;
 
-                   await infomationUserServices.UpdateInfomationUser(infomationUserDb);
+                    await infomationUserServices.UpdateInfomationUser(infomationUserDb);
 
                     return Ok(new ResultApi
                     {
@@ -133,7 +140,7 @@ namespace ShoppingAPI.Controllers
         {
             try
             {
-               await infomationUserServices.DeleteInfomationUser(id);
+                await infomationUserServices.DeleteInfomationUser(id);
                 return Ok(new ResultApi
                 {
                     Success = true,
