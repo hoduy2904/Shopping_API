@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,6 @@ namespace ShoppingAPI.REPO.Repository
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
         Task SavechangesAsync();
-        IEnumerable<T> Where(Func<T,bool> func);
+        IQueryable<T> Where(Expression<Func<T,bool>> preicate);
     }
 }

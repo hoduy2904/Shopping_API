@@ -8,7 +8,11 @@ namespace ShoppingAPI.Data.Models
 {
     public class Role :BaseModels
     {
+        public Role()
+        {
+            UserRoles = new HashSet<UserRole>();
+        }
         public string Name { get; set; }
-        public virtual IEnumerable<UserRole>? UserRoles { get; set; }
+        public virtual ICollection<UserRole>? UserRoles { get; set; }
     }
 }

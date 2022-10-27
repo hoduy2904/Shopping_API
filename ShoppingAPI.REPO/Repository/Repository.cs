@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -61,9 +62,9 @@ namespace ShoppingAPI.REPO.Repository
             await db.SaveChangesAsync();
         }
 
-        public IEnumerable<T> Where(Func<T, bool> func)
+        public IQueryable<T> Where(Expression<Func<T, bool>> preicate)
         {
-            return entities.Where(func).AsEnumerable();
+            return entities.Where(preicate);
         }
     }
 }
