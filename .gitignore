@@ -1,4 +1,5 @@
 .vs
-LearnAboutNet6/bin
-LearnAboutNet6/obj
-LearnAboutNet6/obj/appsettings.Development.json
+*/bin
+*/obj
+ShoppingAPI/appsettings.Development.json
+Services
