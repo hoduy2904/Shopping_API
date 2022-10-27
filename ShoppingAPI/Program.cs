@@ -67,7 +67,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     {
         var jwtServer = context.HttpContext.RequestServices.GetService<IJwtServices>();
         var jwtToken = context.SecurityToken as JwtSecurityToken;
-        if (jwtServer.isTokenLive(jwtToken.RawData))
+        if (!jwtServer.isTokenLive(jwtToken.RawData))
         {
             context.HttpContext.Response.Headers.Remove("Authorization");
             context.Fail("Invalid Token");
@@ -116,6 +116,10 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseCors(opt =>
+{
+    opt.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+});
 app.MapControllers();
 
 app.Run();

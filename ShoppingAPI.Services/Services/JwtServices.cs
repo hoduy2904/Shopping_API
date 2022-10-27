@@ -200,7 +200,6 @@ namespace ShoppingAPI.Services.Services
             var refreshToken = shoppingContext.RefreshTokens.FirstOrDefault(x =>
             x.Token.Equals(accessToken)
             && x.IsTrash == false
-            && x.IsExpired == false
             );
 
             if (refreshToken != null)
