@@ -36,132 +36,84 @@ namespace ShoppingAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> User(int id)
         {
-            try
+            string roles = HttpContext.User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
+            var UserId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+            if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(id.ToString()))
             {
-                string roles = HttpContext.User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
-                var UserId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value??"";
-                if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(id.ToString()))
-                {
-                    var user = await userServices.GetUserAsync(id);
-                    if (user != null)
-                        return Ok(new ResultApi
-                        {
-                            Status = 200,
-                            Data = user,
-                            Success = true
-                        });
-                    return NotFound(new ResultApi
+                var user = await userServices.GetUserAsync(id);
+                if (user != null)
+                    return Ok(new ResultApi
                     {
-                        Status = (int)HttpStatusCode.NotFound,
-                        Success = false,
-                        Message = new[] { "Not found user" }
+                        Status = 200,
+                        Data = user,
+                        Success = true
                     });
-                }
-                return Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResultApi
+                return NotFound(new ResultApi
                 {
-                    Status = ex.HResult,
+                    Status = (int)HttpStatusCode.NotFound,
                     Success = false,
-                    Message = new[] { ex.Message }
+                    Message = new[] { "Not found user" }
                 });
             }
+            return Unauthorized();
         }
 
         [HttpPost]
         public async Task<IActionResult> User(User user)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                await userServices.InsertUser(user);
+                return Ok(new ResultApi
                 {
-                    await userServices.InsertUser(user);
-                    return Ok(new ResultApi
-                    {
-                        Status = 200,
-                        Success = true,
-                        Message = new[] { "Add Success" },
-                        Data = user
-                    });
-
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResultApi
-                {
-                    Status = ex.HResult,
-                    Success = false,
-                    Message = new[] { ex.Message },
+                    Status = 200,
+                    Success = true,
+                    Message = new[] { "Add Success" },
                     Data = user
                 });
+
             }
+            return BadRequest();
         }
 
         [HttpPut("User")]
         public async Task<IActionResult> PutUser(User user)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                var userDb = await userServices.GetUserAsync(user.Id);
+
+                userDb.FristName = user.FristName;
+                userDb.LastName = user.LastName;
+                userDb.Email = user.Email;
+                userDb.IdentityCard = user.IdentityCard;
+                userDb.Sex = user.Sex;
+
+
+                await userServices.UpdateUser(userDb);
+
+                return Ok(new ResultApi
                 {
-                    var userDb = await userServices.GetUserAsync(user.Id);
-
-                    userDb.FristName = user.FristName;
-                    userDb.LastName = user.LastName;
-                    userDb.Email = user.Email;
-                    userDb.IdentityCard = user.IdentityCard;
-                    userDb.Sex = user.Sex;
-
-
-                    await userServices.UpdateUser(userDb);
-
-                    return Ok(new ResultApi
-                    {
-                        Status = 200,
-                        Success = true,
-                        Message = new[] { "Edit success" },
-                        Data = userDb
-                    });
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResultApi
-                {
-                    Status = ex.HResult,
-                    Success = false,
-                    Message = new[] { ex.Message }
+                    Status = 200,
+                    Success = true,
+                    Message = new[] { "Edit success" },
+                    Data = userDb
                 });
             }
+            return BadRequest();
         }
 
         [HttpDelete("User")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            try
+            await userServices.DeleteUser(id);
+            return Ok(new ResultApi
             {
-                await userServices.DeleteUser(id);
-                return Ok(new ResultApi
-                {
-                    Status = 200,
-                    Success = true,
-                    Message = new[] { "Delete Success" }
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResultApi
-                {
-                    Status = ex.HResult,
-                    Success = false,
-                    Message = new[] { ex.Message }
-                });
-            }
+                Status = 200,
+                Success = true,
+                Message = new[] { "Delete Success" }
+            });
+
         }
     }
 }

@@ -9,7 +9,7 @@ namespace ShoppingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles ="Admin,SuperAdmin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryServices categoryServices;
@@ -28,126 +28,77 @@ namespace ShoppingAPI.Controllers
                 Data = categories
             });
         }
-        [HttpGet("{id}"),AllowAnonymous]
+        [HttpGet("{id}"), AllowAnonymous]
         public async Task<IActionResult> Category(int id)
         {
-            try
-            {
-                var category = await categoryServices.GetCategoryAsync(id);
-                if (category != null)
-                    return Ok(new ResultApi
-                    {
-                        Data = category,
-                        Success = true
-                    });
-                return NotFound(new ResultApi
+            var category = await categoryServices.GetCategoryAsync(id);
+            if (category != null)
+                return Ok(new ResultApi
                 {
-                    Status = (int)HttpStatusCode.NotFound,
-                    Success = false,
-                    Message = new[] { "Not found category" }
+                    Data = category,
+                    Success = true
                 });
-            }
-            catch (Exception ex)
+            return NotFound(new ResultApi
             {
-                return BadRequest(new ResultApi
-                {
-                    Status = ex.HResult,
-                    Success = false,
-                    Message = new[] { ex.Message }
-                });
-            }
+                Status = (int)HttpStatusCode.NotFound,
+                Success = false,
+                Message = new[] { "Not found category" }
+            });
         }
 
         [HttpPost]
         public async Task<IActionResult> Category(Category category)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                await categoryServices.InsertCategory(category);
+                return Ok(new ResultApi
                 {
-                    await categoryServices.InsertCategory(category);
-                    return Ok(new ResultApi
-                    {
-                        Status = 200,
-                        Success = true,
-                        Message = new[] { "Add Success" },
-                        Data = category
-                    });
-
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResultApi
-                {
-                    Status = ex.HResult,
-                    Success = false,
-                    Message = new[] { ex.Message },
+                    Status = 200,
+                    Success = true,
+                    Message = new[] { "Add Success" },
                     Data = category
                 });
+
             }
+            return BadRequest();
         }
 
         [HttpPut("Category")]
         public async Task<IActionResult> PutCategory(Category category)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                var CategoryDb = await categoryServices.GetCategoryAsync(category.Id);
+
+                CategoryDb.Image = category.Image;
+                CategoryDb.Name = category.Name;
+                CategoryDb.CategoryId = category.CategoryId;
+
+                await categoryServices.UpdateCategory(CategoryDb);
+
+                return Ok(new ResultApi
                 {
-                    var CategoryDb = await categoryServices.GetCategoryAsync(category.Id);
-
-                    CategoryDb.Image = category.Image;
-                    CategoryDb.Name = category.Name;
-                    CategoryDb.CategoryId = category.CategoryId;
-
-                    await categoryServices.UpdateCategory(CategoryDb);
-
-                    return Ok(new ResultApi
-                    {
-                        Status = 200,
-                        Success = true,
-                        Message = new[] { "Edit success" },
-                        Data = CategoryDb
-                    });
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResultApi
-                {
-                    Status = ex.HResult,
-                    Success = false,
-                    Message = new[] { ex.Message }
+                    Status = 200,
+                    Success = true,
+                    Message = new[] { "Edit success" },
+                    Data = CategoryDb
                 });
             }
+            return BadRequest();
+
         }
 
         [HttpDelete("Category")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            try
+            await categoryServices.DeleteCategory(id);
+            return Ok(new ResultApi
             {
-               await categoryServices.DeleteCategory(id);
-                return Ok(new ResultApi
-                {
-                    Status = 200,
-                    Success = true,
-                    Message = new[] { "Delete Success" }
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResultApi
-                {
-
-                    Status = ex.HResult,
-                    Success = false,
-                    Message = new[] { ex.Message }
-                });
-            }
+                Status = 200,
+                Success = true,
+                Message = new[] { "Delete Success" }
+            });
         }
     }
 }

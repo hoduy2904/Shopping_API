@@ -32,127 +32,78 @@ namespace ShoppingAPI.Controllers
         [HttpGet("{id}"), AllowAnonymous]
         public async Task<IActionResult> ShoppingDeliveryAddress(int id)
         {
-            try
+            string roles = User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
+            var UserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            var shoppingDeliveryAddress = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(id);
+            if (shoppingDeliveryAddress != null)
             {
-                string roles = User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
-                var UserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
-                var shoppingDeliveryAddress = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(id);
-                if (shoppingDeliveryAddress != null)
-                {
-                    if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(shoppingDeliveryAddress.UserId.ToString()))
-                        return Ok(new ResultApi
-                        {
-                            Status = 200,
-                            Data = shoppingDeliveryAddress,
-                            Success = true
-                        });
-                    return NotFound(new ResultApi
+                if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(shoppingDeliveryAddress.UserId.ToString()))
+                    return Ok(new ResultApi
                     {
-                        Status = (int)HttpStatusCode.NotFound,
-                        Success = false,
-                        Message = new[] { "Not found shoppingDeliveryAddress User" }
+                        Status = 200,
+                        Data = shoppingDeliveryAddress,
+                        Success = true
                     });
-                }
-                return Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResultApi
+                return NotFound(new ResultApi
                 {
-                    Status = ex.HResult,
+                    Status = (int)HttpStatusCode.NotFound,
                     Success = false,
-                    Message = new[] { ex.Message }
+                    Message = new[] { "Not found shoppingDeliveryAddress User" }
                 });
             }
+            return Unauthorized();
         }
 
         [HttpPost]
         public async Task<IActionResult> shoppingDeliveryAddress(ShoppingDeliveryAddress shoppingDelivery)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                await shoppingDeliveryAddressServices.InsertShoppingDeliveryAddress(shoppingDelivery);
+                return Ok(new ResultApi
                 {
-                    await shoppingDeliveryAddressServices.InsertShoppingDeliveryAddress(shoppingDelivery);
-                    return Ok(new ResultApi
-                    {
-                        Status = 200,
-                        Success = true,
-                        Message = new[] { "Add Success" },
-                        Data = shoppingDelivery
-                    });
-
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResultApi
-                {
-                    Status = ex.HResult,
-                    Success = false,
-                    Message = new[] { ex.Message },
+                    Status = 200,
+                    Success = true,
+                    Message = new[] { "Add Success" },
                     Data = shoppingDelivery
                 });
+
             }
+            return BadRequest();
         }
 
         [HttpPut("InfomationUser")]
         public async Task<IActionResult> PutInfomationUser(ShoppingDeliveryAddress shoppingDelivery)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                var shoppingDeliveryAddressDb = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(shoppingDelivery.Id);
+
+                shoppingDeliveryAddressDb.PhoneNumber = shoppingDelivery.PhoneNumber;
+                shoppingDeliveryAddressDb.Address = shoppingDelivery.Address;
+
+                await shoppingDeliveryAddressServices.UpdateShoppingDeliveryAddress(shoppingDeliveryAddressDb);
+
+                return Ok(new ResultApi
                 {
-                    var shoppingDeliveryAddressDb = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(shoppingDelivery.Id);
-
-                    shoppingDeliveryAddressDb.PhoneNumber = shoppingDelivery.PhoneNumber;
-                    shoppingDeliveryAddressDb.Address = shoppingDelivery.Address;
-
-                    await shoppingDeliveryAddressServices.UpdateShoppingDeliveryAddress(shoppingDeliveryAddressDb);
-
-                    return Ok(new ResultApi
-                    {
-                        Status = 200,
-                        Success = true,
-                        Message = new[] { "Edit success" },
-                        Data = shoppingDeliveryAddressDb
-                    });
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResultApi
-                {
-                    Status = ex.HResult,
-                    Success = false,
-                    Message = new[] { ex.Message }
+                    Status = 200,
+                    Success = true,
+                    Message = new[] { "Edit success" },
+                    Data = shoppingDeliveryAddressDb
                 });
             }
+            return BadRequest();
         }
 
         [HttpDelete("InfomationUser")]
         public async Task<IActionResult> DeleteShoppingDeliveryAddress(int id)
         {
-            try
+            await shoppingDeliveryAddressServices.DeleteShoppingDeliveryAddress(id);
+            return Ok(new ResultApi
             {
-                await shoppingDeliveryAddressServices.DeleteShoppingDeliveryAddress(id);
-                return Ok(new ResultApi
-                {
-                    Success = true,
-                    Message = new[] { "Delete Success" }
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResultApi
-                {
-                    Status = ex.HResult,
-                    Success = false,
-                    Message = new[] { ex.Message }
-                });
-            }
+                Success = true,
+                Message = new[] { "Delete Success" }
+            });
         }
     }
 }
