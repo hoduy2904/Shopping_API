@@ -104,7 +104,7 @@ namespace ShoppingAPI.Controllers
                     ProductVariationDb.PriceCurrent = productVariation.PriceCurrent;
                     ProductVariationDb.Name = productVariation.Name;
                     ProductVariationDb.PriceOld = productVariation.PriceOld;
-                    ProductVariationDb.Variation = productVariation.Variation;
+                    ProductVariationDb.VariationId = productVariation.VariationId;
 
                     await productVariationServices.UpdateProductVariation(ProductVariationDb);
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShoppingAPI.REPO;
 
@@ -11,9 +12,10 @@ using ShoppingAPI.REPO;
 namespace ShoppingAPI.REPO.Migrations
 {
     [DbContext(typeof(ShoppingContext))]
-    partial class ShoppingContextModelSnapshot : ModelSnapshot
+    [Migration("20221028031049_fixProductVar")]
+    partial class fixProductVar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,6 +97,39 @@ namespace ShoppingAPI.REPO.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("ShoppingAPI.Data.Models.InfomationUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsTrash")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("InfomationUsers");
                 });
 
             modelBuilder.Entity("ShoppingAPI.Data.Models.Product", b =>
@@ -273,46 +308,10 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 10, 28, 11, 20, 6, 351, DateTimeKind.Local).AddTicks(9529),
+                            Created = new DateTime(2022, 10, 28, 10, 10, 49, 190, DateTimeKind.Local).AddTicks(4035),
                             IsTrash = false,
                             Name = "SuperAdmin"
                         });
-                });
-
-            modelBuilder.Entity("ShoppingAPI.Data.Models.ShoppingDeliveryAddress", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsTrash")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("InfomationUsers");
                 });
 
             modelBuilder.Entity("ShoppingAPI.Data.Models.User", b =>
@@ -364,7 +363,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 10, 28, 11, 20, 6, 352, DateTimeKind.Local).AddTicks(357),
+                            Created = new DateTime(2022, 10, 28, 10, 10, 49, 190, DateTimeKind.Local).AddTicks(4828),
                             IsTrash = false,
                             LastName = "Admin",
                             PasswordHash = "21232f297a57a5a743894a0e4a801fc3",
@@ -405,7 +404,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 10, 28, 11, 20, 6, 352, DateTimeKind.Local).AddTicks(432),
+                            Created = new DateTime(2022, 10, 28, 10, 10, 49, 190, DateTimeKind.Local).AddTicks(4888),
                             IsTrash = false,
                             RoleId = 1,
                             UserId = 1
@@ -442,6 +441,17 @@ namespace ShoppingAPI.REPO.Migrations
                         .HasForeignKey("CategoryId");
 
                     b.Navigation("CategoryParrent");
+                });
+
+            modelBuilder.Entity("ShoppingAPI.Data.Models.InfomationUser", b =>
+                {
+                    b.HasOne("ShoppingAPI.Data.Models.User", "User")
+                        .WithMany("InfomationUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ShoppingAPI.Data.Models.Product", b =>
@@ -500,17 +510,6 @@ namespace ShoppingAPI.REPO.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ShoppingAPI.Data.Models.ShoppingDeliveryAddress", b =>
-                {
-                    b.HasOne("ShoppingAPI.Data.Models.User", "User")
-                        .WithMany("ShoppingDeliveryAddresses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ShoppingAPI.Data.Models.UserRole", b =>
                 {
                     b.HasOne("ShoppingAPI.Data.Models.Role", "Role")
@@ -562,9 +561,9 @@ namespace ShoppingAPI.REPO.Migrations
                 {
                     b.Navigation("Carts");
 
-                    b.Navigation("RefreshTokens");
+                    b.Navigation("InfomationUsers");
 
-                    b.Navigation("ShoppingDeliveryAddresses");
+                    b.Navigation("RefreshTokens");
 
                     b.Navigation("UserRoles");
                 });

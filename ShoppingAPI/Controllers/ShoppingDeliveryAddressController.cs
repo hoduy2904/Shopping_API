@@ -11,17 +11,17 @@ namespace ShoppingAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "Admin,SuperAdmin")]
-    public class InfomationUserController : ControllerBase
+    public class ShoppingDeliveryAddressController : ControllerBase
     {
-        private readonly IInfomationUserServices infomationUserServices;
-        public InfomationUserController(IInfomationUserServices infomationUserServices)
+        private readonly IShoppingDeliveryAddressServices shoppingDeliveryAddressServices;
+        public ShoppingDeliveryAddressController(IShoppingDeliveryAddressServices shoppingDeliveryAddressServices)
         {
-            this.infomationUserServices = infomationUserServices;
+            this.shoppingDeliveryAddressServices = shoppingDeliveryAddressServices;
         }
         [HttpGet]
-        public async Task<IActionResult> InfomationUsers()
+        public async Task<IActionResult> ShoppingDeliveryAddresses()
         {
-            var categories = await infomationUserServices.GetInfomationUsersAsync();
+            var categories = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressesAsync();
             return Ok(new ResultApi
             {
                 Status = 200,
@@ -30,31 +30,28 @@ namespace ShoppingAPI.Controllers
             });
         }
         [HttpGet("{id}"), AllowAnonymous]
-        public async Task<IActionResult> InfomationUser(int id)
+        public async Task<IActionResult> ShoppingDeliveryAddress(int id)
         {
             try
             {
                 string roles = User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
                 var UserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
-                var infomationUser = await infomationUserServices.GetInfomationUserAsync(id);
-                if (infomationUser != null)
+                var shoppingDeliveryAddress = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(id);
+                if (shoppingDeliveryAddress != null)
                 {
-                    if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(infomationUser.UserId.ToString()))
-                    {
-                        if (infomationUser != null)
-                            return Ok(new ResultApi
-                            {
-                                Status = 200,
-                                Data = infomationUser,
-                                Success = true
-                            });
-                        return NotFound(new ResultApi
+                    if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(shoppingDeliveryAddress.UserId.ToString()))
+                        return Ok(new ResultApi
                         {
-                            Status = (int)HttpStatusCode.NotFound,
-                            Success = false,
-                            Message = new[] { "Not found infomation User" }
+                            Status = 200,
+                            Data = shoppingDeliveryAddress,
+                            Success = true
                         });
-                    }
+                    return NotFound(new ResultApi
+                    {
+                        Status = (int)HttpStatusCode.NotFound,
+                        Success = false,
+                        Message = new[] { "Not found shoppingDeliveryAddress User" }
+                    });
                 }
                 return Unauthorized();
             }
@@ -70,19 +67,19 @@ namespace ShoppingAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> infomationUser(InfomationUser infomationUser)
+        public async Task<IActionResult> shoppingDeliveryAddress(ShoppingDeliveryAddress shoppingDelivery)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await infomationUserServices.InsertInfomationUser(infomationUser);
+                    await shoppingDeliveryAddressServices.InsertShoppingDeliveryAddress(shoppingDelivery);
                     return Ok(new ResultApi
                     {
                         Status = 200,
                         Success = true,
                         Message = new[] { "Add Success" },
-                        Data = infomationUser
+                        Data = shoppingDelivery
                     });
 
                 }
@@ -95,31 +92,31 @@ namespace ShoppingAPI.Controllers
                     Status = ex.HResult,
                     Success = false,
                     Message = new[] { ex.Message },
-                    Data = infomationUser
+                    Data = shoppingDelivery
                 });
             }
         }
 
         [HttpPut("InfomationUser")]
-        public async Task<IActionResult> PutInfomationUser(InfomationUser infomationUser)
+        public async Task<IActionResult> PutInfomationUser(ShoppingDeliveryAddress shoppingDelivery)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var infomationUserDb = await infomationUserServices.GetInfomationUserAsync(infomationUser.Id);
+                    var shoppingDeliveryAddressDb = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(shoppingDelivery.Id);
 
-                    infomationUserDb.PhoneNumber = infomationUser.PhoneNumber;
-                    infomationUserDb.Address = infomationUser.Address;
+                    shoppingDeliveryAddressDb.PhoneNumber = shoppingDelivery.PhoneNumber;
+                    shoppingDeliveryAddressDb.Address = shoppingDelivery.Address;
 
-                    await infomationUserServices.UpdateInfomationUser(infomationUserDb);
+                    await shoppingDeliveryAddressServices.UpdateShoppingDeliveryAddress(shoppingDeliveryAddressDb);
 
                     return Ok(new ResultApi
                     {
                         Status = 200,
                         Success = true,
                         Message = new[] { "Edit success" },
-                        Data = infomationUserDb
+                        Data = shoppingDeliveryAddressDb
                     });
                 }
                 return BadRequest();
@@ -136,11 +133,11 @@ namespace ShoppingAPI.Controllers
         }
 
         [HttpDelete("InfomationUser")]
-        public async Task<IActionResult> DeleteInfomationUser(int id)
+        public async Task<IActionResult> DeleteShoppingDeliveryAddress(int id)
         {
             try
             {
-                await infomationUserServices.DeleteInfomationUser(id);
+                await shoppingDeliveryAddressServices.DeleteShoppingDeliveryAddress(id);
                 return Ok(new ResultApi
                 {
                     Success = true,

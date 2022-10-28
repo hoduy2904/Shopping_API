@@ -5,7 +5,7 @@ namespace ShoppingAPI.Data.Models
     {
         public User()
         {
-            InfomationUsers = new HashSet<InfomationUser>();
+            ShoppingDeliveryAddresses = new HashSet<ShoppingDeliveryAddress>();
             Carts = new HashSet<Cart>();
             UserRoles = new HashSet<UserRole>();
             RefreshTokens = new HashSet<RefreshToken>();
@@ -17,7 +17,7 @@ namespace ShoppingAPI.Data.Models
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public string? Email { get; set; }
-        public virtual ICollection<InfomationUser> InfomationUsers { get; set; }
+        public virtual ICollection<ShoppingDeliveryAddress> ShoppingDeliveryAddresses { get; set; }
         public virtual ICollection<Cart> Carts { get; set; }
         public virtual ICollection<UserRole> UserRoles { get; set; }
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }

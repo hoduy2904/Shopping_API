@@ -33,7 +33,7 @@ builder.Services.AddControllersWithViews().AddJsonOptions(option =>
 builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICartServices, CartServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
-builder.Services.AddScoped<IInfomationUserServices, InfomationUserServices>();
+builder.Services.AddScoped<IShoppingDeliveryAddressServices, ShoppingDeliveryAddressServices>();
 builder.Services.AddScoped<IProductImageServices, ProductImageServices>();
 builder.Services.AddScoped<IProductServices, ProductServices>();
 builder.Services.AddScoped<IProductVariationServices, ProductVariationServices>();

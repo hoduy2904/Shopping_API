@@ -15,7 +15,8 @@ namespace ShoppingAPI.Data.Models
         public int Number { get; set; }
         public double PriceOld { get; set; }
         public double PriceCurrent { get; set; }
-        public string? Variation { get; set; }
+        public int? VariationId { get; set; }
+        [ForeignKey("VariationId")]
         public virtual ProductVariation? ProductVariate { get; set; }
         public virtual ICollection<ProductVariation> ProductVariations { get; set; }
         [ForeignKey("ProductId")]

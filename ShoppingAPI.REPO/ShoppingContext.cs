@@ -15,7 +15,7 @@ namespace ShoppingAPI.REPO
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductVariation> ProductVariations { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<InfomationUser> InfomationUsers { get; set; }
+        public DbSet<ShoppingDeliveryAddress> InfomationUsers { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
