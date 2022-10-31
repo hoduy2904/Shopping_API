@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>D:\TTS\Day16\ShoppingAPI\ShoppingAPI\bin\Release\net6.0\publish\</_PublishTargetUrl>
+    <History>False|2022-10-28T08:04:52.0319761Z;False|2022-10-28T15:04:10.0567540+07:00;True|2022-10-28T10:13:18.4774461+07:00;True|2022-10-28T09:34:25.1871427+07:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>
