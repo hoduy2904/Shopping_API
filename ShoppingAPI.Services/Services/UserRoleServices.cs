@@ -4,6 +4,7 @@ using ShoppingAPI.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,6 +41,11 @@ namespace ShoppingAPI.Services.Services
         public async Task UpdateUserRole(UserRole userRole)
         {
            await repository.UpdateAsync(userRole);
+        }
+
+        public IQueryable<UserRole> Where(Expression<Func<UserRole, bool>> expression)
+        {
+            return repository.Where(expression);
         }
     }
 }

@@ -4,6 +4,7 @@ using ShoppingAPI.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,10 @@ namespace ShoppingAPI.Services.Services
         public async Task UpdateCart(Cart cart)
         {
             await repository.UpdateAsync(cart);
+        }
+        public IQueryable<Cart> Where(Expression<Func<Cart, bool>> expression)
+        {
+            return repository.Where(expression);
         }
     }
 }

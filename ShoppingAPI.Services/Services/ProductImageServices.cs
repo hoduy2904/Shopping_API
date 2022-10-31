@@ -4,6 +4,7 @@ using ShoppingAPI.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.WebSockets;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -43,6 +44,10 @@ namespace ShoppingAPI.Services.Services
         public async Task UpdateProductImage(ProductImage productImage)
         {
            await repository.UpdateAsync(productImage);
+        }
+        public IQueryable<ProductImage> Where(Expression<Func<ProductImage, bool>> expression)
+        {
+            return repository.Where(expression);
         }
     }
 }

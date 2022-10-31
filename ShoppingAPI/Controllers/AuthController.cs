@@ -13,10 +13,63 @@ namespace ShoppingAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IJwtServices jwtServices;
-        public AuthController(IJwtServices jwtServices)
+        private readonly IRoleServices roleServices;
+        private readonly IUserServices userServices;
+        public AuthController(IJwtServices jwtServices, IRoleServices roleServices, IUserServices userServices)
         {
             this.jwtServices = jwtServices;
+            this.roleServices = roleServices;
+            this.userServices = userServices;
         }
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> Register(RegisterRequest registerRequest)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userServices.FindByUsername(registerRequest.Username);
+                if (user == null)
+                {
+                    var role = await roleServices.FindRoleByname("User");
+                    var UserRole = new List<UserRole>();
+
+                    var us = new User
+                    {
+                        Email = registerRequest.Email,
+                        FristName = registerRequest.FirstName,
+                        LastName = registerRequest.LastName,
+                        PasswordHash = StringHashing.Hash(registerRequest.Password),
+                        Sex = registerRequest.Sex,
+                        Username = registerRequest.Username,
+                        IdentityCard = registerRequest.IdentityCard
+                    };
+
+                    UserRole.Add(new UserRole
+                    {
+                        RoleId = role.Id,
+                        UserId = us.Id
+                    });
+
+                    us.UserRoles = UserRole;
+                    await userServices.InsertUser(us);
+
+                    return Ok(new ResultApi
+                    {
+                        Message = new[] { "Register Successfull" },
+                        Status = (int)HttpStatusCode.OK,
+                        Success = true
+                    });
+                }
+
+                return BadRequest(new ResultApi
+                {
+                    Message = new[] { "Username is Exists" },
+                    Success = false,
+                    Status = BadRequest().StatusCode
+                });
+            }
+            return BadRequest();
+        }
+
         [HttpPost("[Action]")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {

@@ -5,6 +5,7 @@ using ShoppingAPI.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,7 +43,10 @@ namespace ShoppingAPI.Services.Services
         public async Task UpdateCategory(Category category)
         {
             await repository.UpdateAsync(category);
-
+        }
+        public IQueryable<Category> Where(Expression<Func<Category, bool>> expression)
+        {
+            return repository.Where(expression);
         }
     }
 }

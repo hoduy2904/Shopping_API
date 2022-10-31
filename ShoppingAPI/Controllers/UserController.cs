@@ -17,8 +17,10 @@ namespace ShoppingAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserServices userServices;
-        public UserController(IUserServices userServices)
+        private readonly IRoleServices roleServices;
+        public UserController(IUserServices userServices, IRoleServices roleServices)
         {
+            this.roleServices = roleServices;
             this.userServices = userServices;
         }
         [HttpGet]
@@ -60,10 +62,27 @@ namespace ShoppingAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> User(User user)
+        public async Task<IActionResult> User(User user, string? roleName)
         {
+            if (string.IsNullOrEmpty(roleName))
+            {
+                roleName = "User";
+            }
             if (ModelState.IsValid)
             {
+                var role = roleServices.Where(x => x.Name.Equals(roleName)).FirstOrDefault();
+
+                if (role != null)
+                {
+                    user.UserRoles = new List<UserRole>{
+                            new UserRole
+                            {
+                                UserId = user.Id,
+                                RoleId=role.Id
+                            }
+                        };
+                }
+
                 await userServices.InsertUser(user);
                 return Ok(new ResultApi
                 {

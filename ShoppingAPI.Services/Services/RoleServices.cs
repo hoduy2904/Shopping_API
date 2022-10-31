@@ -1,9 +1,11 @@
-﻿using ShoppingAPI.Data.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Data.Models;
 using ShoppingAPI.REPO.Repository;
 using ShoppingAPI.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,6 +28,10 @@ namespace ShoppingAPI.Services.Services
         {
             return await repository.GetAsync(id);
         }
+        public async Task<Role> FindRoleByname(string roleName)
+        {
+            return await repository.Where(x => x.Name.Equals(roleName)).FirstOrDefaultAsync();
+        }
 
         public async Task<IEnumerable<Role>> GetRolesAsync()
         {
@@ -40,6 +46,10 @@ namespace ShoppingAPI.Services.Services
         public async Task UpdateRole(Role role)
         {
            await repository.UpdateAsync(role);
+        }
+        public IQueryable<Role> Where(Expression<Func<Role,bool>> expression)
+        {
+            return repository.Where(expression);
         }
     }
 }

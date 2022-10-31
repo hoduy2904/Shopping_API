@@ -4,6 +4,7 @@ using ShoppingAPI.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,10 @@ namespace ShoppingAPI.Services.Services
         public async Task UpdateProduct(Product product)
         {
            await repository.UpdateAsync(product);
+        }
+        public IQueryable<Product> Where(Expression<Func<Product, bool>> expression)
+        {
+            return repository.Where(expression);
         }
     }
 }

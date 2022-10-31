@@ -1,10 +1,12 @@
-﻿using ShoppingAPI.Data.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Data.Models;
 using ShoppingAPI.REPO;
 using ShoppingAPI.REPO.Repository;
 using ShoppingAPI.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +32,11 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAsync(id);
         }
 
+        public async Task<User> FindByUsername(string username)
+        {
+            return await repository.Where(x => x.Username.Equals(username)).FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<User>> GetUsersAsync()
         {
            // return repository.Where(x => x.IsTrash == false).ToList();
@@ -44,6 +51,11 @@ namespace ShoppingAPI.Services.Services
         public async Task UpdateUser(User user)
         {
            await repository.UpdateAsync(user);
+        }
+
+        public IQueryable<User> Where(Expression<Func<User, bool>> expression)
+        {
+            return repository.Where(expression);
         }
     }
 }
