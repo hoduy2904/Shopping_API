@@ -56,7 +56,7 @@ namespace ShoppingAPI.Services.Services
             new { x.Id, x.IdentityCard, x.Email, x.Sex, x.FristName, x.LastName, Role = x.UserRoles.Select(r => r.Role.Name) })
                 .SingleOrDefaultAsync(x => x.Id == UserId);
 
-            int.TryParse(configuration["JwtSettings:RefreshTokenTime"], out int RefreshTime);
+            int.TryParse(JwtSettingsConfig.RefreshTokenTime, out int RefreshTime);
             var refreshDb = new RefreshToken
             {
                 TokenId = GetJwtSecurity(accessToken).Id,
@@ -98,9 +98,11 @@ namespace ShoppingAPI.Services.Services
 
         private string GenarateToken(int UserId, string IpAdress, string RoleName)
         {
-            int.TryParse(configuration["JwtSettings:AccessTokenTime"], out int AccessTime);
+            int.TryParse(JwtSettingsConfig.AccessTokenTime, out int AccessTime);
             //Get Secret and get bytes secret
-            var secret = configuration["JwtSettings:SecretKey"];
+
+            var secret = JwtSettingsConfig.SecretKey;
+
             var secretBytes = Encoding.UTF8.GetBytes(secret);
             //TokenSecurityHandle
             var tokenSecurityHandle = new JwtSecurityTokenHandler();
