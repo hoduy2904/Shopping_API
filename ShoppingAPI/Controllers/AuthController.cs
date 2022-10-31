@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
-using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
+using ShoppingAPI.Common;
+using ShoppingAPI.Data.Models;
+using ShoppingAPI.Common.Models;
+using System.Net;
 
 namespace ShoppingAPI.Controllers
 {
@@ -41,7 +43,7 @@ namespace ShoppingAPI.Controllers
             {
                 Success = true,
                 Message = new[] { "Logout success " },
-                Status = 200
+                Status = (int)HttpStatusCode.OK
             });
         }
         [HttpPost("[Action]")]
@@ -52,10 +54,13 @@ namespace ShoppingAPI.Controllers
             var result = jwtServices.checkValidate(refreshTokenRequest);
             if (!result.Success)
                 return BadRequest(result);
+
             var isRevoked = await jwtServices.RevokeRefreshToken((RefreshToken)result.Data);
             if (!isRevoked.Success)
                 return BadRequest(isRevoked);
+
             var RefreshTokenDb = (result.Data as RefreshToken);
+
             var userRole = RefreshTokenDb.User.UserRoles?.FirstOrDefault();
             string roleName = "User";
             if (userRole != null)
@@ -64,6 +69,7 @@ namespace ShoppingAPI.Controllers
                 if (Role != null)
                     roleName = Role.Name;
             }
+
             var response = await jwtServices.getRefreshTokenAsync(RefreshTokenDb.UserId,
                 remoteIP,
                 roleName);

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace ShoppingAPI.Data.Models
+namespace ShoppingAPI.Common.Models
 {
     public class ResultApi
     {

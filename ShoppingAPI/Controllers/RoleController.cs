@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
 using System.Data;
@@ -25,7 +26,7 @@ namespace ShoppingAPI.Controllers
             var roles = await roleServices.GetRolesAsync();
             return Ok(new ResultApi
             {
-                Status = 200,
+                Status = (int)HttpStatusCode.OK,
                 Success = true,
                 Data = roles
             });
@@ -37,7 +38,7 @@ namespace ShoppingAPI.Controllers
             if (Role != null)
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Data = Role,
                     Success = true
                 });
@@ -57,7 +58,7 @@ namespace ShoppingAPI.Controllers
                 await roleServices.InsertRole(role);
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { "Add Success" },
                     Data = role
@@ -80,7 +81,7 @@ namespace ShoppingAPI.Controllers
 
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { "Edit success" },
                     Data = RoleDb
@@ -95,7 +96,7 @@ namespace ShoppingAPI.Controllers
             await roleServices.DeleteRole(id);
             return Ok(new ResultApi
             {
-                Status = 200,
+                Status = (int)HttpStatusCode.OK,
                 Success = true,
                 Message = new[] { "Delete Success" }
             });

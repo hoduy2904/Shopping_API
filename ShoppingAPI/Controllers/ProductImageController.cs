@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
 using System.Data;
@@ -36,7 +37,7 @@ namespace ShoppingAPI.Controllers
             if (productImage != null)
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Data = productImage,
                     Success = true
                 });
@@ -56,7 +57,7 @@ namespace ShoppingAPI.Controllers
                 await productImageServices.InsertProductImage(productImage);
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { "Add Success" },
                     Data = productImage
@@ -79,7 +80,7 @@ namespace ShoppingAPI.Controllers
 
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { "Edit success" },
                     Data = ProductImageDb
@@ -94,7 +95,7 @@ namespace ShoppingAPI.Controllers
             await productImageServices.DeleteProductImage(id);
             return Ok(new ResultApi
             {
-                Status = 200,
+                Status = (int)HttpStatusCode.OK,
                 Success = true,
                 Message = new[] { "Delete Success" }
             });

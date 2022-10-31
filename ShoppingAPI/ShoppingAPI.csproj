@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ShoppingAPI.Common\ShoppingAPI.Common.csproj" />
     <ProjectReference Include="..\ShoppingAPI.Services\ShoppingAPI.Services.csproj" />
   </ItemGroup>
 

@@ -1,16 +1,5 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using ShoppingAPI;
 using ShoppingAPI.Middlewares;
-using ShoppingAPI.REPO;
-using ShoppingAPI.REPO.Repository;
-using ShoppingAPI.Services.Interfaces;
-using ShoppingAPI.Services.Services;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 

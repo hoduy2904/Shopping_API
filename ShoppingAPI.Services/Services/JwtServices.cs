@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using ShoppingAPI.Common;
+using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.REPO;
 using ShoppingAPI.Services.Interfaces;
@@ -28,7 +29,11 @@ namespace ShoppingAPI.Services.Services
         public async Task<ResultApi> getTokenAsync(LoginRequest loginRequest, string IPAdress)
         {
             string PasswordHasing = StringHashing.Hash(loginRequest.Password);
-            var user = await shoppingContext.Users.SingleOrDefaultAsync(x => x.Username.Equals(loginRequest.Username) && x.PasswordHash.Equals(PasswordHasing));
+            var user = await shoppingContext.Users.SingleOrDefaultAsync(x =>
+            x.Username.Equals(loginRequest.Username)
+            && x.PasswordHash.Equals(PasswordHasing)
+            );
+
             if (user != null)
             {
                 var accessToken = GenarateToken(user.Id, "", user.UserRoles.FirstOrDefault().Role.Name);
@@ -47,14 +52,18 @@ namespace ShoppingAPI.Services.Services
         //Save Token Database
         private async Task<ResultApi> SaveTokenDetails(string accessToken, string refreshToken, string IPAdress, int UserId)
         {
-            int.TryParse(configuration["JwtSettings:RefreshTokenTime"],out int RefreshTime);
+            var user = await shoppingContext.Users.Include(r => r.UserRoles).Select(x =>
+            new { x.Id, x.IdentityCard, x.Email, x.Sex, x.FristName, x.LastName, Role = x.UserRoles.Select(r => r.Role.Name) })
+                .SingleOrDefaultAsync(x => x.Id == UserId);
+
+            int.TryParse(configuration["JwtSettings:RefreshTokenTime"], out int RefreshTime);
             var refreshDb = new RefreshToken
             {
                 TokenId = GetJwtSecurity(accessToken).Id,
                 Expired = DateTime.UtcNow.AddDays(RefreshTime),
                 Refresh = refreshToken,
                 Token = accessToken,
-                UserId = UserId,
+                UserId = user.Id,
                 IPAdress = IPAdress,
                 Created = DateTime.UtcNow
             };
@@ -64,10 +73,14 @@ namespace ShoppingAPI.Services.Services
             return new ResultApi
             {
                 Success = true,
-                Data = new RefreshTokenRequest
+                Data = new
                 {
-                    AccessToken = accessToken,
-                    RefreshToken = refreshToken
+                    TokenResponse = new RefreshTokenRequest
+                    {
+                        AccessToken = accessToken,
+                        RefreshToken = refreshToken
+                    },
+                    user
                 }
             };
         }
@@ -138,13 +151,6 @@ namespace ShoppingAPI.Services.Services
                 {
                     Success = false,
                     Message = new[] { "Refresh Token Not found" }
-                };
-            //Check AccessToken Expired
-            if (token.ValidTo > DateTime.UtcNow)
-                return new ResultApi
-                {
-                    Success = false,
-                    Message = new[] { "Access token not expired" }
                 };
             //Check RefreshToken expired
             if (refreshToken.IsExpired)

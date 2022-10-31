@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
 using System.Net;
@@ -24,6 +25,7 @@ namespace ShoppingAPI.Controllers
             var categories = await categoryServices.GetCategoriesAsync();
             return Ok(new ResultApi
             {
+                Status = (int)HttpStatusCode.OK,
                 Success = true,
                 Data = categories
             });
@@ -35,6 +37,7 @@ namespace ShoppingAPI.Controllers
             if (category != null)
                 return Ok(new ResultApi
                 {
+                    Status = (int)HttpStatusCode.OK,
                     Data = category,
                     Success = true
                 });
@@ -54,7 +57,7 @@ namespace ShoppingAPI.Controllers
                 await categoryServices.InsertCategory(category);
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { "Add Success" },
                     Data = category
@@ -79,7 +82,7 @@ namespace ShoppingAPI.Controllers
 
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { "Edit success" },
                     Data = CategoryDb
@@ -95,7 +98,7 @@ namespace ShoppingAPI.Controllers
             await categoryServices.DeleteCategory(id);
             return Ok(new ResultApi
             {
-                Status = 200,
+                Status = (int)HttpStatusCode.OK,
                 Success = true,
                 Message = new[] { "Delete Success" }
             });

@@ -1,4 +1,5 @@
-﻿using ShoppingAPI.Data.Models;
+﻿using ShoppingAPI.Common.Models;
+using ShoppingAPI.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;

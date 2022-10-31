@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
@@ -24,7 +25,7 @@ namespace ShoppingAPI.Controllers
             var categories = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressesAsync();
             return Ok(new ResultApi
             {
-                Status = 200,
+                Status = (int)HttpStatusCode.OK,
                 Success = true,
                 Data = categories
             });
@@ -40,7 +41,7 @@ namespace ShoppingAPI.Controllers
                 if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(shoppingDeliveryAddress.UserId.ToString()))
                     return Ok(new ResultApi
                     {
-                        Status = 200,
+                        Status = (int)HttpStatusCode.OK,
                         Data = shoppingDeliveryAddress,
                         Success = true
                     });
@@ -62,7 +63,7 @@ namespace ShoppingAPI.Controllers
                 await shoppingDeliveryAddressServices.InsertShoppingDeliveryAddress(shoppingDelivery);
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { "Add Success" },
                     Data = shoppingDelivery
@@ -86,7 +87,7 @@ namespace ShoppingAPI.Controllers
 
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { "Edit success" },
                     Data = shoppingDeliveryAddressDb

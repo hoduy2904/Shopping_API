@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
+using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
 using System.Net;
@@ -27,7 +28,7 @@ namespace ShoppingAPI.Controllers
             var users = await userServices.GetUsersAsync();
             return Ok(new ResultApi
             {
-                Status = 200,
+                Status = (int)HttpStatusCode.OK,
                 Success = true,
                 Data = users
             });
@@ -44,7 +45,7 @@ namespace ShoppingAPI.Controllers
                 if (user != null)
                     return Ok(new ResultApi
                     {
-                        Status = 200,
+                        Status = (int)HttpStatusCode.OK,
                         Data = user,
                         Success = true
                     });
@@ -66,7 +67,7 @@ namespace ShoppingAPI.Controllers
                 await userServices.InsertUser(user);
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { "Add Success" },
                     Data = user
@@ -94,7 +95,7 @@ namespace ShoppingAPI.Controllers
 
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { "Edit success" },
                     Data = userDb
@@ -109,7 +110,7 @@ namespace ShoppingAPI.Controllers
             await userServices.DeleteUser(id);
             return Ok(new ResultApi
             {
-                Status = 200,
+                Status = (int)HttpStatusCode.OK,
                 Success = true,
                 Message = new[] { "Delete Success" }
             });

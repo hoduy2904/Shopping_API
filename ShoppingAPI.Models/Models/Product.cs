@@ -11,6 +11,8 @@ namespace ShoppingAPI.Data.Models
             ProductImages = new HashSet<ProductImage>();
             Carts = new HashSet<Cart>();
         }
+        [StringLength(100)]
+        public string SKUS { get; set; }
         [StringLength(200)]
         public string Name { get; set; }
         public int CategoryId { get; set; }

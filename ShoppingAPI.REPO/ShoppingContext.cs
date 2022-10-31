@@ -25,7 +25,7 @@ namespace ShoppingAPI.REPO
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<User>().HasIndex(x => x.Username).IsUnique();
-
+            modelBuilder.Entity<Role>().HasIndex(x => x.Name).IsUnique();
             //Seed Role
             var role = new Role
             {

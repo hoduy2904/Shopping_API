@@ -1,4 +1,5 @@
-﻿using ShoppingAPI.Data.Models;
+﻿using ShoppingAPI.Common.Models;
+using ShoppingAPI.Data.Models;
 using System.Net;
 
 namespace ShoppingAPI.Middlewares

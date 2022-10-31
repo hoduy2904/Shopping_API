@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
 using System.Data;
@@ -25,7 +26,7 @@ namespace ShoppingAPI.Controllers
             var products = await productServices.GetProductsAsync();
             return Ok(new ResultApi
             {
-                Status = 200,
+                Status = (int)HttpStatusCode.OK,
                 Success = true,
                 Data = products
             });
@@ -37,7 +38,7 @@ namespace ShoppingAPI.Controllers
             if (product != null)
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Data = product,
                     Success = true
                 });
@@ -57,7 +58,7 @@ namespace ShoppingAPI.Controllers
                 await productServices.InsertProduct(product);
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { "Add Success" },
                     Data = product
@@ -81,7 +82,7 @@ namespace ShoppingAPI.Controllers
 
                 return Ok(new ResultApi
                 {
-                    Status = 200,
+                    Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { "Edit success" },
                     Data = productDb
@@ -96,7 +97,7 @@ namespace ShoppingAPI.Controllers
             await productServices.DeleteProduct(id);
             return Ok(new ResultApi
             {
-                Status = 200,
+                Status = (int)HttpStatusCode.OK,
                 Success = true,
                 Message = new[] { "Delete Success" }
             });
