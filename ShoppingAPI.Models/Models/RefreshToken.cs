@@ -23,6 +23,6 @@ namespace ShoppingAPI.Data.Models
                 return DateTime.UtcNow > Expired;
             }
         }
-        public virtual User User { get; set; }
+        public User User { get; set; }
     }
 }

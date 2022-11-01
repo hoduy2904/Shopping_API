@@ -18,9 +18,9 @@ namespace ShoppingAPI.Data.Models
         public int CategoryId { get; set; }
         public string Description { get; set; }
         [ForeignKey("CategoryId")]
-        public virtual Category? Category { get; set; }
-        public virtual ICollection<ProductVariation> ProductVariations { get; set; }
-        public virtual ICollection<ProductImage> ProductImages { get; set; }
-        public virtual ICollection<Cart>? Carts { get; set; }
+        public Category? Category { get; set; }
+        public ICollection<ProductVariation> ProductVariations { get; set; }
+        public ICollection<ProductImage> ProductImages { get; set; }
+        public ICollection<Cart>? Carts { get; set; }
     }
 }

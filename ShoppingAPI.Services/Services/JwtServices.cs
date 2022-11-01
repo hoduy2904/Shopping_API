@@ -29,7 +29,9 @@ namespace ShoppingAPI.Services.Services
         public async Task<ResultApi> getTokenAsync(LoginRequest loginRequest, string IPAdress)
         {
             string PasswordHasing = StringHashing.Hash(loginRequest.Password);
-            var user = await shoppingContext.Users.SingleOrDefaultAsync(x =>
+            var user = await shoppingContext.Users.Include(ur => ur.UserRoles)
+                .ThenInclude(r => r.Role)
+                .SingleOrDefaultAsync(x =>
             x.Username.Equals(loginRequest.Username)
             && x.PasswordHash.Equals(PasswordHasing)
             );
@@ -52,9 +54,24 @@ namespace ShoppingAPI.Services.Services
         //Save Token Database
         private async Task<ResultApi> SaveTokenDetails(string accessToken, string refreshToken, string IPAdress, int UserId)
         {
-            var user = await shoppingContext.Users.Include(r => r.UserRoles).Select(x =>
-            new { x.Id, x.IdentityCard, x.Email, x.Sex, x.FristName, x.LastName, Role = x.UserRoles.Select(r => r.Role.Name) })
-                .SingleOrDefaultAsync(x => x.Id == UserId);
+            var user = await shoppingContext.Users
+                .Include(ur => ur.UserRoles)
+                .ThenInclude(r => r.Role)
+                .Select(u => new
+                {
+                    u.FristName,
+                    u.LastName,
+                    u.Username,
+                    u.Created,
+                    u.IdentityCard,
+                    u.Email,
+                    u.Sex,
+                    u.Id,
+                    RoleName = u.UserRoles.Select(ur => ur.Role.Name),
+                    accessToken,
+                    refreshToken
+                })
+                .SingleOrDefaultAsync(u => u.Id == UserId);
 
             int.TryParse(JwtSettingsConfig.RefreshTokenTime, out int RefreshTime);
             var refreshDb = new RefreshToken
@@ -73,15 +90,7 @@ namespace ShoppingAPI.Services.Services
             return new ResultApi
             {
                 Success = true,
-                Data = new
-                {
-                    TokenResponse = new RefreshTokenRequest
-                    {
-                        AccessToken = accessToken,
-                        RefreshToken = refreshToken
-                    },
-                    user
-                }
+                Data = user
             };
         }
 

@@ -10,7 +10,7 @@ namespace ShoppingAPI.Data.Models
         [StringLength(12)]
         public string PhoneNumber { get; set; }
         [ForeignKey("UserId")]
-        public virtual User? User { get; set; }
+        public User? User { get; set; }
         public bool IsDefault { get; set; }
     }
 }

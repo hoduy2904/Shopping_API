@@ -9,9 +9,9 @@ namespace ShoppingAPI.Data.Models
         
         public int? ProductVariationId { get; set; }
         [ForeignKey("ProductVariationId")]
-        public virtual ProductVariation? ProductVariation { get; set; }
+        public ProductVariation? ProductVariation { get; set; }
         [ForeignKey("ProductId")]
-        public virtual Product? Product { get; set; }
+        public Product? Product { get; set; }
 
     }
 }

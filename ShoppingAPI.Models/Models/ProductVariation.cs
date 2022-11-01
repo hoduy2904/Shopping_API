@@ -17,11 +17,11 @@ namespace ShoppingAPI.Data.Models
         public double PriceCurrent { get; set; }
         public int? VariationId { get; set; }
         [ForeignKey("VariationId")]
-        public virtual ProductVariation? ProductVariate { get; set; }
-        public virtual ICollection<ProductVariation> ProductVariations { get; set; }
+        public ProductVariation? ProductVariate { get; set; }
+        public ICollection<ProductVariation> ProductVariations { get; set; }
         [ForeignKey("ProductId")]
-        public virtual Product? Product { get; set; }
-        public virtual ICollection<ProductImage> ProductImages { get; set; }
-        public virtual ICollection<Cart> Carts { get; set; }
+        public Product? Product { get; set; }
+        public ICollection<ProductImage> ProductImages { get; set; }
+        public ICollection<Cart> Carts { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using ShoppingAPI.Data.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Data.Models;
 using ShoppingAPI.REPO.Repository;
 using ShoppingAPI.Services.Interfaces;
 using System;
@@ -25,7 +26,11 @@ namespace ShoppingAPI.Services.Services
 
         public async Task<UserRole> GetUserRoleAsync(int id)
         {
-            return await repository.GetAsync(id);
+            return await repository
+                .Where(ur => ur.Id == id && ur.IsTrash == false)
+                .Include(u => u.User)
+                .Include(r => r.Role)
+                .SingleOrDefaultAsync();
         }
 
         public async Task<IEnumerable<UserRole>> GetUserRolesAsync()

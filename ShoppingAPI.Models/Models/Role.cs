@@ -14,6 +14,6 @@ namespace ShoppingAPI.Data.Models
             UserRoles = new HashSet<UserRole>();
         }
         public string Name { get; set; }
-        public virtual ICollection<UserRole>? UserRoles { get; set; }
+        public ICollection<UserRole>? UserRoles { get; set; }
     }
 }

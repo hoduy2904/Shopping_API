@@ -31,7 +31,7 @@ namespace ShoppingAPI
 
             Services.AddDbContext<ShoppingContext>(options =>
             {
-                options.UseLazyLoadingProxies()
+                options
                 .UseSqlServer(Configuration.GetConnectionString("ShoppingContext"));
             });
 

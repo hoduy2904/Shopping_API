@@ -1,4 +1,5 @@
-﻿using ShoppingAPI.Data.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Data.Models;
 using ShoppingAPI.REPO;
 using ShoppingAPI.REPO.Repository;
 using ShoppingAPI.Services.Interfaces;
@@ -20,18 +21,21 @@ namespace ShoppingAPI.Services.Services
         }
         public async Task DeleteCategory(int id)
         {
-            var category =await repository.GetAsync(id);
-           await repository.DeleteAsync(category);
+            var category = await repository.GetAsync(id);
+            await repository.DeleteAsync(category);
         }
 
         public async Task<IEnumerable<Category>> GetCategoriesAsync()
         {
-           return await repository.GetAllAsync();
+            return await repository.GetAllAsync();
         }
 
         public async Task<Category> GetCategoryAsync(int id)
         {
-            return await repository.GetAsync(id);
+            return await repository
+                .Where(x => x.Id == id && x.IsTrash == false)
+                .Include(p => p.Products)
+                .SingleOrDefaultAsync();
         }
 
         public async Task InsertCategory(Category category)
