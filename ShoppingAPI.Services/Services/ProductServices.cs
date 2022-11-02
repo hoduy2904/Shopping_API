@@ -38,7 +38,11 @@ namespace ShoppingAPI.Services.Services
 
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
-            return await repository.GetAllAsync();
+            return repository.Where(x => x.IsTrash == false)
+                .Include(pi => pi.ProductImages)
+                .Include(pv => pv.ProductVariations)
+                .Include(pct => pct.Category)
+                .AsEnumerable();
         }
 
         public async Task InsertProduct(Product product)
