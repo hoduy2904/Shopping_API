@@ -19,10 +19,10 @@ namespace ShoppingAPI.Services.Services
             this.repository = repository;
         }
 
-        public async Task DeleteCart(int id)
+        public async Task DeleteCartAsync(int id)
         {
-           var cart=await repository.GetAsync(id);
-           await repository.DeleteAsync(cart);
+            var cart = await repository.GetAsync(id);
+            await repository.DeleteAsync(cart);
         }
 
         public async Task<Cart> GetCartAsync(int id)
@@ -30,20 +30,45 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAsync(id);
         }
 
-        public async Task<IEnumerable<Cart>> GetCartsAsync()
+        public IQueryable<Cart> GetCarts(int UserId)
         {
-           return await repository.GetAllAsync();
+            return repository.Where(x => x.UserId == UserId && x.IsTrash == false);
         }
 
-        public async Task InsertCart(Cart cart)
+        public Cart GetCartByProduct(int ProductId, int ProductVariationId)
         {
-           await repository.InsertAsync(cart);
+            return repository.Where(x =>
+            x.ProductId == ProductId
+            && x.IsTrash == false
+            && x.ProductVarationId == ProductVariationId)
+                .FirstOrDefault();
         }
 
-        public async Task UpdateCart(Cart cart)
+        public async Task InsertCartAsync(Cart cart)
+        {
+            await repository.InsertAsync(cart);
+        }
+
+        public async Task UpdateCartAsync(Cart cart)
         {
             await repository.UpdateAsync(cart);
         }
+
+        public async Task InsertCartRangeAsync(IEnumerable<Cart> carts)
+        {
+            await repository.InsertRangeAsync(carts);
+        }
+
+        public async Task UpdateCartRangeAsync(IEnumerable<Cart> carts)
+        {
+            await repository.UpdateRangeAsync(carts);
+        }
+
+        public async Task DeleteCartRange(IEnumerable<Cart> carts)
+        {
+            await repository.DeleteRangeAsync(carts);
+        }
+
         public IQueryable<Cart> Where(Expression<Func<Cart, bool>> expression)
         {
             return repository.Where(expression);

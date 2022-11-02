@@ -66,5 +66,23 @@ namespace ShoppingAPI.REPO.Repository
         {
             return entities.Where(preicate);
         }
+
+        public async Task InsertRangeAsync(IEnumerable<T> lstEntity)
+        {
+            await entities.AddRangeAsync(lstEntity);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task UpdateRangeAsync(IEnumerable<T> lstEntity)
+        {
+            entities.UpdateRange(lstEntity);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task DeleteRangeAsync(IEnumerable<T> lstEntity)
+        {
+            entities.RemoveRange(lstEntity);
+            await db.SaveChangesAsync();
+        }
     }
 }

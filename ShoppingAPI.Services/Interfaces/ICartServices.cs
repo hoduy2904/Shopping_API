@@ -11,10 +11,11 @@ namespace ShoppingAPI.Services.Interfaces
     public interface ICartServices
     {
         Task<Cart> GetCartAsync(int id);
-        Task<IEnumerable<Cart>> GetCartsAsync();
-        Task InsertCart(Cart cart);
-        Task UpdateCart(Cart cart);
-        Task DeleteCart(int id);
+        IQueryable<Cart> GetCarts(int UserId);
+        Task InsertCartAsync(Cart cart);
+        Task UpdateCartAsync(Cart cart);
+        Task DeleteCartAsync(int id);
+        Cart GetCartByProduct(int ProductId, int ProductVariationId);
         IQueryable<Cart> Where(Expression<Func<Cart, bool>> expression);
     }
 }

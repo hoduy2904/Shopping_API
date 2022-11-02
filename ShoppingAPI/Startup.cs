@@ -41,6 +41,7 @@ namespace ShoppingAPI
             });
 
             Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             Services.AddScoped<ICartServices, CartServices>();
             Services.AddScoped<ICategoryServices, CategoryServices>();
             Services.AddScoped<IShoppingDeliveryAddressServices, ShoppingDeliveryAddressServices>();
