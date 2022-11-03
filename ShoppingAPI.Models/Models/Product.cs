@@ -12,7 +12,7 @@ namespace ShoppingAPI.Data.Models
             Carts = new HashSet<Cart>();
             InvoicesDetails = new HashSet<InvoicesDetails>();
         }
-        [StringLength(100)]
+        [DataType("varchar(50)")]
         public string SKUS { get; set; }
         [StringLength(200)]
         public string Name { get; set; }

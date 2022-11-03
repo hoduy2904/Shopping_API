@@ -7,7 +7,7 @@ namespace ShoppingAPI.Data.Models
     {
         public int UserId { get; set; }
         public string Address { get; set; }
-        [StringLength(12)]
+        [DataType("varchar(12)")]
         public string PhoneNumber { get; set; }
         [ForeignKey("UserId")]
         public User? User { get; set; }

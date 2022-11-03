@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
@@ -15,8 +16,10 @@ namespace ShoppingAPI.Data.Models
             InvoicesDetails = new HashSet<InvoicesDetails>();
         }
         public int UserId { get; set; }
+        [StringLength(100)]
         public string FullName { get; set; }
         public string Address { get; set; }
+        [DataType("varchar(12)")]
         public string PhoneNumber { get; set; }
         public DateTime? PaymentTime { get; set; }
         public DateTime? DeliveryTime { get; set; }

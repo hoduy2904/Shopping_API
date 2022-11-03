@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace ShoppingAPI.Data.Models
     {
         public int? InvoiceId { get; set; }
         public int? ProductId { get; set; }
+        [StringLength(200)]
         public string ProductName { get; set; }
         public int? ProductVariationId { get; set; }
         public double Price { get; set; }

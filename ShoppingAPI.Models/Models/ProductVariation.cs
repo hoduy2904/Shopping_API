@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShoppingAPI.Data.Models
 {
@@ -11,6 +12,7 @@ namespace ShoppingAPI.Data.Models
             Carts = new HashSet<Cart>();
             InvoicesDetails = new HashSet<InvoicesDetails>();
         }
+        [StringLength(50)]
         public string? Name { get; set; }
         public int ProductId { get; set; }
         public int Number { get; set; }
