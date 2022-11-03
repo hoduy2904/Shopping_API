@@ -12,11 +12,11 @@ namespace ShoppingAPI.Data.Models
     {
         [StringLength(100)]
         public string TokenId { get; set; }
-        [DataType("varchar(max)")]
+        [Column(TypeName = "varchar(max)")]
         public string Token { get; set; }
-        [DataType("varchar(200)")]
+        [Column(TypeName = "varchar(200)")]
         public string Refresh { get; set; }
-        [DataType("varchar(50)")]
+        [Column(TypeName = "varchar(50)")]
         public string IPAdress { get; set; }
         public DateTime Expired { get; set; }
         public int UserId { get; set; }

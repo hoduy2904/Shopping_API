@@ -19,7 +19,7 @@ namespace ShoppingAPI.Data.Models
         [StringLength(100)]
         public string FullName { get; set; }
         public string Address { get; set; }
-        [DataType("varchar(12)")]
+        [Column(TypeName = "varchar(12)")]
         public string PhoneNumber { get; set; }
         public DateTime? PaymentTime { get; set; }
         public DateTime? DeliveryTime { get; set; }

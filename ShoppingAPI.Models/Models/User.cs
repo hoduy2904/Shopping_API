@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShoppingAPI.Data.Models
 {
@@ -18,13 +19,13 @@ namespace ShoppingAPI.Data.Models
         [StringLength(50)]
         public string LastName { get; set; }
         public bool Sex { get; set; }
-        [DataType("varchar(18)")]
+        [Column(TypeName = "varchar(18)")]
         public string? IdentityCard { get; set; }
-        [DataType("varchar(50)")]
+        [Column(TypeName = "varchar(50)")]
         public string Username { get; set; }
-        [DataType("varchar(200)")]
+        [Column(TypeName = "varchar(200)")]
         public string PasswordHash { get; set; }
-        [DataType("varchar(100)")]
+        [Column(TypeName = "varchar(100)")]
         public string? Email { get; set; }
         public ICollection<ShoppingDeliveryAddress> ShoppingDeliveryAddresses { get; set; }
         public ICollection<Cart> Carts { get; set; }
