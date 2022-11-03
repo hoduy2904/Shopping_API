@@ -2,13 +2,14 @@
 
 namespace ShoppingAPI.Data.Models
 {
-    public class ProductVariation :BaseModels
+    public class ProductVariation : BaseModels
     {
         public ProductVariation()
         {
-            ProductVariations=new HashSet<ProductVariation>();
+            ProductVariations = new HashSet<ProductVariation>();
             ProductImages = new HashSet<ProductImage>();
-            Carts=new HashSet<Cart>();
+            Carts = new HashSet<Cart>();
+            InvoicesDetails = new HashSet<InvoicesDetails>();
         }
         public string? Name { get; set; }
         public int ProductId { get; set; }
@@ -23,5 +24,6 @@ namespace ShoppingAPI.Data.Models
         public Product? Product { get; set; }
         public ICollection<ProductImage> ProductImages { get; set; }
         public ICollection<Cart> Carts { get; set; }
+        public ICollection<InvoicesDetails> InvoicesDetails { get; set; }
     }
 }

@@ -35,6 +35,9 @@ namespace ShoppingAPI.Services.Services
             return await repository
                 .Where(x => x.Id == id && x.IsTrash == false)
                 .Include(p => p.Products)
+                .ThenInclude(pi=>pi.ProductImages)
+                .Include(p=>p.Products)
+                .ThenInclude(pi=>pi.ProductVariations)
                 .SingleOrDefaultAsync();
         }
 

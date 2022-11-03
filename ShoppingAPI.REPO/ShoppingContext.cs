@@ -20,6 +20,8 @@ namespace ShoppingAPI.REPO
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Invoice> invoices { get; set; }
+        public DbSet<InvoicesDetails> InvoicesDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,20 +31,20 @@ namespace ShoppingAPI.REPO
             //Seed Role
             var role = new Role
             {
-                Id=1,
+                Id = 1,
                 Name = "SuperAdmin",
-                Created=DateTime.Now
+                Created = DateTime.Now
             };
-            
+
             modelBuilder.Entity<Role>().HasData(role);
 
             //Seed User
             var user = new User
             {
-                Id=1,
+                Id = 1,
                 Username = "Admin",
                 PasswordHash = StringHashing.Hash("admin"),
-                LastName="Admin",
+                LastName = "Admin",
                 Created = DateTime.Now
             };
             modelBuilder.Entity<User>().HasData(user);
@@ -50,7 +52,7 @@ namespace ShoppingAPI.REPO
 
             modelBuilder.Entity<UserRole>().HasData(new UserRole
             {
-                Id=1,
+                Id = 1,
                 RoleId = role.Id,
                 UserId = user.Id,
                 Created = DateTime.Now

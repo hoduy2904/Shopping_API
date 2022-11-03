@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShoppingAPI.REPO;
 
@@ -11,9 +12,10 @@ using ShoppingAPI.REPO;
 namespace ShoppingAPI.REPO.Migrations
 {
     [DbContext(typeof(ShoppingContext))]
-    partial class ShoppingContextModelSnapshot : ModelSnapshot
+    [Migration("20221103082315_InsertInvoice")]
+    partial class InsertInvoice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -367,7 +369,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 11, 3, 15, 27, 42, 559, DateTimeKind.Local).AddTicks(761),
+                            Created = new DateTime(2022, 11, 3, 15, 23, 14, 784, DateTimeKind.Local).AddTicks(8708),
                             IsTrash = false,
                             Name = "SuperAdmin"
                         });
@@ -458,7 +460,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 11, 3, 15, 27, 42, 559, DateTimeKind.Local).AddTicks(1808),
+                            Created = new DateTime(2022, 11, 3, 15, 23, 14, 784, DateTimeKind.Local).AddTicks(9810),
                             IsTrash = false,
                             LastName = "Admin",
                             PasswordHash = "21232f297a57a5a743894a0e4a801fc3",
@@ -499,7 +501,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 11, 3, 15, 27, 42, 559, DateTimeKind.Local).AddTicks(1885),
+                            Created = new DateTime(2022, 11, 3, 15, 23, 14, 784, DateTimeKind.Local).AddTicks(9913),
                             IsTrash = false,
                             RoleId = 1,
                             UserId = 1
@@ -543,7 +545,7 @@ namespace ShoppingAPI.REPO.Migrations
             modelBuilder.Entity("ShoppingAPI.Data.Models.Invoice", b =>
                 {
                     b.HasOne("ShoppingAPI.Data.Models.User", "User")
-                        .WithMany("Invoices")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -558,11 +560,11 @@ namespace ShoppingAPI.REPO.Migrations
                         .HasForeignKey("InvoiceId");
 
                     b.HasOne("ShoppingAPI.Data.Models.Product", "Product")
-                        .WithMany("InvoicesDetails")
+                        .WithMany()
                         .HasForeignKey("ProductId");
 
                     b.HasOne("ShoppingAPI.Data.Models.ProductVariation", "ProductVariation")
-                        .WithMany("InvoicesDetails")
+                        .WithMany()
                         .HasForeignKey("ProductVariationId");
 
                     b.Navigation("Invoice");
@@ -674,8 +676,6 @@ namespace ShoppingAPI.REPO.Migrations
                 {
                     b.Navigation("Carts");
 
-                    b.Navigation("InvoicesDetails");
-
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductVariations");
@@ -684,8 +684,6 @@ namespace ShoppingAPI.REPO.Migrations
             modelBuilder.Entity("ShoppingAPI.Data.Models.ProductVariation", b =>
                 {
                     b.Navigation("Carts");
-
-                    b.Navigation("InvoicesDetails");
 
                     b.Navigation("ProductImages");
 
@@ -700,8 +698,6 @@ namespace ShoppingAPI.REPO.Migrations
             modelBuilder.Entity("ShoppingAPI.Data.Models.User", b =>
                 {
                     b.Navigation("Carts");
-
-                    b.Navigation("Invoices");
 
                     b.Navigation("RefreshTokens");
 

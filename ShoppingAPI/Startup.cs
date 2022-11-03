@@ -52,6 +52,8 @@ namespace ShoppingAPI
             Services.AddScoped<IRoleServices, RoleServices>();
             Services.AddScoped<IUserRoleServices, UserRoleServices>();
             Services.AddScoped<IJwtServices, JwtServices>();
+            Services.AddScoped<IInvoiceServices, InvoiceServices>();
+            Services.AddScoped<IInvoiceDetailsServices, InvoiceDetailsServices>();
 
             //Jwt
             //Get Secret Key and Bytes

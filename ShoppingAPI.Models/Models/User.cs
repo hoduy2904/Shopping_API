@@ -9,6 +9,7 @@ namespace ShoppingAPI.Data.Models
             Carts = new HashSet<Cart>();
             UserRoles = new HashSet<UserRole>();
             RefreshTokens = new HashSet<RefreshToken>();
+            Invoices = new HashSet<Invoice>();
         }
         public string? FristName { get; set; }
         public string LastName { get; set; }
@@ -21,5 +22,6 @@ namespace ShoppingAPI.Data.Models
         public ICollection<Cart> Carts { get; set; }
         public ICollection<UserRole> UserRoles { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
+        public ICollection<Invoice> Invoices { get; set; }
     }
 }

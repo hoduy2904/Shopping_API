@@ -49,6 +49,17 @@ namespace ShoppingAPI.Controllers
                 Message = new[] { "Not found product Variation" }
             });
         }
+        [HttpGet("[Action]"), AllowAnonymous]
+        public async Task<IActionResult> ProductVariationNumber(int ProductId,int ProductVariationId)
+        {
+            var res = await productVariationServices.getProductVariationNumber(ProductId,ProductVariationId);
+            return Ok(new ResultApi
+            {
+                Status = (int)HttpStatusCode.OK,
+                Data = res,
+                Success = true
+            });
+        }
 
         [HttpPost]
         public async Task<IActionResult> ProductVariation(ProductVariation productVariation)

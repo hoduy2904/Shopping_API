@@ -3,13 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShoppingAPI.Data.Models
 {
-    public class Product :BaseModels
+    public class Product : BaseModels
     {
         public Product()
         {
             ProductVariations = new HashSet<ProductVariation>();
             ProductImages = new HashSet<ProductImage>();
             Carts = new HashSet<Cart>();
+            InvoicesDetails = new HashSet<InvoicesDetails>();
         }
         [StringLength(100)]
         public string SKUS { get; set; }
@@ -22,5 +23,6 @@ namespace ShoppingAPI.Data.Models
         public ICollection<ProductVariation> ProductVariations { get; set; }
         public ICollection<ProductImage> ProductImages { get; set; }
         public ICollection<Cart>? Carts { get; set; }
+        public ICollection<InvoicesDetails> InvoicesDetails { get; set; }
     }
 }

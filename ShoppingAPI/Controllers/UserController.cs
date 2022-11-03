@@ -27,7 +27,6 @@ namespace ShoppingAPI.Controllers
         [Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Users()
         {
-            
             var users = await userServices.GetUsersAsync();
             return Ok(new ResultApi
             {

@@ -1,4 +1,6 @@
-﻿using ShoppingAPI.Data.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Common.Models;
+using ShoppingAPI.Data.Models;
 using ShoppingAPI.REPO.Repository;
 using ShoppingAPI.Services.Interfaces;
 using System;
@@ -21,7 +23,7 @@ namespace ShoppingAPI.Services.Services
         public async Task DeleteProductVariation(int id)
         {
             var productvariation = await repository.GetAsync(id);
-           await repository.DeleteAsync(productvariation);
+            await repository.DeleteAsync(productvariation);
         }
 
         public async Task<IEnumerable<ProductVariation>> GetProductVariatiesAsync()
@@ -34,14 +36,28 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAsync(id);
         }
 
+        public async Task<ProductVariationResponse> getProductVariationNumber(int ProductId, int ProductVariationId)
+        {
+            var productVRes = await repository.Where(x => x.IsTrash == false
+            && x.ProductId == ProductId
+            && x.Id == ProductVariationId)
+                .Include(r => r.Carts)
+                .Select(r => new ProductVariationResponse
+                {
+                    ProductVariations=r.ProductVariations,
+                    Numbers = r.Number - r.Carts.Sum(x => x.Number),
+                }).FirstOrDefaultAsync();
+            return productVRes;
+        }
+
         public async Task InsertProductVariation(ProductVariation productVariation)
         {
-           await repository.InsertAsync(productVariation);
+            await repository.InsertAsync(productVariation);
         }
 
         public async Task UpdateProductVariation(ProductVariation productVariation)
         {
-           await repository.UpdateAsync(productVariation);
+            await repository.UpdateAsync(productVariation);
         }
         public IQueryable<ProductVariation> Where(Expression<Func<ProductVariation, bool>> expression)
         {

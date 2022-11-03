@@ -1,4 +1,5 @@
-﻿using ShoppingAPI.Data.Models;
+﻿using ShoppingAPI.Common.Models;
+using ShoppingAPI.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace ShoppingAPI.Services.Interfaces
         Task InsertProductVariation(ProductVariation productVariation);
         Task UpdateProductVariation(ProductVariation productVariation);
         Task DeleteProductVariation(int id);
+        Task<ProductVariationResponse> getProductVariationNumber(int ProductId, int ProductVariationId);
         IQueryable<ProductVariation> Where(Expression<Func<ProductVariation, bool>> expression);
     }
 }
