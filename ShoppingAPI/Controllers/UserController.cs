@@ -22,7 +22,7 @@ namespace ShoppingAPI.Controllers
         {
             this.roleServices = roleServices;
             this.userServices = userServices;
-        }   
+        }
         [HttpGet]
         [Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Users()
@@ -36,14 +36,16 @@ namespace ShoppingAPI.Controllers
             });
         }
         [AllowAnonymous]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> User(int id)
+        [HttpGet("[action]")]
+        public async Task<IActionResult> User(int? id)
         {
             string roles = HttpContext.User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
             var UserId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
-            if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(id.ToString()))
+            if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(id.ToString()) || id == null)
             {
-                var user = await userServices.GetUserAsync(id);
+                if (id == null)
+                    id = int.Parse(UserId);
+                var user = await userServices.GetUserAsync(id.Value);
                 if (user != null)
                     return Ok(new ResultApi
                     {

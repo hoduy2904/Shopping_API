@@ -50,7 +50,7 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
-        [HttpPost]
+        [HttpPost("Invoice")]
         public async Task<IActionResult> Invoice(Invoice invoice)
         {
             if (invoice.UserId == this.UserId)

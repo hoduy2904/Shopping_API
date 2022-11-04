@@ -54,33 +54,16 @@ namespace ShoppingAPI.Services.Services
         //Save Token Database
         private async Task<ResultApi> SaveTokenDetails(string accessToken, string refreshToken, string IPAdress, int UserId)
         {
-            var user = await shoppingContext.Users
-                .Include(ur => ur.UserRoles)
-                .ThenInclude(r => r.Role)
-                .Select(u => new
-                {
-                    u.FristName,
-                    u.LastName,
-                    u.Username,
-                    u.Created,
-                    u.IdentityCard,
-                    u.Email,
-                    u.Sex,
-                    u.Id,
-                    RoleName = u.UserRoles.Select(ur => ur.Role.Name),
-                    accessToken,
-                    refreshToken
-                })
-                .SingleOrDefaultAsync(u => u.Id == UserId);
+            var getInfomationToken = GetJwtSecurity(accessToken);
 
             int.TryParse(JwtSettingsConfig.RefreshTokenTime, out int RefreshTime);
             var refreshDb = new RefreshToken
             {
-                TokenId = GetJwtSecurity(accessToken).Id,
+                TokenId = getInfomationToken.Id,
                 Expired = DateTime.UtcNow.AddDays(RefreshTime),
                 Refresh = refreshToken,
                 Token = accessToken,
-                UserId = user.Id,
+                UserId = UserId,
                 IPAdress = IPAdress,
                 Created = DateTime.UtcNow
             };
@@ -90,7 +73,12 @@ namespace ShoppingAPI.Services.Services
             return new ResultApi
             {
                 Success = true,
-                Data = user
+                Data = new
+                {
+                    accessToken,
+                    acessToken_type="Bearer",
+                    accessToken_time=getInfomationToken.ValidTo,
+                }
             };
         }
 

@@ -55,8 +55,7 @@ namespace ShoppingAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                cart.UserId = this.UserId;
-                var cartDb = cartServices.GetCartByProduct(cart.ProductId, cart.ProductVarationId.Value);
+                var cartDb = cartServices.GetCartByProduct(cart.ProductId, cart.ProductVarationId.Value, UserId);
                 if (cartDb == null)
                 {
                     cart.UserId = this.UserId;
@@ -86,8 +85,7 @@ namespace ShoppingAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                cart.UserId = this.UserId;
-                var cartDb = cartServices.GetCartByProduct(cart.ProductId, cart.ProductVarationId.Value);
+                var cartDb = cartServices.GetCartByProduct(cart.ProductId, cart.ProductVarationId.Value, UserId);
                 if (cartDb != null)
                 {
                     cartDb.Number = cart.Number;
@@ -110,19 +108,15 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
         [HttpDelete]
-        public async Task<IActionResult> Cart(int id, int UserId)
+        public async Task<IActionResult> Cart(int id)
         {
-            if (this.UserId == UserId)
+            await cartServices.DeleteCartAsync(id, UserId);
+            return Ok(new ResultApi
             {
-                await cartServices.DeleteCartAsync(id);
-                return Ok(new ResultApi
-                {
-                    Message = new[] { "Delete Success" },
-                    Status = Ok().StatusCode,
-                    Success = true,
-                });
-            }
-            return BadRequest();
+                Message = new[] { "Delete Success" },
+                Status = Ok().StatusCode,
+                Success = true,
+            });
         }
     }
 }

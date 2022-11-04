@@ -34,18 +34,18 @@ namespace ShoppingAPI.Services.Services
                 .Where(x => x.IsTrash == false && x.Id == id)
                 .Include(sd => sd.ShoppingDeliveryAddresses)
                 .Include(ur => ur.UserRoles)
-                .ThenInclude(r=>r.Role)
+                .ThenInclude(r => r.Role)
                 .Select(x => new User
                 {
-                    Sex= x.Sex,
-                    Email=x.Email,
+                    Sex = x.Sex,
+                    Email = x.Email,
                     Created = x.Created,
                     IdentityCard = x.IdentityCard,
-                    UserRoles=x.UserRoles,
+                    UserRoles = x.UserRoles,
                     Username = x.Username,
                     FristName = x.FristName,
                     LastName = x.LastName,
-                    ShoppingDeliveryAddresses=x.ShoppingDeliveryAddresses,
+                    ShoppingDeliveryAddresses = x.ShoppingDeliveryAddresses,
                 })
                 .SingleOrDefaultAsync();
         }

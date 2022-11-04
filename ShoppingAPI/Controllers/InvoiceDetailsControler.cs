@@ -56,7 +56,7 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpPost]
+        [HttpPost("[action]")]
         public async Task<IActionResult> InvoiceDetailsRange(IEnumerable<InvoicesDetails> invoicesDetails)
         {
             await invoiceDetailsServices.InsertInvoiceDetailRangesAsync(invoicesDetails);
@@ -82,7 +82,7 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpPut("InvoiceDetails")]
+        [HttpDelete("InvoiceDetails")]
         public async Task<IActionResult> DeleteInvoiceDetails(int id)
         {
             await invoiceDetailsServices.DeleteInvoiceDetailsAsync(id);

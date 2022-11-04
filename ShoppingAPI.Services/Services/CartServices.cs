@@ -1,4 +1,5 @@
-﻿using ShoppingAPI.Data.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Data.Models;
 using ShoppingAPI.REPO.Repository;
 using ShoppingAPI.Services.Interfaces;
 using System;
@@ -19,9 +20,9 @@ namespace ShoppingAPI.Services.Services
             this.repository = repository;
         }
 
-        public async Task DeleteCartAsync(int id)
+        public async Task DeleteCartAsync(int id, int UserId)
         {
-            var cart = await repository.GetAsync(id);
+            var cart = await repository.Where(x => x.Id == id && x.UserId == UserId).SingleOrDefaultAsync();
             await repository.DeleteAsync(cart);
         }
 
@@ -35,12 +36,13 @@ namespace ShoppingAPI.Services.Services
             return repository.Where(x => x.UserId == UserId && x.IsTrash == false);
         }
 
-        public Cart GetCartByProduct(int ProductId, int ProductVariationId)
+        public Cart GetCartByProduct(int ProductId, int ProductVariationId, int UserId)
         {
             return repository.Where(x =>
             x.ProductId == ProductId
             && x.IsTrash == false
-            && x.ProductVarationId == ProductVariationId)
+            && x.ProductVarationId == ProductVariationId
+            && x.UserId == UserId)
                 .FirstOrDefault();
         }
 

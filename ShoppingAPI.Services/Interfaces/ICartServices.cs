@@ -14,8 +14,8 @@ namespace ShoppingAPI.Services.Interfaces
         IQueryable<Cart> GetCarts(int UserId);
         Task InsertCartAsync(Cart cart);
         Task UpdateCartAsync(Cart cart);
-        Task DeleteCartAsync(int id);
-        Cart GetCartByProduct(int ProductId, int ProductVariationId);
+        Task DeleteCartAsync(int id, int UserId);
+        Cart GetCartByProduct(int ProductId, int ProductVariationId,int UserId);
         IQueryable<Cart> Where(Expression<Func<Cart, bool>> expression);
     }
 }
