@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Common;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -16,35 +17,41 @@ namespace ShoppingAPI.Controllers
     {
         private readonly ICartServices cartServices;
         private int UserId = -1;
+        string roleName = "Guest";
         public CartController(ICartServices cartServices, IHttpContextAccessor httpContextAccessor)
         {
             this.cartServices = cartServices;
             this.UserId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            this.roleName = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value;
         }
 
         [HttpGet]
-        public IActionResult Carts()
+        public IActionResult Carts(int? UserId)
         {
-                var cart = cartServices.GetCarts(this.UserId)
-                    .Include(pv => pv.ProductVariation)
-                    .ThenInclude(p => p.Product)
-                    .Include(pv => pv.ProductVariation)
-                    .ThenInclude(pi => pi.ProductImages)
-                    .Select(x => new
-                    {
-                        x.Id,
-                        x.UserId,
-                        x.Created,
-                        x.Number,
-                        x.ProductVariation
-                    })
-                    .AsEnumerable();
-                return Ok(new ResultApi
+            //Check if Admin
+            if (Library.isAdmin(roleName))
+                UserId = UserId ?? this.UserId;
+
+            var cart = cartServices.GetCarts(this.UserId)
+                .Include(pv => pv.ProductVariation)
+                .ThenInclude(p => p.Product)
+                .Include(pv => pv.ProductVariation)
+                .ThenInclude(pi => pi.ProductImages)
+                .Select(x => new
                 {
-                    Status = Ok().StatusCode,
-                    Data = cart,
-                    Success = true
-                });
+                    x.Id,
+                    x.UserId,
+                    x.Created,
+                    x.Number,
+                    x.ProductVariation
+                })
+                .AsEnumerable();
+            return Ok(new ResultApi
+            {
+                Status = Ok().StatusCode,
+                Data = cart,
+                Success = true
+            });
         }
         [HttpPost]
         public async Task<IActionResult> Cart(Cart cart)

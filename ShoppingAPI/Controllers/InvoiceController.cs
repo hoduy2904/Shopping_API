@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Common;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -16,28 +17,33 @@ namespace ShoppingAPI.Controllers
     {
         private readonly IInvoiceServices invoiceServices;
         private int UserId = -1;
+        private string roleName = "Guest";
         public InvoiceController(IInvoiceServices invoiceServices, IHttpContextAccessor httpContextAccessor)
         {
             this.invoiceServices = invoiceServices;
             this.UserId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            this.roleName = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Invoice(int id)
         {
             var invoice = await invoiceServices.GetInvoiceAsync(id);
-            return Ok(new ResultApi
-            {
-                Data = invoice,
-                Status = Ok().StatusCode,
-                Success = true
-            });
+            //Check if invoice for User or Admin
+            if (invoice.UserId == UserId || Library.isAdmin(roleName))
+                return Ok(new ResultApi
+                {
+                    Data = invoice,
+                    Status = Ok().StatusCode,
+                    Success = true
+                });
+            return BadRequest();
         }
 
         [HttpGet("{UserId}")]
         public IActionResult Invoices(int UserId)
         {
-            if (this.UserId == UserId)
+            if (this.UserId == UserId || Library.isAdmin(roleName))
             {
                 var invoices = invoiceServices.GetInvoicesByUserId(UserId).AsEnumerable();
                 return Ok(new ResultApi

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
+using ShoppingAPI.Common;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -41,7 +42,7 @@ namespace ShoppingAPI.Controllers
         {
             string roles = HttpContext.User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
             var UserId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
-            if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(id.ToString()) || id == null)
+            if (Library.isAdmin(roles) || UserId.Equals(id.ToString()) || id == null)
             {
                 if (id == null)
                     id = int.Parse(UserId);
