@@ -20,6 +20,8 @@ namespace ShoppingAPI.Controllers
         {
             this.productImageServices = productImageServices;
         }
+
+        //Get list productimages
         [HttpGet, AllowAnonymous]
         public async Task<IActionResult> ProductImages()
         {
@@ -30,10 +32,13 @@ namespace ShoppingAPI.Controllers
                 Data = productImages
             });
         }
+
+        //Get productImage from ProductImageId
         [HttpGet("{id}"), AllowAnonymous]
         public async Task<IActionResult> ProductImage(int id)
         {
             var productImage = await productImageServices.GetProductImageAsync(id);
+
             if (productImage != null)
                 return Ok(new ResultApi
                 {
@@ -41,6 +46,7 @@ namespace ShoppingAPI.Controllers
                     Data = productImage,
                     Success = true
                 });
+
             return NotFound(new ResultApi
             {
                 Status = (int)HttpStatusCode.NotFound,
@@ -48,7 +54,21 @@ namespace ShoppingAPI.Controllers
                 Message = new[] { "Not found Product Image" }
             });
         }
+        //Get ProducImage from productId
+        [HttpGet("{ProductId}")]
+        public IActionResult ProductImageByProductId(int ProductId)
+        {
+            var productImage = productImageServices.Where(x => x.ProductId == ProductId && x.IsTrash == false).AsEnumerable();
+            return Ok(new ResultApi
+            {
+                Status = (int)HttpStatusCode.OK,
+                Data = productImage,
+                Success = true
+            });
+        }
 
+
+        //Insert ProductImage
         [HttpPost]
         public async Task<IActionResult> ProductImage(ProductImage productImage)
         {
@@ -67,6 +87,7 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        //update productImage
         [HttpPut("ProductImage")]
         public async Task<IActionResult> PutProductImage(ProductImage productImage)
         {
@@ -88,6 +109,7 @@ namespace ShoppingAPI.Controllers
             }
             return BadRequest();
         }
+        //Delete productImage from productImageId
 
         [HttpDelete("ProductImage")]
         public async Task<IActionResult> DeleteProductImage(int id)

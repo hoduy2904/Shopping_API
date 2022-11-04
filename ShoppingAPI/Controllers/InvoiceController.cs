@@ -25,6 +25,7 @@ namespace ShoppingAPI.Controllers
             this.roleName = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value;
         }
 
+        //Get invoice from InvoiceId
         [HttpGet("{id}")]
         public async Task<IActionResult> Invoice(int id)
         {
@@ -40,9 +41,11 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        //Get list Invoices from UserId
         [HttpGet("{UserId}")]
         public IActionResult Invoices(int UserId)
         {
+            //Check if is User or Admin get
             if (this.UserId == UserId || Library.isAdmin(roleName))
             {
                 var invoices = invoiceServices.GetInvoicesByUserId(UserId).AsEnumerable();
@@ -53,12 +56,16 @@ namespace ShoppingAPI.Controllers
                     Status = Ok().StatusCode
                 });
             }
-            return BadRequest();
+            //return unauthorized
+            return Unauthorized();
         }
+
+        //Insert Invoice
 
         [HttpPost("Invoice")]
         public async Task<IActionResult> Invoice(Invoice invoice)
         {
+            //isIs User Post for User Invoice
             if (invoice.UserId == this.UserId)
             {
                 await invoiceServices.InsertInvoiceAsync(invoice);
@@ -73,9 +80,11 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        //Update Invoice
         [HttpPut("Invoice")]
         public async Task<IActionResult> PutInvoice(Invoice invoice)
         {
+            //isIs User Update for User Invoice
             if (invoice.UserId == this.UserId)
             {
                 await invoiceServices.UpdateInvoiceAsync(invoice);
@@ -90,10 +99,12 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        //Delete Invoice 
         [HttpDelete("Invoice")]
         public async Task<IActionResult> DeleteInvoice(int id)
         {
             var invoice = await invoiceServices.GetInvoiceAsync(id);
+            //Check is User delete for User invoice
             if (invoice.UserId == this.UserId)
             {
                 await invoiceServices.DeleteInvoiceAsync(id);
@@ -104,7 +115,8 @@ namespace ShoppingAPI.Controllers
                     Success = true
                 });
             }
-            return BadRequest();
+            //return unauthorized if not
+            return Unauthorized();
         }
     }
 }

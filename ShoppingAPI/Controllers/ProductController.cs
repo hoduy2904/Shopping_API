@@ -20,6 +20,8 @@ namespace ShoppingAPI.Controllers
         {
             this.productServices = productServices;
         }
+
+        //Get all products
         [HttpGet, AllowAnonymous]
         public async Task<IActionResult> Products()
         {
@@ -31,6 +33,8 @@ namespace ShoppingAPI.Controllers
                 Data = products
             });
         }
+
+        //Get product
         [HttpGet("{id}"), AllowAnonymous]
         public async Task<IActionResult> Product(int id)
         {
@@ -50,6 +54,7 @@ namespace ShoppingAPI.Controllers
             });
         }
 
+        //Insert Product
         [HttpPost]
         public async Task<IActionResult> Product(Product product)
         {
@@ -68,6 +73,7 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        //Update product
         [HttpPut("Product")]
         public async Task<IActionResult> PutProduct(Product product)
         {
@@ -91,6 +97,7 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        //Delete product from ProductId
         [HttpDelete("Product")]
         public async Task<IActionResult> DeleteProduct(int id)
         {

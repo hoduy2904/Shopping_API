@@ -18,6 +18,8 @@ namespace ShoppingAPI.Controllers
         {
             this.categoryServices = categoryServices;
         }
+
+        //Get all Categories
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Categories()
@@ -30,10 +32,14 @@ namespace ShoppingAPI.Controllers
                 Data = categories
             });
         }
+
+        //Get single category
         [HttpGet("{id}"), AllowAnonymous]
         public async Task<IActionResult> Category(int id)
         {
             var category = await categoryServices.GetCategoryAsync(id);
+            //Check exists category from id
+            //have result to category
             if (category != null)
                 return Ok(new ResultApi
                 {
@@ -41,6 +47,8 @@ namespace ShoppingAPI.Controllers
                     Data = category,
                     Success = true
                 });
+
+            //if not exists return not found
             return NotFound(new ResultApi
             {
                 Status = (int)HttpStatusCode.NotFound,
@@ -49,6 +57,7 @@ namespace ShoppingAPI.Controllers
             });
         }
 
+        //Insert category
         [HttpPost]
         public async Task<IActionResult> Category(Category category)
         {
@@ -67,6 +76,7 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        //Update category
         [HttpPut("Category")]
         public async Task<IActionResult> PutCategory(Category category)
         {
@@ -92,6 +102,7 @@ namespace ShoppingAPI.Controllers
 
         }
 
+        //Delete Category from Id
         [HttpDelete("Category")]
         public async Task<IActionResult> DeleteCategory(int id)
         {

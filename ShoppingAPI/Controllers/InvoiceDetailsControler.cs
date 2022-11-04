@@ -19,6 +19,7 @@ namespace ShoppingAPI.Controllers
             this.invoiceDetailsServices = invoiceDetailsServices;
             this.UserId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> InvoiceDetail(int id)
         {

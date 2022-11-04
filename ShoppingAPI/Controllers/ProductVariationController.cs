@@ -20,6 +20,8 @@ namespace ShoppingAPI.Controllers
         {
             this.productVariationServices = productVariationServices;
         }
+
+        //Get product variations
         [HttpGet, AllowAnonymous]
         public async Task<IActionResult> ProductVariations()
         {
@@ -31,10 +33,13 @@ namespace ShoppingAPI.Controllers
                 Data = productVariations
             });
         }
+
+        //Get product Variation from ProductVariationId
         [HttpGet("{id}"), AllowAnonymous]
         public async Task<IActionResult> ProductVariation(int id)
         {
             var productVariation = await productVariationServices.GetProductVariationAsync(id);
+
             if (productVariation != null)
                 return Ok(new ResultApi
                 {
@@ -42,6 +47,7 @@ namespace ShoppingAPI.Controllers
                     Data = productVariation,
                     Success = true
                 });
+
             return NotFound(new ResultApi
             {
                 Status = (int)HttpStatusCode.NotFound,
@@ -49,10 +55,12 @@ namespace ShoppingAPI.Controllers
                 Message = new[] { "Not found product Variation" }
             });
         }
+
+        //Get Productvariation from ProductId and ProductVariationId
         [HttpGet("[Action]"), AllowAnonymous]
-        public async Task<IActionResult> ProductVariationNumber(int ProductId,int ProductVariationId)
+        public async Task<IActionResult> ProductVariationNumber(int ProductId, int ProductVariationId)
         {
-            var res = await productVariationServices.getProductVariationNumber(ProductId,ProductVariationId);
+            var res = await productVariationServices.getProductVariationNumber(ProductId, ProductVariationId);
             return Ok(new ResultApi
             {
                 Status = (int)HttpStatusCode.OK,
@@ -61,6 +69,7 @@ namespace ShoppingAPI.Controllers
             });
         }
 
+        //Insert Product Variation
         [HttpPost]
         public async Task<IActionResult> ProductVariation(ProductVariation productVariation)
         {
@@ -79,6 +88,7 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        //Update Productvariation
         [HttpPut("ProductVariation")]
         public async Task<IActionResult> PutProductVariation(ProductVariation productVariation)
         {
@@ -105,6 +115,7 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        //Delete ProductVariation form ProductvariationId
         [HttpDelete("ProductVariation")]
         public async Task<IActionResult> DeleteProductVariation(int id)
         {

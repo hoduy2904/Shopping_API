@@ -13,17 +13,22 @@ namespace ShoppingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,SuperAdmin")]
+    [Authorize]
 
     public class UserController : ControllerBase
     {
         private readonly IUserServices userServices;
         private readonly IRoleServices roleServices;
-        public UserController(IUserServices userServices, IRoleServices roleServices)
+        private int UserId = -1;
+        private string roleName = "Guest";
+        public UserController(IUserServices userServices, IRoleServices roleServices, IHttpContextAccessor httpContextAccessor)
         {
             this.roleServices = roleServices;
             this.userServices = userServices;
+            this.UserId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            this.roleName = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value;
         }
+
         [HttpGet]
         [Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> Users()
@@ -36,17 +41,19 @@ namespace ShoppingAPI.Controllers
                 Data = users
             });
         }
-        [AllowAnonymous]
+
         [HttpGet("[action]")]
         public async Task<IActionResult> User(int? id)
         {
             string roles = HttpContext.User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
             var UserId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+            //Check if true user or Admin
             if (Library.isAdmin(roles) || UserId.Equals(id.ToString()) || id == null)
             {
                 if (id == null)
                     id = int.Parse(UserId);
                 var user = await userServices.GetUserAsync(id.Value);
+
                 if (user != null)
                     return Ok(new ResultApi
                     {
@@ -54,6 +61,7 @@ namespace ShoppingAPI.Controllers
                         Data = user,
                         Success = true
                     });
+
                 return NotFound(new ResultApi
                 {
                     Status = (int)HttpStatusCode.NotFound,
@@ -61,29 +69,36 @@ namespace ShoppingAPI.Controllers
                     Message = new[] { "Not found user" }
                 });
             }
+            //if not
             return Unauthorized();
         }
 
+        //Insert User
+        [Authorize(Roles = "Admin,SuperAdmin")]
         [HttpPost]
         public async Task<IActionResult> User(User user, string? roleName)
         {
+            //Check if roleName null then assign by User
             if (string.IsNullOrEmpty(roleName))
             {
                 roleName = "User";
             }
+
             if (ModelState.IsValid)
             {
                 var role = roleServices.Where(x => x.Name.Equals(roleName)).FirstOrDefault();
 
+                //check role exists
                 if (role != null)
                 {
-                    user.UserRoles = new List<UserRole>{
+                    user.UserRoles = new List<UserRole>
+                    {
                             new UserRole
                             {
                                 UserId = user.Id,
                                 RoleId=role.Id
                             }
-                        };
+                    };
                 }
 
                 await userServices.InsertUser(user);
@@ -99,44 +114,57 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        //Edit User
         [HttpPut("User")]
         public async Task<IActionResult> PutUser(User user)
         {
             if (ModelState.IsValid)
             {
-                var userDb = await userServices.GetUserAsync(user.Id);
-
-                userDb.FristName = user.FristName;
-                userDb.LastName = user.LastName;
-                userDb.Email = user.Email;
-                userDb.IdentityCard = user.IdentityCard;
-                userDb.Sex = user.Sex;
-
-
-                await userServices.UpdateUser(userDb);
-
-                return Ok(new ResultApi
+                //Check is User or Admin
+                if (user.Id == this.UserId || Library.isAdmin(roleName))
                 {
-                    Status = (int)HttpStatusCode.OK,
-                    Success = true,
-                    Message = new[] { "Edit success" },
-                    Data = userDb
-                });
+                    var userDb = await userServices.GetUserAsync(user.Id);
+
+                    userDb.FristName = user.FristName;
+                    userDb.LastName = user.LastName;
+                    userDb.Email = user.Email;
+                    userDb.IdentityCard = user.IdentityCard;
+                    userDb.Sex = user.Sex;
+
+
+                    await userServices.UpdateUser(userDb);
+
+                    return Ok(new ResultApi
+                    {
+                        Status = (int)HttpStatusCode.OK,
+                        Success = true,
+                        Message = new[] { "Edit success" },
+                        Data = userDb
+                    });
+                }
+                //if not
+                return Unauthorized();
             }
             return BadRequest();
         }
 
+        //Delete User
         [HttpDelete("User")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            await userServices.DeleteUser(id);
-            return Ok(new ResultApi
+            //Check is User or Admin
+            if (id == this.UserId || Library.isAdmin(roleName))
             {
-                Status = (int)HttpStatusCode.OK,
-                Success = true,
-                Message = new[] { "Delete Success" }
-            });
-
+                await userServices.DeleteUser(id);
+                return Ok(new ResultApi
+                {
+                    Status = (int)HttpStatusCode.OK,
+                    Success = true,
+                    Message = new[] { "Delete Success" }
+                });
+            }
+            //if not
+            return Unauthorized();
         }
     }
 }

@@ -21,6 +21,7 @@ namespace ShoppingAPI.Controllers
             this.userRoleServices = userRoleServices;
         }
 
+        //Get UserRoles
         [HttpGet, AllowAnonymous]
         public async Task<IActionResult> UserRoles()
         {
@@ -32,10 +33,13 @@ namespace ShoppingAPI.Controllers
                 Data = userRoles
             });
         }
+
+        //Get UserRole
         [HttpGet("{id}"), AllowAnonymous]
         public async Task<IActionResult> UserRole(int id)
         {
             var userRole = await userRoleServices.GetUserRoleAsync(id);
+
             if (userRole != null)
                 return Ok(new ResultApi
                 {
@@ -43,6 +47,7 @@ namespace ShoppingAPI.Controllers
                     Data = userRole,
                     Success = true
                 });
+
             return NotFound(new ResultApi
             {
                 Status = NotFound().StatusCode,
@@ -51,6 +56,7 @@ namespace ShoppingAPI.Controllers
             });
         }
 
+        //Insert UserRole
         [HttpPost]
         public async Task<IActionResult> UserRole(UserRole userRole)
         {
@@ -69,6 +75,7 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        //Update UserRole
         [HttpPut("UserRole")]
         public async Task<IActionResult> PutUserRole(UserRole userRole)
         {
@@ -89,6 +96,7 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        //delete userole
         [HttpDelete("UserRole")]
         public async Task<IActionResult> DeleteUserRole(int id)
         {
