@@ -55,30 +55,28 @@ namespace ShoppingAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (this.UserId == cart.UserId)
+                cart.UserId = this.UserId;
+                var cartDb = cartServices.GetCartByProduct(cart.ProductId, cart.ProductVarationId.Value);
+                if (cartDb == null)
                 {
-                    var cartDb = cartServices.GetCartByProduct(cart.ProductId, cart.ProductVarationId.Value);
-                    if (cartDb == null)
-                    {
-                        cart.UserId = this.UserId;
-                        await cartServices.InsertCartAsync(cart);
-                        return Ok(new ResultApi
-                        {
-                            Success = true,
-                            Status = Ok().StatusCode,
-                            Data = cart
-                        });
-                    }
-                    cartDb.Number += cart.Number;
-                    await cartServices.UpdateCartAsync(cartDb);
+                    cart.UserId = this.UserId;
+                    await cartServices.InsertCartAsync(cart);
                     return Ok(new ResultApi
                     {
-                        Message = new[] { "Add Success Product Exists in Cart" },
+                        Success = true,
                         Status = Ok().StatusCode,
-                        Data = cartDb,
-                        Success = true
+                        Data = cart
                     });
                 }
+                cartDb.Number += cart.Number;
+                await cartServices.UpdateCartAsync(cartDb);
+                return Ok(new ResultApi
+                {
+                    Message = new[] { "Add Success Product Exists in Cart" },
+                    Status = Ok().StatusCode,
+                    Data = cartDb,
+                    Success = true
+                });
             }
             return BadRequest();
         }
@@ -88,28 +86,26 @@ namespace ShoppingAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (this.UserId == cart.UserId)
+                cart.UserId = this.UserId;
+                var cartDb = cartServices.GetCartByProduct(cart.ProductId, cart.ProductVarationId.Value);
+                if (cartDb != null)
                 {
-                    var cartDb = cartServices.GetCartByProduct(cart.ProductId, cart.ProductVarationId.Value);
-                    if (cartDb != null)
+                    cartDb.Number = cart.Number;
+                    await cartServices.UpdateCartAsync(cartDb);
+                    return Ok(new ResultApi
                     {
-                        cartDb.Number = cart.Number;
-                        await cartServices.UpdateCartAsync(cartDb);
-                        return Ok(new ResultApi
-                        {
-                            Success = true,
-                            Status = Ok().StatusCode,
-                            Data = cart,
-                            Message = new[] { "Update success" }
-                        });
-                    }
-                    return NotFound(new ResultApi
-                    {
-                        Success = false,
-                        Status = NotFound().StatusCode,
-                        Message = new[] { "Not found product in Cart" }
+                        Success = true,
+                        Status = Ok().StatusCode,
+                        Data = cart,
+                        Message = new[] { "Update success" }
                     });
                 }
+                return NotFound(new ResultApi
+                {
+                    Success = false,
+                    Status = NotFound().StatusCode,
+                    Message = new[] { "Not found product in Cart" }
+                });
             }
             return BadRequest();
         }

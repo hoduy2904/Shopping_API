@@ -41,11 +41,11 @@ namespace ShoppingAPI.Services.Services
             var productVRes = await repository.Where(x => x.IsTrash == false
             && x.ProductId == ProductId
             && x.Id == ProductVariationId)
-                .Include(r => r.Carts)
+                .Include(r => r.InvoicesDetails)
                 .Select(r => new ProductVariationResponse
                 {
                     ProductVariations=r.ProductVariations,
-                    Numbers = r.Number - r.Carts.Sum(x => x.Number),
+                    Numbers = r.Number - r.InvoicesDetails.Sum(x => x.Numbers),
                 }).FirstOrDefaultAsync();
             return productVRes;
         }

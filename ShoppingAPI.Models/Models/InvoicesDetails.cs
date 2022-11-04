@@ -17,7 +17,7 @@ namespace ShoppingAPI.Data.Models
         public string ProductName { get; set; }
         public int? ProductVariationId { get; set; }
         public double Price { get; set; }
-        public double Numbers { get; set; }
+        public int Numbers { get; set; }
         public string? Image { get; set; }
         [NotMapped]
         public double Total => (Price * Numbers);
