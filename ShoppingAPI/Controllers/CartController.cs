@@ -22,12 +22,10 @@ namespace ShoppingAPI.Controllers
             this.UserId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
-        [HttpGet("{UserId}")]
-        public IActionResult Carts(int UserId)
+        [HttpGet]
+        public IActionResult Carts()
         {
-            if (this.UserId == UserId)
-            {
-                var cart = cartServices.GetCarts(UserId)
+                var cart = cartServices.GetCarts(this.UserId)
                     .Include(pv => pv.ProductVariation)
                     .ThenInclude(p => p.Product)
                     .Include(pv => pv.ProductVariation)
@@ -47,15 +45,13 @@ namespace ShoppingAPI.Controllers
                     Data = cart,
                     Success = true
                 });
-            }
-            return BadRequest();
         }
         [HttpPost]
         public async Task<IActionResult> Cart(Cart cart)
         {
             if (ModelState.IsValid)
             {
-                var cartDb = cartServices.GetCartByProduct(cart.ProductId, cart.ProductVarationId.Value, UserId);
+                var cartDb = cartServices.GetCartByProduct(cart.ProductId, cart.ProductVarationId.Value, this.UserId);
                 if (cartDb == null)
                 {
                     cart.UserId = this.UserId;
