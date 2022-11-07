@@ -13,6 +13,7 @@ namespace ShoppingAPI.Data.Models
             UserRoles = new HashSet<UserRole>();
             RefreshTokens = new HashSet<RefreshToken>();
             Invoices = new HashSet<Invoice>();
+            ProductRatings = new HashSet<ProductRating>();
         }
         [StringLength(50)]
         public string? FristName { get; set; }
@@ -32,5 +33,6 @@ namespace ShoppingAPI.Data.Models
         public ICollection<UserRole> UserRoles { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; }
         public ICollection<Invoice> Invoices { get; set; }
+        public ICollection<ProductRating> ProductRatings { get; set; }
     }
 }

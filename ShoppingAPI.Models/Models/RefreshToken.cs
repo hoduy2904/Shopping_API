@@ -28,6 +28,7 @@ namespace ShoppingAPI.Data.Models
                 return DateTime.UtcNow > Expired;
             }
         }
-        public User User { get; set; }
+        [ForeignKey("UserId")]
+        public User? User { get; set; }
     }
 }

@@ -33,6 +33,8 @@ namespace ShoppingAPI.Services.Services
                 .Include(pi => pi.ProductImages)
                 .Include(pv => pv.ProductVariations)
                 .Include(pct => pct.Category)
+                .Include(pr => pr.ProductRatings)
+                .ThenInclude(pri => pri.productRatingImages)
                 .SingleOrDefaultAsync();
         }
 

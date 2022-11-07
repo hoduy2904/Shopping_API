@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShoppingAPI.REPO;
 
@@ -11,9 +12,10 @@ using ShoppingAPI.REPO;
 namespace ShoppingAPI.REPO.Migrations
 {
     [DbContext(typeof(ShoppingContext))]
-    partial class ShoppingContextModelSnapshot : ModelSnapshot
+    [Migration("20221107071418_fixFKRfresh")]
+    partial class fixFKRfresh
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,86 +257,6 @@ namespace ShoppingAPI.REPO.Migrations
                     b.ToTable("ProductImages");
                 });
 
-            modelBuilder.Entity("ShoppingAPI.Data.Models.ProductRating", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsTrash")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProductRatingId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductRatingImage")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProductVariationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("isEdit")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductRatingId");
-
-                    b.HasIndex("ProductVariationId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ProductRatings");
-                });
-
-            modelBuilder.Entity("ShoppingAPI.Data.Models.ProductRatingImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsTrash")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ProductRatingId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductRatingId");
-
-                    b.ToTable("ProductRatingImages");
-                });
-
             modelBuilder.Entity("ShoppingAPI.Data.Models.ProductVariation", b =>
                 {
                     b.Property<int>("Id")
@@ -451,7 +373,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 11, 7, 17, 7, 6, 541, DateTimeKind.Local).AddTicks(3911),
+                            Created = new DateTime(2022, 11, 7, 14, 14, 17, 826, DateTimeKind.Local).AddTicks(9371),
                             IsTrash = false,
                             Name = "SuperAdmin"
                         });
@@ -543,7 +465,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 11, 7, 17, 7, 6, 541, DateTimeKind.Local).AddTicks(4726),
+                            Created = new DateTime(2022, 11, 7, 14, 14, 17, 827, DateTimeKind.Local).AddTicks(186),
                             IsTrash = false,
                             LastName = "Admin",
                             PasswordHash = "21232f297a57a5a743894a0e4a801fc3",
@@ -584,7 +506,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 11, 7, 17, 7, 6, 541, DateTimeKind.Local).AddTicks(4790),
+                            Created = new DateTime(2022, 11, 7, 14, 14, 17, 827, DateTimeKind.Local).AddTicks(251),
                             IsTrash = false,
                             RoleId = 1,
                             UserId = 1
@@ -685,48 +607,6 @@ namespace ShoppingAPI.REPO.Migrations
                     b.Navigation("ProductVariation");
                 });
 
-            modelBuilder.Entity("ShoppingAPI.Data.Models.ProductRating", b =>
-                {
-                    b.HasOne("ShoppingAPI.Data.Models.Product", "Product")
-                        .WithMany("ProductRatings")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ShoppingAPI.Data.Models.ProductRating", "ProductRatingReply")
-                        .WithMany()
-                        .HasForeignKey("ProductRatingId");
-
-                    b.HasOne("ShoppingAPI.Data.Models.ProductVariation", "ProductVariation")
-                        .WithMany("ProductRatings")
-                        .HasForeignKey("ProductVariationId");
-
-                    b.HasOne("ShoppingAPI.Data.Models.User", "User")
-                        .WithMany("ProductRatings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("ProductRatingReply");
-
-                    b.Navigation("ProductVariation");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ShoppingAPI.Data.Models.ProductRatingImage", b =>
-                {
-                    b.HasOne("ShoppingAPI.Data.Models.ProductRating", "ProductRating")
-                        .WithMany("productRatingImages")
-                        .HasForeignKey("ProductRatingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ProductRating");
-                });
-
             modelBuilder.Entity("ShoppingAPI.Data.Models.ProductVariation", b =>
                 {
                     b.HasOne("ShoppingAPI.Data.Models.Product", "Product")
@@ -805,14 +685,7 @@ namespace ShoppingAPI.REPO.Migrations
 
                     b.Navigation("ProductImages");
 
-                    b.Navigation("ProductRatings");
-
                     b.Navigation("ProductVariations");
-                });
-
-            modelBuilder.Entity("ShoppingAPI.Data.Models.ProductRating", b =>
-                {
-                    b.Navigation("productRatingImages");
                 });
 
             modelBuilder.Entity("ShoppingAPI.Data.Models.ProductVariation", b =>
@@ -822,8 +695,6 @@ namespace ShoppingAPI.REPO.Migrations
                     b.Navigation("InvoicesDetails");
 
                     b.Navigation("ProductImages");
-
-                    b.Navigation("ProductRatings");
 
                     b.Navigation("ProductVariations");
                 });
@@ -838,8 +709,6 @@ namespace ShoppingAPI.REPO.Migrations
                     b.Navigation("Carts");
 
                     b.Navigation("Invoices");
-
-                    b.Navigation("ProductRatings");
 
                     b.Navigation("RefreshTokens");
 

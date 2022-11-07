@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShoppingAPI.REPO;
 
@@ -11,9 +12,10 @@ using ShoppingAPI.REPO;
 namespace ShoppingAPI.REPO.Migrations
 {
     [DbContext(typeof(ShoppingContext))]
-    partial class ShoppingContextModelSnapshot : ModelSnapshot
+    [Migration("20221107074345_addRatingProduct")]
+    partial class addRatingProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -291,9 +293,6 @@ namespace ShoppingAPI.REPO.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("isEdit")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
@@ -451,7 +450,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 11, 7, 17, 7, 6, 541, DateTimeKind.Local).AddTicks(3911),
+                            Created = new DateTime(2022, 11, 7, 14, 43, 44, 982, DateTimeKind.Local).AddTicks(3403),
                             IsTrash = false,
                             Name = "SuperAdmin"
                         });
@@ -543,7 +542,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 11, 7, 17, 7, 6, 541, DateTimeKind.Local).AddTicks(4726),
+                            Created = new DateTime(2022, 11, 7, 14, 43, 44, 982, DateTimeKind.Local).AddTicks(4214),
                             IsTrash = false,
                             LastName = "Admin",
                             PasswordHash = "21232f297a57a5a743894a0e4a801fc3",
@@ -584,7 +583,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 11, 7, 17, 7, 6, 541, DateTimeKind.Local).AddTicks(4790),
+                            Created = new DateTime(2022, 11, 7, 14, 43, 44, 982, DateTimeKind.Local).AddTicks(4296),
                             IsTrash = false,
                             RoleId = 1,
                             UserId = 1

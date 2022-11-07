@@ -23,6 +23,9 @@ namespace ShoppingAPI.REPO
         public DbSet<Invoice> invoices { get; set; }
         public DbSet<InvoicesDetails> InvoicesDetails { get; set; }
 
+        public DbSet<ProductRating> ProductRatings { get; set; }
+        public DbSet<ProductRatingImage> ProductRatingImages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

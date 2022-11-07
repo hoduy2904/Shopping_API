@@ -11,6 +11,7 @@ namespace ShoppingAPI.Data.Models
             ProductImages = new HashSet<ProductImage>();
             Carts = new HashSet<Cart>();
             InvoicesDetails = new HashSet<InvoicesDetails>();
+            ProductRatings = new HashSet<ProductRating>();
         }
         [StringLength(50)]
         public string? Name { get; set; }
@@ -27,5 +28,6 @@ namespace ShoppingAPI.Data.Models
         public ICollection<ProductImage> ProductImages { get; set; }
         public ICollection<Cart> Carts { get; set; }
         public ICollection<InvoicesDetails> InvoicesDetails { get; set; }
+        public ICollection<ProductRating> ProductRatings { get; set; }
     }
 }

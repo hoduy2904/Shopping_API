@@ -54,6 +54,8 @@ namespace ShoppingAPI
             Services.AddScoped<IJwtServices, JwtServices>();
             Services.AddScoped<IInvoiceServices, InvoiceServices>();
             Services.AddScoped<IInvoiceDetailsServices, InvoiceDetailsServices>();
+            Services.AddScoped<IProductRatingServices, ProductRatingServices>();
+            Services.AddScoped<IProductRatingImageServices, ProductRatingImageServices>();
 
             //Jwt
             //Get Secret Key and Bytes
