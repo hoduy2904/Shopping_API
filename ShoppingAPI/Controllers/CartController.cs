@@ -31,8 +31,10 @@ namespace ShoppingAPI.Controllers
         public IActionResult Carts(int? UserId)
         {
             //Check if Admin
-            if (Library.isAdmin(roleName))
+            if (Library.isAdmin(roleName) || UserId == null)
                 UserId = UserId ?? this.UserId;
+            else
+                return Unauthorized();
 
             //Get list cart for User 
             var cart = cartServices.GetCarts(this.UserId)
@@ -46,14 +48,20 @@ namespace ShoppingAPI.Controllers
                     x.UserId,
                     x.Created,
                     x.Number,
-                    x.ProductVariation
+                    x.ProductVariation,
+                    totalMoney = x.Number * x.ProductVariation.PriceCurrent
                 })
                 .AsEnumerable();
 
             return Ok(new ResultApi
             {
                 Status = Ok().StatusCode,
-                Data = cart,
+                Data = new
+                {
+                    cart,
+                    total = cart.Count(),
+                    totalMoney = cart.Sum(x => x.Number * x.ProductVariation.PriceCurrent)
+                },
                 Success = true
             });
         }
@@ -72,22 +80,30 @@ namespace ShoppingAPI.Controllers
                 {
                     cart.UserId = this.UserId;
                     await cartServices.InsertCartAsync(cart);
+                    int total = cartServices.GetCarts(this.UserId).Count();
                     return Ok(new ResultApi
                     {
                         Success = true,
                         Status = Ok().StatusCode,
-                        Data = cart
+                        Data = new
+                        {
+                            cart,
+                            total = total
+                        }
                     });
                 }
                 //If exists increase Number for cart item
                 cartDb.Number += cart.Number;
                 await cartServices.UpdateCartAsync(cartDb);
-
                 return Ok(new ResultApi
                 {
                     Message = new[] { "Add Success Product Exists in Cart" },
                     Status = Ok().StatusCode,
-                    Data = cartDb,
+                    Data = new
+                    {
+                        cart = cartDb,
+                        total = cartServices.GetCarts(this.UserId).Count()
+                    },
                     Success = true
                 });
             }
@@ -96,12 +112,12 @@ namespace ShoppingAPI.Controllers
 
 
         [HttpPut("Cart")]
-        public async Task<IActionResult> EditCart(Cart cart)
+        public async Task<IActionResult> EditCart(Cart cart, int ProductVariationId)
         {
             if (ModelState.IsValid)
             {
                 //Get and check cart exists
-                var cartDb = cartServices.GetCartByProduct(cart.ProductId, cart.ProductVarationId.Value, UserId);
+                var cartDb = cartServices.GetCartByProduct(cart.ProductId, ProductVariationId, UserId);
                 //if have cart then update cart
                 if (cartDb != null)
                 {
@@ -111,7 +127,11 @@ namespace ShoppingAPI.Controllers
                     {
                         Success = true,
                         Status = Ok().StatusCode,
-                        Data = cart,
+                        Data = new
+                        {
+                            cart = cartDb,
+                            total = cartDb.Number * cartDb.ProductVariation.PriceCurrent
+                        },
                         Message = new[] { "Update success" }
                     });
                 }
@@ -136,6 +156,7 @@ namespace ShoppingAPI.Controllers
                 Message = new[] { "Delete Success" },
                 Status = Ok().StatusCode,
                 Success = true,
+                Data = cartServices.GetCarts(this.UserId).Count()
             });
         }
     }

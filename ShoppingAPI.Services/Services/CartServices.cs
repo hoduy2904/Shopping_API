@@ -43,6 +43,7 @@ namespace ShoppingAPI.Services.Services
             && x.IsTrash == false
             && x.ProductVarationId == ProductVariationId
             && x.UserId == UserId)
+                .Include(pv=>pv.ProductVariation)
                 .FirstOrDefault();
         }
 
