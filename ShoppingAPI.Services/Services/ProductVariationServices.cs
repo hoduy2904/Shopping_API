@@ -3,12 +3,7 @@ using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.REPO.Repository;
 using ShoppingAPI.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShoppingAPI.Services.Services
 {
@@ -26,9 +21,9 @@ namespace ShoppingAPI.Services.Services
             await repository.DeleteAsync(productvariation);
         }
 
-        public async Task<IEnumerable<ProductVariation>> GetProductVariatiesAsync()
+        public IQueryable<ProductVariation> GetProductVariaties()
         {
-            return await repository.GetAllAsync();
+            return repository.GetAll();
         }
 
         public async Task<ProductVariation> GetProductVariationAsync(int id)
@@ -44,7 +39,7 @@ namespace ShoppingAPI.Services.Services
                 .Include(r => r.InvoicesDetails)
                 .Select(r => new ProductVariationResponse
                 {
-                    ProductVariations=r.ProductVariations,
+                    ProductVariations = r.ProductVariations,
                     Numbers = r.Number - r.InvoicesDetails.Sum(x => x.Numbers),
                 }).FirstOrDefaultAsync();
             return productVRes;

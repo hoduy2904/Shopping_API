@@ -12,7 +12,7 @@ namespace ShoppingAPI.Services.Interfaces
     {
         Task<ProductRatingImage> GetProductRatingImageAsync(int id);
         IQueryable<ProductRatingImage> GetProductRatingImagesByRatingId(int RatingId);
-        Task<IEnumerable<ProductRatingImage>> GetProductRatingImages();
+        IQueryable<ProductRatingImage> GetProductRatingImages();
         Task InsertProductRatingImageAsync(ProductRatingImage productRating);
         Task InsertProductRatingImageRangeAsync(List<ProductRatingImage> productRatingImages);
         Task UpdateProductRatingImageAsync(ProductRatingImage productRating);

@@ -20,7 +20,7 @@ namespace ShoppingAPI.Services.Services
         public async Task DeleteShoppingDeliveryAddress(int id)
         {
             var infomationUser = await repository.GetAsync(id);
-           await repository.DeleteAsync(infomationUser);
+            await repository.DeleteAsync(infomationUser);
         }
 
         public async Task<ShoppingDeliveryAddress> GetShoppingDeliveryAddressAsync(int id)
@@ -28,9 +28,9 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAsync(id);
         }
 
-        public async Task<IEnumerable<ShoppingDeliveryAddress>> GetShoppingDeliveryAddressesAsync()
+        public IQueryable<ShoppingDeliveryAddress> GetShoppingDeliveryAddresses()
         {
-            return await repository.GetAllAsync();
+            return repository.GetAll();
         }
 
         public async Task InsertShoppingDeliveryAddress(ShoppingDeliveryAddress shoppingDeliveryAddress)

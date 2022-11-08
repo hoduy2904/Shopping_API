@@ -9,7 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json.Serialization;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using ShoppingAPI.Common.Models;
+using ShoppingAPI.Common.Config;
 
 namespace ShoppingAPI
 {
@@ -23,6 +23,7 @@ namespace ShoppingAPI
         public void ConfigureServices(IServiceCollection Services, IConfiguration Configuration)
         {
             JwtSettingsConfig.ConfigurationJwtSettings(Configuration);
+            PagingSettingsConfig.ConfigurationPagingSettings(Configuration);
 
             Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

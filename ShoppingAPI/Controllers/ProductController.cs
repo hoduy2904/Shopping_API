@@ -6,6 +6,9 @@ using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
 using System.Data;
 using System.Net;
+using ShoppingAPI.Common.Extensions;
+using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Common.Config;
 
 namespace ShoppingAPI.Controllers
 {
@@ -21,16 +24,30 @@ namespace ShoppingAPI.Controllers
             this.productServices = productServices;
         }
 
-        //Get all products
+        //Get all products with paging
         [HttpGet, AllowAnonymous]
-        public async Task<IActionResult> Products()
+        public async Task<IActionResult> Products(int? page, int? pageSize)
         {
-            var products = await productServices.GetProductsAsync();
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var products = await productServices.GetProducts()
+                .OrderByDescending(od => od.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
             return Ok(new ResultApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = products
+                Data = new ResultWithPaging
+                {
+                    Data = products,
+                    PageCount = products.PageCount,
+                    PageNumber = products.PageNumber,
+                    TotalItems = products.TotalItemCount
+                }
             });
         }
 

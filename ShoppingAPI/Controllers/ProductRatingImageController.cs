@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -32,12 +34,26 @@ namespace ShoppingAPI.Controllers
             });
         }
         [HttpGet("{ProductRatingId}")]
-        public IActionResult ProductRatingImages(int ProductRatingId)
+        public async Task<IActionResult> ProductRatingImages(int ProductRatingId, int? page, int? pageSize)
         {
-            var productRatingImages = productRatingImageServices.GetProductRatingImagesByRatingId(ProductRatingId);
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var productRatingImages = await productRatingImageServices
+                .GetProductRatingImagesByRatingId(ProductRatingId)
+                .OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
             return Ok(new ResultApi
             {
-                Data = productRatingImages,
+                Data = new ResultWithPaging
+                {
+                    Data = productRatingImages,
+                    PageCount = productRatingImages.PageCount,
+                    PageNumber = productRatingImages.PageNumber,
+                    TotalItems = productRatingImages.TotalItemCount
+                },
                 Status = Ok().StatusCode,
                 Success = true
             });

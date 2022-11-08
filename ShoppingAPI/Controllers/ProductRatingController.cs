@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -33,24 +36,55 @@ namespace ShoppingAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ProductRatings()
+        public async Task<IActionResult> ProductRatings(int? page, int? pageSize)
         {
-            var productRatings = await productRatingServices.GetProductRatings();
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var productRatings = await productRatingServices
+                .GetProductRatings()
+                .OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
             return Ok(new ResultApi
             {
-                Data = productRatings,
+                Data = new ResultWithPaging
+                {
+                    Data = productRatings,
+                    PageCount = productRatings.PageCount,
+                    PageNumber = productRatings.PageNumber,
+                    TotalItems = productRatings.TotalItemCount
+                },
                 Status = Ok().StatusCode,
                 Success = true
             });
         }
 
         [HttpGet("{ProductId}")]
-        public IActionResult ProductRatings(int ProductId)
+        public async Task<IActionResult> ProductRatings(int ProductId, int? page, int? pageSize)
         {
-            var productRatings = productRatingServices.GetProductRatingsByProductid(ProductId);
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var productRatings = await productRatingServices
+                .GetProductRatingsByProductid(ProductId)
+                .OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
             return Ok(new ResultApi
             {
-                Data = productRatings,
+                Data = new ResultWithPaging
+                {
+                    Data = productRatings,
+                    PageCount = productRatings.PageCount,
+                    PageNumber = productRatings.PageNumber,
+                    TotalItems = productRatings.TotalItemCount
+                },
+
                 Status = Ok().StatusCode,
                 Success = true
             });
@@ -58,14 +92,29 @@ namespace ShoppingAPI.Controllers
 
         [HttpGet("{UserId}/{ProductId}/{ProductVariationId}")]
         [Authorize]
-        public IActionResult ProductRatings(int UserId, int ProductId, int ProductVariationid)
+        public async Task<IActionResult> ProductRatings(int UserId, int ProductId, int ProductVariationid, int? page, int? pageSize)
         {
             if (this.UserId == UserId)
             {
-                var productRatings = productRatingServices.GetProductRatings(UserId, ProductId, ProductVariationid);
+                if (page == null)
+                    page = PagingSettingsConfig.pageDefault;
+                if (pageSize == null)
+                    pageSize = PagingSettingsConfig.pageSize;
+
+                var productRatings = await productRatingServices
+                    .GetProductRatings(UserId, ProductId, ProductVariationid)
+                    .OrderByDescending(x => x.Id)
+                    .ToPagedList(page.Value, pageSize.Value);
+
                 return Ok(new ResultApi
                 {
-                    Data = productRatings,
+                    Data = new ResultWithPaging
+                    {
+                        Data = productRatings,
+                        PageCount = productRatings.PageCount,
+                        PageNumber = productRatings.PageNumber,
+                        TotalItems = productRatings.TotalItemCount
+                    },
                     Status = Ok().StatusCode,
                     Success = true
                 });
@@ -74,12 +123,28 @@ namespace ShoppingAPI.Controllers
         }
 
         [HttpGet("{ProductId}/{ProductVariationId}")]
-        public IActionResult ProductRatings(int ProductId, int ProductVariationid)
+        public async Task<IActionResult> ProductRatings(int ProductId, int ProductVariationid, int? page, int? pageSize)
         {
-            var productRatings = productRatingServices.GetProductRatings(ProductId, ProductVariationid);
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var productRatings = await productRatingServices
+                .GetProductRatings(ProductId, ProductVariationid)
+                .OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
             return Ok(new ResultApi
             {
-                Data = productRatings,
+                Data = new ResultWithPaging
+                {
+                    Data = productRatings,
+                    PageCount = productRatings.PageCount,
+                    PageNumber = productRatings.PageNumber,
+                    TotalItems = productRatings.TotalItemCount
+                },
+
                 Status = Ok().StatusCode,
                 Success = true
             });

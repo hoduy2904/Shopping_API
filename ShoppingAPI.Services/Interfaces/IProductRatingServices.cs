@@ -15,7 +15,7 @@ namespace ShoppingAPI.Services.Interfaces
         IQueryable<ProductRating> GetProductRatings(int UserId,int ProductId,int ProductVariationId);
         IQueryable<ProductRating> GetProductRatings(int ProductId, int ProductVariationId);
         IQueryable<ProductRating> GetProductRatingsByProductid(int ProductId);
-        Task<IEnumerable<ProductRating>> GetProductRatings();
+        IQueryable<ProductRating> GetProductRatings();
         Task InsertProductRatingAsync(ProductRating productRating);
         Task UpdateProductRatingAsync(ProductRating productRating);
         Task DeleteProductRatingAsync(int id);

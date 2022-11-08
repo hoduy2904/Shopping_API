@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace ShoppingAPI.REPO.Repository
 {
@@ -39,9 +40,9 @@ namespace ShoppingAPI.REPO.Repository
             return entity;
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public IQueryable<T> GetAll()
         {
-            return await entities.Where(x => x.IsTrash == false).ToListAsync();
+            return entities.Where(x => x.IsTrash == false);
         }
 
         public async Task InsertAsync(T entity)

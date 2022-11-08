@@ -1,6 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -19,17 +22,31 @@ namespace ShoppingAPI.Controllers
             this.categoryServices = categoryServices;
         }
 
-        //Get all Categories
+        //Get all Categories with Paging
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Categories()
+        public async Task<IActionResult> Categories(int? page, int? pageSize)
         {
-            var categories = await categoryServices.GetCategoriesAsync();
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var categories = await categoryServices
+                .GetCategories().OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
             return Ok(new ResultApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = categories
+                Data = new ResultWithPaging
+                {
+                    Data = categories,
+                    PageCount = categories.PageCount,
+                    PageNumber = categories.PageNumber,
+                    TotalItems = categories.TotalItemCount
+                }
             });
         }
 

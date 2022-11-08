@@ -33,19 +33,19 @@ namespace ShoppingAPI.Services.Services
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<UserRole>> GetUserRolesAsync()
+        public IQueryable<UserRole> GetUserRoles()
         {
-            return await repository.GetAllAsync();
+            return repository.GetAll();
         }
 
         public async Task InsertUserRole(UserRole userRole)
         {
-           await repository.InsertAsync(userRole);
+            await repository.InsertAsync(userRole);
         }
 
         public async Task UpdateUserRole(UserRole userRole)
         {
-           await repository.UpdateAsync(userRole);
+            await repository.UpdateAsync(userRole);
         }
 
         public IQueryable<UserRole> Where(Expression<Func<UserRole, bool>> expression)

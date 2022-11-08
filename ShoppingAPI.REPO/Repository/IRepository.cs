@@ -6,12 +6,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace ShoppingAPI.REPO.Repository
 {
     public interface IRepository<T> where T : BaseModels
     {
-        Task<IEnumerable<T>> GetAllAsync();
+        IQueryable<T> GetAll();
         Task<T> GetAsync(int id);
         Task InsertAsync(T entity);
         Task InsertRangeAsync(IEnumerable<T> lstEntity);
@@ -20,6 +21,6 @@ namespace ShoppingAPI.REPO.Repository
         Task DeleteAsync(T entity);
         Task DeleteRangeAsync(IEnumerable<T> lstEntity);
         Task SavechangesAsync();
-        IQueryable<T> Where(Expression<Func<T,bool>> preicate);
+        IQueryable<T> Where(Expression<Func<T, bool>> preicate);
     }
 }

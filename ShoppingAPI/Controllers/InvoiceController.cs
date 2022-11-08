@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShoppingAPI.Common;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -43,15 +45,29 @@ namespace ShoppingAPI.Controllers
 
         //Get list Invoices from UserId
         [HttpGet("{UserId}")]
-        public IActionResult Invoices(int UserId)
+        public async Task<IActionResult> Invoices(int UserId, int? page, int? pageSize)
         {
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
             //Check if is User or Admin get
             if (this.UserId == UserId || Library.isAdmin(roleName))
             {
-                var invoices = invoiceServices.GetInvoicesByUserId(UserId).AsEnumerable();
+                var invoices = await invoiceServices.GetInvoicesByUserId(UserId)
+                    .OrderByDescending(x => x.Id)
+                    .ToPagedList(page.Value, pageSize.Value);
+
                 return Ok(new ResultApi
                 {
-                    Data = invoices,
+                    Data = new ResultWithPaging
+                    {
+                        Data = invoices,
+                        PageCount = invoices.PageCount,
+                        PageNumber = invoices.PageNumber,
+                        TotalItems = invoices.TotalItemCount
+                    },
                     Success = true,
                     Status = Ok().StatusCode
                 });

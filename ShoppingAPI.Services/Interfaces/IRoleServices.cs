@@ -11,7 +11,7 @@ namespace ShoppingAPI.Services.Interfaces
     public interface IRoleServices
     {
         Task<Role> GetRoleAsync(int id);
-        Task<IEnumerable<Role>> GetRolesAsync();
+        IQueryable<Role> GetRoles();
         Task InsertRole(Role role);
         Task UpdateRole(Role role);
         Task DeleteRole(int id);

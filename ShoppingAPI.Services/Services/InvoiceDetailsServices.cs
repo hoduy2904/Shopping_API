@@ -36,9 +36,9 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAsync(id);
         }
 
-        public async Task<IEnumerable<InvoicesDetails>> GetInvoicesDetails()
+        public IQueryable<InvoicesDetails> GetInvoicesDetails()
         {
-            return await repository.GetAllAsync();
+            return repository.GetAll();
         }
 
         public IQueryable<InvoicesDetails> GetInvoicesDetailsByInvoiceId(int InvoiceId)

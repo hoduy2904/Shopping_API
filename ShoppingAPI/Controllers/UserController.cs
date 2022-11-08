@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.EntityFrameworkCore;
 using ShoppingAPI.Common;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -31,14 +32,28 @@ namespace ShoppingAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,SuperAdmin")]
-        public async Task<IActionResult> Users()
+        public async Task<IActionResult> Users(int? page, int? pageSize)
         {
-            var users = await userServices.GetUsersAsync();
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var users = await userServices.GetUsers()
+                .OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
             return Ok(new ResultApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = users
+                Data = new ResultWithPaging
+                {
+                    Data = users,
+                    PageCount = users.PageCount,
+                    PageNumber = users.PageNumber,
+                    TotalItems = users.TotalItemCount
+                }
             });
         }
 

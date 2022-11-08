@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingAPI.Common;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -27,14 +29,33 @@ namespace ShoppingAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ShoppingDeliveryAddresses()
+        public async Task<IActionResult> ShoppingDeliveryAddresses(int? UserId, int? page, int? pageSize)
         {
-            var categories = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressesAsync();
+            if (Library.isAdmin(roleName))
+                this.UserId = UserId ?? this.UserId;
+
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var DeliveryAddress = await shoppingDeliveryAddressServices
+                .GetShoppingDeliveryAddresses()
+                .Where(x => x.UserId == this.UserId)
+                .OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
             return Ok(new ResultApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = categories
+                Data = new ResultWithPaging
+                {
+                    Data = DeliveryAddress,
+                    PageCount = DeliveryAddress.PageCount,
+                    PageNumber = DeliveryAddress.PageNumber,
+                    TotalItems = DeliveryAddress.TotalItemCount
+                }
             });
         }
 
@@ -42,16 +63,13 @@ namespace ShoppingAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> ShoppingDeliveryAddress(int id)
         {
-            string roles = User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
-            var UserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
-
             var shoppingDeliveryAddress = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(id);
 
             //Check ShoppingDeliveryAddress Exists
             if (shoppingDeliveryAddress != null)
             {
                 //check if admin or user for Address user
-                if (Library.isAdmin(roles) || UserId.Equals(shoppingDeliveryAddress.UserId.ToString()))
+                if (Library.isAdmin(roleName) || UserId.Equals(shoppingDeliveryAddress.UserId.ToString()))
                     return Ok(new ResultApi
                     {
                         Status = (int)HttpStatusCode.OK,

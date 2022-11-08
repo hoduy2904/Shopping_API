@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -32,18 +34,34 @@ namespace ShoppingAPI.Controllers
                 Success = true
             });
         }
+
         [HttpGet("{InvoiceId}")]
-        public IActionResult InvoiceDetails(int InvoiceId)
+        public async Task<IActionResult> InvoiceDetails(int InvoiceId, int? page, int? pageSize)
         {
-            var invoiceDetails = invoiceDetailsServices.GetInvoicesDetailsByInvoiceId(InvoiceId).AsEnumerable();
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var invoiceDetails = await invoiceDetailsServices
+                .GetInvoicesDetailsByInvoiceId(InvoiceId)
+                .OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
             return Ok(new ResultApi
             {
-                Data = invoiceDetails,
+                Data = new ResultWithPaging
+                {
+                    Data = invoiceDetails,
+                    PageCount = invoiceDetails.PageCount,
+                    PageNumber = invoiceDetails.PageNumber,
+                    TotalItems = invoiceDetails.TotalItemCount,
+                },
                 Status = Ok().StatusCode,
                 Success = true
             });
-
         }
+
         [HttpPost]
         public async Task<IActionResult> InvoiceDetails(InvoicesDetails invoicesDetails)
         {

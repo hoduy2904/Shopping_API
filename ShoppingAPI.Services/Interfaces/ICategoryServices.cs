@@ -11,7 +11,7 @@ namespace ShoppingAPI.Services.Interfaces
     public interface ICategoryServices
     {
         Task<Category> GetCategoryAsync(int id);
-        Task<IEnumerable<Category>> GetCategoriesAsync();
+        IQueryable<Category> GetCategories();
         Task InsertCategory(Category category);
         Task UpdateCategory(Category category);
         Task DeleteCategory(int id);

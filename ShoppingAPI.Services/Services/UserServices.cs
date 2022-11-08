@@ -30,7 +30,7 @@ namespace ShoppingAPI.Services.Services
 
         public async Task<User> GetUserAsync(int id)
         {
-            return await repository
+            var user = await repository
                 .Where(x => x.IsTrash == false && x.Id == id)
                 .Include(sd => sd.ShoppingDeliveryAddresses)
                 .Include(ur => ur.UserRoles)
@@ -48,17 +48,19 @@ namespace ShoppingAPI.Services.Services
                     ShoppingDeliveryAddresses = x.ShoppingDeliveryAddresses,
                 })
                 .SingleOrDefaultAsync();
+            return user;
         }
 
         public async Task<User> FindByUsername(string username)
         {
-            return await repository.Where(x => x.Username.Equals(username)).SingleOrDefaultAsync();
+            var user = await repository.Where(x => x.Username.Equals(username)).SingleOrDefaultAsync();
+            return user;
         }
 
-        public async Task<IEnumerable<User>> GetUsersAsync()
+        public IQueryable<User> GetUsers()
         {
             // return repository.Where(x => x.IsTrash == false).ToList();
-            return await repository.GetAllAsync();
+            return repository.GetAll();
         }
 
         public async Task InsertUser(User user)

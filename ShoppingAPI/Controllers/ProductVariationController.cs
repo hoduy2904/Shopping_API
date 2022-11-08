@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -23,14 +25,28 @@ namespace ShoppingAPI.Controllers
 
         //Get product variations
         [HttpGet, AllowAnonymous]
-        public async Task<IActionResult> ProductVariations()
+        public async Task<IActionResult> ProductVariations(int? page, int? pageSize)
         {
-            var productVariations = await productVariationServices.GetProductVariatiesAsync();
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var productVariations = await productVariationServices.GetProductVariaties()
+                .OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
             return Ok(new ResultApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = productVariations
+                Data = new ResultWithPaging
+                {
+                    Data = productVariations,
+                    PageCount = productVariations.PageCount,
+                    PageNumber = productVariations.PageNumber,
+                    TotalItems = productVariations.TotalItemCount
+                }
             });
         }
 

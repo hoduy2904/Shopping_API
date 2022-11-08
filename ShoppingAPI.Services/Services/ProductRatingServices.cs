@@ -52,9 +52,9 @@ namespace ShoppingAPI.Services.Services
                 .Include(pv => pv.ProductVariation);
         }
 
-        public async Task<IEnumerable<ProductRating>> GetProductRatings()
+        public IQueryable<ProductRating> GetProductRatings()
         {
-            return await repository.GetAllAsync();
+            return repository.GetAll();
         }
 
         public IQueryable<ProductRating> GetProductRatingsByProductid(int ProductId)

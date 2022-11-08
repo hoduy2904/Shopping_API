@@ -20,8 +20,8 @@ namespace ShoppingAPI.Services.Services
         }
         public async Task DeleteRole(int id)
         {
-            var role=await repository.GetAsync(id);
-           await repository.DeleteAsync(role);
+            var role = await repository.GetAsync(id);
+            await repository.DeleteAsync(role);
         }
 
         public async Task<Role> GetRoleAsync(int id)
@@ -33,21 +33,21 @@ namespace ShoppingAPI.Services.Services
             return await repository.Where(x => x.Name.Equals(roleName)).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Role>> GetRolesAsync()
+        public IQueryable<Role> GetRoles()
         {
-            return await repository.GetAllAsync();
+            return repository.GetAll();
         }
 
         public async Task InsertRole(Role role)
         {
-           await repository.InsertAsync(role);
+            await repository.InsertAsync(role);
         }
 
         public async Task UpdateRole(Role role)
         {
-           await repository.UpdateAsync(role);
+            await repository.UpdateAsync(role);
         }
-        public IQueryable<Role> Where(Expression<Func<Role,bool>> expression)
+        public IQueryable<Role> Where(Expression<Func<Role, bool>> expression)
         {
             return repository.Where(expression);
         }

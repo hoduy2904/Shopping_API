@@ -12,7 +12,7 @@ namespace ShoppingAPI.Services.Interfaces
     {
         Task<Invoice> GetInvoiceAsync(int id);
         IQueryable<Invoice> GetInvoicesByUserId(int UserId);
-        Task<IEnumerable<Invoice>> GetInvoices();
+        IQueryable<Invoice> GetInvoices();
         Task InsertInvoiceAsync(Invoice invoice);
         Task UpdateInvoiceAsync(Invoice invoice);
         Task DeleteInvoiceAsync(int id);

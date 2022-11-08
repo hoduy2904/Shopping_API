@@ -31,9 +31,9 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAsync(id);
         }
 
-        public async Task<IEnumerable<ProductImage>> GetProductImagesAsync()
+        public IQueryable<ProductImage> GetProductImages()
         {
-            return await repository.GetAllAsync();
+            return repository.GetAll();
         }
 
         public async Task InsertProductImage(ProductImage productImage)

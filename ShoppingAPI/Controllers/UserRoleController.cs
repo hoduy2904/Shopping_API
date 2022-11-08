@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -23,9 +25,17 @@ namespace ShoppingAPI.Controllers
 
         //Get UserRoles
         [HttpGet, AllowAnonymous]
-        public async Task<IActionResult> UserRoles()
+        public async Task<IActionResult> UserRoles(int? page, int? pageSize)
         {
-            var userRoles = await userRoleServices.GetUserRolesAsync();
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var userRoles = await userRoleServices
+                .GetUserRoles()
+                .OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
             return Ok(new ResultApi
             {
                 Status = (int)HttpStatusCode.OK,

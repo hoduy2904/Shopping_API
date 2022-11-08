@@ -25,10 +25,9 @@ namespace ShoppingAPI.Services.Services
             await repository.DeleteAsync(invoice);
         }
 
-        public async Task<IEnumerable<Invoice>> GetInvoices()
+        public IQueryable<Invoice> GetInvoices()
         {
-            var invoices = await repository.GetAllAsync();
-            return invoices;
+            return repository.GetAll();
         }
 
         public async Task<Invoice> GetInvoiceAsync(int id)

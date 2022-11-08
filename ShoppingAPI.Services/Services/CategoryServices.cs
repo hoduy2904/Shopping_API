@@ -25,20 +25,21 @@ namespace ShoppingAPI.Services.Services
             await repository.DeleteAsync(category);
         }
 
-        public async Task<IEnumerable<Category>> GetCategoriesAsync()
+        public IQueryable<Category> GetCategories()
         {
-            return await repository.GetAllAsync();
+            return repository.GetAll();
         }
 
         public async Task<Category> GetCategoryAsync(int id)
         {
-            return await repository
+            var category = await repository
                 .Where(x => x.Id == id && x.IsTrash == false)
                 .Include(p => p.Products)
-                .ThenInclude(pi=>pi.ProductImages)
-                .Include(p=>p.Products)
-                .ThenInclude(pi=>pi.ProductVariations)
+                .ThenInclude(pi => pi.ProductImages)
+                .Include(p => p.Products)
+                .ThenInclude(pi => pi.ProductVariations)
                 .SingleOrDefaultAsync();
+            return category;
         }
 
         public async Task InsertCategory(Category category)

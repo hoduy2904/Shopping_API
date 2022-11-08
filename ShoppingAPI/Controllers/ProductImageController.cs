@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.Services.Interfaces;
@@ -21,15 +24,29 @@ namespace ShoppingAPI.Controllers
             this.productImageServices = productImageServices;
         }
 
-        //Get list productimages
+        //Get productImages with paging
         [HttpGet, AllowAnonymous]
-        public async Task<IActionResult> ProductImages()
+        public async Task<IActionResult> ProductImages(int? page, int? pageSize)
         {
-            var productImages = await productImageServices.GetProductImagesAsync();
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var productImages = await productImageServices.GetProductImages()
+                .OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
             return Ok(new ResultApi
             {
                 Success = true,
-                Data = productImages
+                Data = new ResultWithPaging
+                {
+                    Data = productImages,
+                    PageCount = productImages.PageCount,
+                    PageNumber = productImages.PageNumber,
+                    TotalItems = productImages.TotalItemCount
+                }
             });
         }
 

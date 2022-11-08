@@ -38,13 +38,14 @@ namespace ShoppingAPI.Services.Services
 
         public Cart GetCartByProduct(int ProductId, int ProductVariationId, int UserId)
         {
-            return repository.Where(x =>
+            var cart = repository.Where(x =>
             x.ProductId == ProductId
             && x.IsTrash == false
             && x.ProductVarationId == ProductVariationId
             && x.UserId == UserId)
-                .Include(pv=>pv.ProductVariation)
+                .Include(pv => pv.ProductVariation)
                 .FirstOrDefault();
+            return cart;
         }
 
         public async Task InsertCartAsync(Cart cart)

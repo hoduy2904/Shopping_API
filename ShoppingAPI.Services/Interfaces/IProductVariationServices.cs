@@ -12,7 +12,7 @@ namespace ShoppingAPI.Services.Interfaces
     public interface IProductVariationServices
     {
         Task<ProductVariation> GetProductVariationAsync(int id);
-        Task<IEnumerable<ProductVariation>> GetProductVariatiesAsync();
+        IQueryable<ProductVariation> GetProductVariaties();
         Task InsertProductVariation(ProductVariation productVariation);
         Task UpdateProductVariation(ProductVariation productVariation);
         Task DeleteProductVariation(int id);

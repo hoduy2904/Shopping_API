@@ -11,7 +11,7 @@ namespace ShoppingAPI.Services.Interfaces
     public interface IShoppingDeliveryAddressServices
     {
         Task<ShoppingDeliveryAddress> GetShoppingDeliveryAddressAsync(int id);
-        Task<IEnumerable<ShoppingDeliveryAddress>> GetShoppingDeliveryAddressesAsync();
+        IQueryable<ShoppingDeliveryAddress> GetShoppingDeliveryAddresses();
         Task InsertShoppingDeliveryAddress(ShoppingDeliveryAddress shoppingDeliveryAddress);
         Task UpdateShoppingDeliveryAddress(ShoppingDeliveryAddress shoppingDeliveryAddress);
         Task DeleteShoppingDeliveryAddress(int id);

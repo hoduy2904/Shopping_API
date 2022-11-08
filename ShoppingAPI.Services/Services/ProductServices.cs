@@ -2,14 +2,7 @@
 using ShoppingAPI.Data.Models;
 using ShoppingAPI.REPO.Repository;
 using ShoppingAPI.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShoppingAPI.Services.Services
 {
@@ -38,13 +31,13 @@ namespace ShoppingAPI.Services.Services
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Product>> GetProductsAsync()
+        public IQueryable<Product> GetProducts()
         {
-            return repository.Where(x => x.IsTrash == false)
+            return repository.GetAll()
                 .Include(pi => pi.ProductImages)
                 .Include(pv => pv.ProductVariations)
-                .Include(pct => pct.Category)
-                .AsEnumerable();
+                .Include(pct => pct.Category);
+
         }
 
         public async Task InsertProduct(Product product)
