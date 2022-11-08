@@ -27,7 +27,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> ProductRating(int id)
         {
             var productRating = await productRatingServices.GetProductRatingAsync(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Data = productRating,
                 Status = Ok().StatusCode,
@@ -48,15 +48,12 @@ namespace ShoppingAPI.Controllers
                 .OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseWithPaging
             {
-                Data = new ResultWithPaging
-                {
-                    Data = productRatings,
-                    PageCount = productRatings.PageCount,
-                    PageNumber = productRatings.PageNumber,
-                    TotalItems = productRatings.TotalItemCount
-                },
+                Data = productRatings,
+                PageCount = productRatings.PageCount,
+                PageNumber = productRatings.PageNumber,
+                TotalItems = productRatings.TotalItemCount,
                 Status = Ok().StatusCode,
                 Success = true
             });
@@ -75,16 +72,12 @@ namespace ShoppingAPI.Controllers
                 .OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseWithPaging
             {
-                Data = new ResultWithPaging
-                {
-                    Data = productRatings,
-                    PageCount = productRatings.PageCount,
-                    PageNumber = productRatings.PageNumber,
-                    TotalItems = productRatings.TotalItemCount
-                },
-
+                Data = productRatings,
+                PageCount = productRatings.PageCount,
+                PageNumber = productRatings.PageNumber,
+                TotalItems = productRatings.TotalItemCount,
                 Status = Ok().StatusCode,
                 Success = true
             });
@@ -106,15 +99,12 @@ namespace ShoppingAPI.Controllers
                     .OrderByDescending(x => x.Id)
                     .ToPagedList(page.Value, pageSize.Value);
 
-                return Ok(new ResultApi
+                return Ok(new ResponseWithPaging
                 {
-                    Data = new ResultWithPaging
-                    {
-                        Data = productRatings,
-                        PageCount = productRatings.PageCount,
-                        PageNumber = productRatings.PageNumber,
-                        TotalItems = productRatings.TotalItemCount
-                    },
+                    Data = productRatings,
+                    PageCount = productRatings.PageCount,
+                    PageNumber = productRatings.PageNumber,
+                    TotalItems = productRatings.TotalItemCount,
                     Status = Ok().StatusCode,
                     Success = true
                 });
@@ -135,16 +125,12 @@ namespace ShoppingAPI.Controllers
                 .OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseWithPaging
             {
-                Data = new ResultWithPaging
-                {
-                    Data = productRatings,
-                    PageCount = productRatings.PageCount,
-                    PageNumber = productRatings.PageNumber,
-                    TotalItems = productRatings.TotalItemCount
-                },
-
+                Data = productRatings,
+                PageCount = productRatings.PageCount,
+                PageNumber = productRatings.PageNumber,
+                TotalItems = productRatings.TotalItemCount,
                 Status = Ok().StatusCode,
                 Success = true
             });
@@ -159,7 +145,7 @@ namespace ShoppingAPI.Controllers
                 productRating.UserId = this.UserId;
 
                 await productRatingServices.InsertProductRatingAsync(productRating);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Message = new[] { "Insert Success Rating" },
                     Status = Ok().StatusCode,
@@ -186,7 +172,7 @@ namespace ShoppingAPI.Controllers
                 if (productRatingDb.isEdit)
                 {
                     //If true then not accept edit
-                    return BadRequest(new ResultApi
+                    return BadRequest(new ResponseApi
                     {
                         Message = new[] { "This Rating was Edited" },
                         Status = BadRequest().StatusCode,
@@ -201,7 +187,7 @@ namespace ShoppingAPI.Controllers
 
                 await productRatingServices.UpdateProductRatingAsync(productRatingDb);
 
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Message = new[] { "Update Success Rating" },
                     Status = Ok().StatusCode,
@@ -223,7 +209,7 @@ namespace ShoppingAPI.Controllers
 
             //If true then delete
             await productRatingServices.DeleteProductRatingAsync(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Message = new[] { "Delete Success Rating" },
                 Status = Ok().StatusCode,

@@ -36,11 +36,15 @@ namespace ShoppingAPI.Controllers
                 .GetUserRoles()
                 .OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
-            return Ok(new ResultApi
+
+            return Ok(new ResponseWithPaging
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = userRoles
+                Data = userRoles,
+                PageCount = userRoles.PageCount,
+                PageNumber = userRoles.PageNumber,
+                TotalItems = userRoles.TotalItemCount
             });
         }
 
@@ -51,14 +55,14 @@ namespace ShoppingAPI.Controllers
             var userRole = await userRoleServices.GetUserRoleAsync(id);
 
             if (userRole != null)
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Data = userRole,
                     Success = true
                 });
 
-            return NotFound(new ResultApi
+            return NotFound(new ResponseApi
             {
                 Status = NotFound().StatusCode,
                 Success = false,
@@ -73,7 +77,7 @@ namespace ShoppingAPI.Controllers
             if (ModelState.IsValid)
             {
                 await userRoleServices.InsertUserRole(userRole);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -95,7 +99,7 @@ namespace ShoppingAPI.Controllers
 
                 userRoleDb.RoleId = userRole.RoleId;
 
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -111,7 +115,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> DeleteUserRole(int id)
         {
             await userRoleServices.DeleteUserRole(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,

@@ -37,16 +37,13 @@ namespace ShoppingAPI.Controllers
                 .OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseWithPaging
             {
                 Success = true,
-                Data = new ResultWithPaging
-                {
-                    Data = productImages,
-                    PageCount = productImages.PageCount,
-                    PageNumber = productImages.PageNumber,
-                    TotalItems = productImages.TotalItemCount
-                }
+                Data = productImages,
+                PageCount = productImages.PageCount,
+                PageNumber = productImages.PageNumber,
+                TotalItems = productImages.TotalItemCount
             });
         }
 
@@ -57,14 +54,14 @@ namespace ShoppingAPI.Controllers
             var productImage = await productImageServices.GetProductImageAsync(id);
 
             if (productImage != null)
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Data = productImage,
                     Success = true
                 });
 
-            return NotFound(new ResultApi
+            return NotFound(new ResponseApi
             {
                 Status = (int)HttpStatusCode.NotFound,
                 Success = false,
@@ -76,7 +73,7 @@ namespace ShoppingAPI.Controllers
         public IActionResult ProductImageByProductId(int ProductId)
         {
             var productImage = productImageServices.Where(x => x.ProductId == ProductId && x.IsTrash == false).AsEnumerable();
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Data = productImage,
@@ -92,7 +89,7 @@ namespace ShoppingAPI.Controllers
             if (ModelState.IsValid)
             {
                 await productImageServices.InsertProductImage(productImage);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -116,7 +113,7 @@ namespace ShoppingAPI.Controllers
 
                 await productImageServices.UpdateProductImage(ProductImageDb);
 
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -132,7 +129,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> DeleteProductImage(int id)
         {
             await productImageServices.DeleteProductImage(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,

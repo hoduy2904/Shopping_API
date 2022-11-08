@@ -26,7 +26,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> ProductRatingImage(int id)
         {
             var productRatingImage = await productRatingImageServices.GetProductRatingImageAsync(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Data = productRatingImage,
                 Status = Ok().StatusCode,
@@ -45,15 +45,12 @@ namespace ShoppingAPI.Controllers
                 .GetProductRatingImagesByRatingId(ProductRatingId)
                 .OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
-            return Ok(new ResultApi
+            return Ok(new ResponseWithPaging
             {
-                Data = new ResultWithPaging
-                {
-                    Data = productRatingImages,
-                    PageCount = productRatingImages.PageCount,
-                    PageNumber = productRatingImages.PageNumber,
-                    TotalItems = productRatingImages.TotalItemCount
-                },
+                Data = productRatingImages,
+                PageCount = productRatingImages.PageCount,
+                PageNumber = productRatingImages.PageNumber,
+                TotalItems = productRatingImages.TotalItemCount,
                 Status = Ok().StatusCode,
                 Success = true
             });
@@ -74,7 +71,7 @@ namespace ShoppingAPI.Controllers
             }
             await productRatingImageServices.InsertProductRatingImageRangeAsync(ProductRatingImages);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = Ok().StatusCode,
                 Success = true,
@@ -100,7 +97,7 @@ namespace ShoppingAPI.Controllers
 
             await productRatingImageServices.UpdateProductRatingImageRangeAsync(ProductRatingImages);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = Ok().StatusCode,
                 Success = true,
@@ -114,7 +111,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> DeleteProductRatingImages(int id)
         {
             await productRatingImageServices.DeleteProductRatingImageAsync(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = Ok().StatusCode,
                 Success = true,

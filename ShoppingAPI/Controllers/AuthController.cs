@@ -54,7 +54,7 @@ namespace ShoppingAPI.Controllers
                     us.UserRoles = UserRole;
                     await userServices.InsertUser(us);
 
-                    return Ok(new ResultApi
+                    return Ok(new ResponseApi
                     {
                         Message = new[] { "Register Successfull" },
                         Status = (int)HttpStatusCode.OK,
@@ -63,7 +63,7 @@ namespace ShoppingAPI.Controllers
                 }
 
                 //If user exists
-                return BadRequest(new ResultApi
+                return BadRequest(new ResponseApi
                 {
                     Message = new[] { "Username is Exists" },
                     Success = false,
@@ -105,7 +105,7 @@ namespace ShoppingAPI.Controllers
             //Revoke Token and refreshToken
             await jwtServices.RevokeRefreshToken(refreshToken);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Success = true,
                 Message = new[] { "Logout success " },

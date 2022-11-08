@@ -11,10 +11,10 @@ namespace ShoppingAPI.Services.Interfaces
 {
     public interface IJwtServices
     {
-        Task<ResultApi> getTokenAsync(LoginRequest loginRequest,string IPAdress);
-        Task<ResultApi> getRefreshTokenAsync(int UserId,string IPAdress,string roleName);
-        ResultApi checkValidate(RefreshTokenRequest refreshTokenRequest);
-        Task<ResultApi> RevokeRefreshToken(RefreshToken refreshToken);
+        Task<ResponseApi> getTokenAsync(LoginRequest loginRequest,string IPAdress);
+        Task<ResponseApi> getRefreshTokenAsync(int UserId,string IPAdress,string roleName);
+        ResponseApi checkValidate(RefreshTokenRequest refreshTokenRequest);
+        Task<ResponseApi> RevokeRefreshToken(RefreshToken refreshToken);
         Task<RefreshToken> getRefreshTokenDbAsync(string accessToken);
         bool isTokenLive(string accessToken);
     }

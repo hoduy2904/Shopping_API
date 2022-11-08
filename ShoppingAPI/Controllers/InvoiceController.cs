@@ -34,7 +34,7 @@ namespace ShoppingAPI.Controllers
             var invoice = await invoiceServices.GetInvoiceAsync(id);
             //Check if invoice for User or Admin
             if (invoice.UserId == UserId || Library.isAdmin(roleName))
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Data = invoice,
                     Status = Ok().StatusCode,
@@ -59,15 +59,12 @@ namespace ShoppingAPI.Controllers
                     .OrderByDescending(x => x.Id)
                     .ToPagedList(page.Value, pageSize.Value);
 
-                return Ok(new ResultApi
+                return Ok(new ResponseWithPaging
                 {
-                    Data = new ResultWithPaging
-                    {
-                        Data = invoices,
-                        PageCount = invoices.PageCount,
-                        PageNumber = invoices.PageNumber,
-                        TotalItems = invoices.TotalItemCount
-                    },
+                    Data = invoices,
+                    PageCount = invoices.PageCount,
+                    PageNumber = invoices.PageNumber,
+                    TotalItems = invoices.TotalItemCount,
                     Success = true,
                     Status = Ok().StatusCode
                 });
@@ -85,7 +82,7 @@ namespace ShoppingAPI.Controllers
             if (invoice.UserId == this.UserId)
             {
                 await invoiceServices.InsertInvoiceAsync(invoice);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Message = new[] { "Add Success" },
                     Status = Ok().StatusCode,
@@ -104,7 +101,7 @@ namespace ShoppingAPI.Controllers
             if (invoice.UserId == this.UserId)
             {
                 await invoiceServices.UpdateInvoiceAsync(invoice);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Message = new[] { "Update Success" },
                     Status = Ok().StatusCode,
@@ -124,7 +121,7 @@ namespace ShoppingAPI.Controllers
             if (invoice.UserId == this.UserId)
             {
                 await invoiceServices.DeleteInvoiceAsync(id);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Message = new[] { "Delete Success" },
                     Status = Ok().StatusCode,

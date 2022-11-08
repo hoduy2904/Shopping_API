@@ -27,7 +27,7 @@ namespace ShoppingAPI.Services.Services
             this.configuration = configuration;
         }
 
-        public async Task<ResultApi> getTokenAsync(LoginRequest loginRequest, string IPAdress)
+        public async Task<ResponseApi> getTokenAsync(LoginRequest loginRequest, string IPAdress)
         {
             string PasswordHasing = StringHashing.Hash(loginRequest.Password);
             var user = await shoppingContext.Users.Include(ur => ur.UserRoles)
@@ -46,14 +46,14 @@ namespace ShoppingAPI.Services.Services
                 refresh.AccessToken = accessToken;
                 return await SaveTokenDetails(accessToken, refreshToken, IPAdress, user.Id);
             }
-            return new ResultApi
+            return new ResponseApi
             {
                 Success = false,
                 Message = new[] { "Incorrect Username or Password" }
             };
         }
         //Save Token Database
-        private async Task<ResultApi> SaveTokenDetails(string accessToken, string refreshToken, string IPAdress, int UserId)
+        private async Task<ResponseApi> SaveTokenDetails(string accessToken, string refreshToken, string IPAdress, int UserId)
         {
             var getInfomationToken = GetJwtSecurity(accessToken);
 
@@ -71,7 +71,7 @@ namespace ShoppingAPI.Services.Services
 
             shoppingContext.Add(refreshDb);
             await shoppingContext.SaveChangesAsync();
-            return new ResultApi
+            return new ResponseApi
             {
                 Success = true,
                 Data = new
@@ -123,7 +123,7 @@ namespace ShoppingAPI.Services.Services
             return tokenSecurityHandle.WriteToken(token);
         }
 
-        public async Task<ResultApi> getRefreshTokenAsync(int UserId, string IPAdress, string roleName)
+        public async Task<ResponseApi> getRefreshTokenAsync(int UserId, string IPAdress, string roleName)
         {
             var accessToken = GenarateToken(UserId, IPAdress, roleName);
             var refreshToken = GenarateRefreshToken();
@@ -136,7 +136,7 @@ namespace ShoppingAPI.Services.Services
             return tokenHandle.ReadJwtToken(accessToken);
         }
 
-        public ResultApi checkValidate(RefreshTokenRequest refreshTokenRequest)
+        public ResponseApi checkValidate(RefreshTokenRequest refreshTokenRequest)
         {
             var token = GetJwtSecurity(refreshTokenRequest.AccessToken);
             var refreshToken = shoppingContext.RefreshTokens.FirstOrDefault(x =>
@@ -147,26 +147,26 @@ namespace ShoppingAPI.Services.Services
             );
             //Check Token Exists
             if (refreshToken == null)
-                return new ResultApi
+                return new ResponseApi
                 {
                     Success = false,
                     Message = new[] { "Refresh Token Not found" }
                 };
             //Check RefreshToken expired
             if (refreshToken.IsExpired)
-                return new ResultApi
+                return new ResponseApi
                 {
                     Success = false,
                     Message = new[] { "Refresh Token Expired" }
                 };
             //Check Alg Access Token
             if (!token.SignatureAlgorithm.Equals(SecurityAlgorithms.HmacSha256))
-                return new ResultApi
+                return new ResponseApi
                 {
                     Success = false,
                     Message = new[] { "Not match Alg" }
                 };
-            return new ResultApi
+            return new ResponseApi
             {
                 Success = true,
                 Data = refreshToken
@@ -174,21 +174,21 @@ namespace ShoppingAPI.Services.Services
         }
 
         //Revoked RefreshToken
-        public async Task<ResultApi> RevokeRefreshToken(RefreshToken refreshToken)
+        public async Task<ResponseApi> RevokeRefreshToken(RefreshToken refreshToken)
         {
             try
             {
                 refreshToken.IsTrash = true;
                 shoppingContext.RefreshTokens.Update(refreshToken);
                 await shoppingContext.SaveChangesAsync();
-                return new ResultApi
+                return new ResponseApi
                 {
                     Success = true,
                 };
             }
             catch (Exception ex)
             {
-                return new ResultApi
+                return new ResponseApi
                 {
                     Success = false,
                     Message = new[] { ex.Message }

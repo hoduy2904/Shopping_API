@@ -26,7 +26,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> InvoiceDetail(int id)
         {
             var invoiceDetail = await invoiceDetailsServices.GetInvoiceDetailsAsync(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
 
                 Status = Ok().StatusCode,
@@ -48,15 +48,12 @@ namespace ShoppingAPI.Controllers
                 .OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseWithPaging
             {
-                Data = new ResultWithPaging
-                {
-                    Data = invoiceDetails,
-                    PageCount = invoiceDetails.PageCount,
-                    PageNumber = invoiceDetails.PageNumber,
-                    TotalItems = invoiceDetails.TotalItemCount,
-                },
+                Data = invoiceDetails,
+                PageCount = invoiceDetails.PageCount,
+                PageNumber = invoiceDetails.PageNumber,
+                TotalItems = invoiceDetails.TotalItemCount,
                 Status = Ok().StatusCode,
                 Success = true
             });
@@ -66,7 +63,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> InvoiceDetails(InvoicesDetails invoicesDetails)
         {
             await invoiceDetailsServices.InsertInvoiceDetailsAsync(invoicesDetails);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Data = invoicesDetails,
                 Message = new[] { "Add Success" },
@@ -79,7 +76,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> InvoiceDetailsRange(IEnumerable<InvoicesDetails> invoicesDetails)
         {
             await invoiceDetailsServices.InsertInvoiceDetailRangesAsync(invoicesDetails);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Data = invoicesDetails,
                 Message = new[] { "Add Success" },
@@ -92,7 +89,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> PutInvoiceDetails(InvoicesDetails invoicesDetails)
         {
             await invoiceDetailsServices.UpdateInvoiceDetailsAsync(invoicesDetails);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Data = invoicesDetails,
                 Message = new[] { "Update Success" },
@@ -105,7 +102,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> DeleteInvoiceDetails(int id)
         {
             await invoiceDetailsServices.DeleteInvoiceDetailsAsync(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Message = new[] { "Delete Success" },
                 Status = Ok().StatusCode,

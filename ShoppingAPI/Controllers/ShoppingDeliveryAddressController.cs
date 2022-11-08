@@ -45,17 +45,14 @@ namespace ShoppingAPI.Controllers
                 .OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseWithPaging
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = new ResultWithPaging
-                {
-                    Data = DeliveryAddress,
-                    PageCount = DeliveryAddress.PageCount,
-                    PageNumber = DeliveryAddress.PageNumber,
-                    TotalItems = DeliveryAddress.TotalItemCount
-                }
+                Data = DeliveryAddress,
+                PageCount = DeliveryAddress.PageCount,
+                PageNumber = DeliveryAddress.PageNumber,
+                TotalItems = DeliveryAddress.TotalItemCount
             });
         }
 
@@ -70,14 +67,14 @@ namespace ShoppingAPI.Controllers
             {
                 //check if admin or user for Address user
                 if (Library.isAdmin(roleName) || UserId.Equals(shoppingDeliveryAddress.UserId.ToString()))
-                    return Ok(new ResultApi
+                    return Ok(new ResponseApi
                     {
                         Status = (int)HttpStatusCode.OK,
                         Data = shoppingDeliveryAddress,
                         Success = true
                     });
 
-                return NotFound(new ResultApi
+                return NotFound(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.NotFound,
                     Success = false,
@@ -95,7 +92,7 @@ namespace ShoppingAPI.Controllers
             {
                 shoppingDelivery.UserId = this.UserId;
                 await shoppingDeliveryAddressServices.InsertShoppingDeliveryAddress(shoppingDelivery);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -122,7 +119,7 @@ namespace ShoppingAPI.Controllers
 
                     await shoppingDeliveryAddressServices.UpdateShoppingDeliveryAddress(shoppingDeliveryAddressDb);
 
-                    return Ok(new ResultApi
+                    return Ok(new ResponseApi
                     {
                         Status = (int)HttpStatusCode.OK,
                         Success = true,
@@ -144,7 +141,7 @@ namespace ShoppingAPI.Controllers
             if (shoppingbyUser.UserId == this.UserId)
             {
                 await shoppingDeliveryAddressServices.DeleteShoppingDeliveryAddress(id);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Success = true,
                     Message = new[] { "Delete Success" }

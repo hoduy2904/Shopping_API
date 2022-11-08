@@ -37,17 +37,14 @@ namespace ShoppingAPI.Controllers
                 .OrderByDescending(od => od.Id)
                 .ToPagedList(page.Value, pageSize.Value);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseWithPaging
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = new ResultWithPaging
-                {
-                    Data = products,
-                    PageCount = products.PageCount,
-                    PageNumber = products.PageNumber,
-                    TotalItems = products.TotalItemCount
-                }
+                Data = products,
+                PageCount = products.PageCount,
+                PageNumber = products.PageNumber,
+                TotalItems = products.TotalItemCount
             });
         }
 
@@ -57,13 +54,13 @@ namespace ShoppingAPI.Controllers
         {
             var product = await productServices.GetProductAsync(id);
             if (product != null)
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Data = product,
                     Success = true
                 });
-            return NotFound(new ResultApi
+            return NotFound(new ResponseApi
             {
                 Status = (int)HttpStatusCode.NotFound,
                 Success = false,
@@ -78,7 +75,7 @@ namespace ShoppingAPI.Controllers
             if (ModelState.IsValid)
             {
                 await productServices.InsertProduct(product);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -103,7 +100,7 @@ namespace ShoppingAPI.Controllers
 
                 await productServices.UpdateProduct(productDb);
 
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -119,7 +116,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> DeleteProduct(int id)
         {
             await productServices.DeleteProduct(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,

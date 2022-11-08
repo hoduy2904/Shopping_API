@@ -43,17 +43,14 @@ namespace ShoppingAPI.Controllers
                 .OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseWithPaging
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = new ResultWithPaging
-                {
-                    Data = users,
-                    PageCount = users.PageCount,
-                    PageNumber = users.PageNumber,
-                    TotalItems = users.TotalItemCount
-                }
+                Data = users,
+                PageCount = users.PageCount,
+                PageNumber = users.PageNumber,
+                TotalItems = users.TotalItemCount
             });
         }
 
@@ -70,14 +67,14 @@ namespace ShoppingAPI.Controllers
                 var user = await userServices.GetUserAsync(id.Value);
 
                 if (user != null)
-                    return Ok(new ResultApi
+                    return Ok(new ResponseApi
                     {
                         Status = (int)HttpStatusCode.OK,
                         Data = user,
                         Success = true
                     });
 
-                return NotFound(new ResultApi
+                return NotFound(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.NotFound,
                     Success = false,
@@ -117,7 +114,7 @@ namespace ShoppingAPI.Controllers
                 }
 
                 await userServices.InsertUser(user);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -149,7 +146,7 @@ namespace ShoppingAPI.Controllers
 
                     await userServices.UpdateUser(userDb);
 
-                    return Ok(new ResultApi
+                    return Ok(new ResponseApi
                     {
                         Status = (int)HttpStatusCode.OK,
                         Success = true,
@@ -171,7 +168,7 @@ namespace ShoppingAPI.Controllers
             if (id == this.UserId || Library.isAdmin(roleName))
             {
                 await userServices.DeleteUser(id);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,

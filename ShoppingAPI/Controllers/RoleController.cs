@@ -37,17 +37,14 @@ namespace ShoppingAPI.Controllers
                 .OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseWithPaging
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = new ResultWithPaging
-                {
-                    Data = roles,
-                    PageCount = roles.PageCount,
-                    PageNumber = roles.PageNumber,
-                    TotalItems = roles.TotalItemCount
-                }
+                Data = roles,
+                PageCount = roles.PageCount,
+                PageNumber = roles.PageNumber,
+                TotalItems = roles.TotalItemCount
             });
         }
 
@@ -58,14 +55,14 @@ namespace ShoppingAPI.Controllers
             var Role = await roleServices.GetRoleAsync(id);
 
             if (Role != null)
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Data = Role,
                     Success = true
                 });
 
-            return NotFound(new ResultApi
+            return NotFound(new ResponseApi
             {
                 Status = (int)HttpStatusCode.NotFound,
                 Success = false,
@@ -80,7 +77,7 @@ namespace ShoppingAPI.Controllers
             if (ModelState.IsValid)
             {
                 await roleServices.InsertRole(role);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -104,7 +101,7 @@ namespace ShoppingAPI.Controllers
 
                 await roleServices.UpdateRole(RoleDb);
 
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -120,7 +117,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> DeleteRole(int id)
         {
             await roleServices.DeleteRole(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,

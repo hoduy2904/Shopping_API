@@ -36,17 +36,14 @@ namespace ShoppingAPI.Controllers
                 .OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseWithPaging
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = new ResultWithPaging
-                {
-                    Data = productVariations,
-                    PageCount = productVariations.PageCount,
-                    PageNumber = productVariations.PageNumber,
-                    TotalItems = productVariations.TotalItemCount
-                }
+                Data = productVariations,
+                PageCount = productVariations.PageCount,
+                PageNumber = productVariations.PageNumber,
+                TotalItems = productVariations.TotalItemCount,
             });
         }
 
@@ -57,14 +54,14 @@ namespace ShoppingAPI.Controllers
             var productVariation = await productVariationServices.GetProductVariationAsync(id);
 
             if (productVariation != null)
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Data = productVariation,
                     Success = true
                 });
 
-            return NotFound(new ResultApi
+            return NotFound(new ResponseApi
             {
                 Status = (int)HttpStatusCode.NotFound,
                 Success = false,
@@ -77,7 +74,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> ProductVariationNumber(int ProductId, int ProductVariationId)
         {
             var res = await productVariationServices.getProductVariationNumber(ProductId, ProductVariationId);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Data = res,
@@ -92,7 +89,7 @@ namespace ShoppingAPI.Controllers
             if (ModelState.IsValid)
             {
                 await productVariationServices.InsertProductVariation(productVariation);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -120,7 +117,7 @@ namespace ShoppingAPI.Controllers
 
                 await productVariationServices.UpdateProductVariation(ProductVariationDb);
 
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -136,7 +133,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> DeleteProductVariation(int id)
         {
             await productVariationServices.DeleteProductVariation(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,

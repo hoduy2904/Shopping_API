@@ -53,7 +53,7 @@ namespace ShoppingAPI.Controllers
                 })
                 .AsEnumerable();
 
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = Ok().StatusCode,
                 Data = new
@@ -81,7 +81,7 @@ namespace ShoppingAPI.Controllers
                     cart.UserId = this.UserId;
                     await cartServices.InsertCartAsync(cart);
                     int total = cartServices.GetCarts(this.UserId).Count();
-                    return Ok(new ResultApi
+                    return Ok(new ResponseApi
                     {
                         Success = true,
                         Status = Ok().StatusCode,
@@ -95,7 +95,7 @@ namespace ShoppingAPI.Controllers
                 //If exists increase Number for cart item
                 cartDb.Number += cart.Number;
                 await cartServices.UpdateCartAsync(cartDb);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Message = new[] { "Add Success Product Exists in Cart" },
                     Status = Ok().StatusCode,
@@ -123,7 +123,7 @@ namespace ShoppingAPI.Controllers
                 {
                     cartDb.Number = cart.Number;
                     await cartServices.UpdateCartAsync(cartDb);
-                    return Ok(new ResultApi
+                    return Ok(new ResponseApi
                     {
                         Success = true,
                         Status = Ok().StatusCode,
@@ -136,7 +136,7 @@ namespace ShoppingAPI.Controllers
                     });
                 }
                 //if not exists then result not found
-                return NotFound(new ResultApi
+                return NotFound(new ResponseApi
                 {
                     Success = false,
                     Status = NotFound().StatusCode,
@@ -151,7 +151,7 @@ namespace ShoppingAPI.Controllers
         {
             //Delete cart from id and UserId
             await cartServices.DeleteCartAsync(id, UserId);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Message = new[] { "Delete Success" },
                 Status = Ok().StatusCode,

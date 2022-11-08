@@ -36,17 +36,14 @@ namespace ShoppingAPI.Controllers
                 .GetCategories().OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
 
-            return Ok(new ResultApi
+            return Ok(new ResponseWithPaging
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = new ResultWithPaging
-                {
-                    Data = categories,
-                    PageCount = categories.PageCount,
-                    PageNumber = categories.PageNumber,
-                    TotalItems = categories.TotalItemCount
-                }
+                Data = categories,
+                PageCount = categories.PageCount,
+                PageNumber = categories.PageNumber,
+                TotalItems = categories.TotalItemCount
             });
         }
 
@@ -58,7 +55,7 @@ namespace ShoppingAPI.Controllers
             //Check exists category from id
             //have result to category
             if (category != null)
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Data = category,
@@ -66,7 +63,7 @@ namespace ShoppingAPI.Controllers
                 });
 
             //if not exists return not found
-            return NotFound(new ResultApi
+            return NotFound(new ResponseApi
             {
                 Status = (int)HttpStatusCode.NotFound,
                 Success = false,
@@ -81,7 +78,7 @@ namespace ShoppingAPI.Controllers
             if (ModelState.IsValid)
             {
                 await categoryServices.InsertCategory(category);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -107,7 +104,7 @@ namespace ShoppingAPI.Controllers
 
                 await categoryServices.UpdateCategory(CategoryDb);
 
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -124,7 +121,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> DeleteCategory(int id)
         {
             await categoryServices.DeleteCategory(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
