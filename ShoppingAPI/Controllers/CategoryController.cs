@@ -16,6 +16,7 @@ namespace ShoppingAPI.Controllers
     [Authorize(Roles = "Admin,SuperAdmin")]
     public class CategoryController : ControllerBase
     {
+        private string folderRoot = Directory.GetCurrentDirectory() + "\\wwwroot";
         private readonly ICategoryServices categoryServices;
         public CategoryController(ICategoryServices categoryServices)
         {
@@ -35,6 +36,11 @@ namespace ShoppingAPI.Controllers
             var categories = await categoryServices
                 .GetCategories().OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
+
+            foreach (var item in categories)
+            {
+                item.Image = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + item.Image;
+            }
 
             return Ok(new ResponseWithPaging
             {
@@ -73,10 +79,16 @@ namespace ShoppingAPI.Controllers
 
         //Insert category
         [HttpPost]
-        public async Task<IActionResult> Category(Category category)
+        public async Task<IActionResult> Category([FromForm] Category category, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    string PathImage = await SaveImage(imageFile);
+                    category.Image = PathImage;
+                }
+
                 await categoryServices.InsertCategory(category);
                 return Ok(new ResponseApi
                 {
@@ -90,15 +102,33 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
+        private async Task<string> SaveImage(IFormFile image)
+        {
+            string extensionFile = Path.GetExtension(image.FileName);
+            string newFileImage = $"{Guid.NewGuid()}{extensionFile}";
+            string PathImage = SaveFileConfig.Image + newFileImage;
+            string fullPath = Path.Combine(folderRoot + SaveFileConfig.Image, newFileImage);
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            return PathImage;
+        }
+
         //Update category
         [HttpPut("Category")]
-        public async Task<IActionResult> PutCategory(Category category)
+        public async Task<IActionResult> PutCategory([FromForm] Category category, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
                 var CategoryDb = await categoryServices.GetCategoryAsync(category.Id);
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    string PathImage = await SaveImage(imageFile);
 
-                CategoryDb.Image = category.Image;
+                    CategoryDb.Image = PathImage;
+                }
                 CategoryDb.Name = category.Name;
                 CategoryDb.CategoryId = category.CategoryId;
 

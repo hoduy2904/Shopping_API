@@ -19,6 +19,8 @@ namespace ShoppingAPI.Controllers
     public class ProductImageController : ControllerBase
     {
         private readonly IProductImageServices productImageServices;
+        private string folderRoot = Directory.GetCurrentDirectory() + "\\wwwroot";
+
         public ProductImageController(IProductImageServices productImageServices)
         {
             this.productImageServices = productImageServices;
@@ -84,16 +86,30 @@ namespace ShoppingAPI.Controllers
 
         //Insert ProductImage
         [HttpPost]
-        public async Task<IActionResult> ProductImage(ProductImage productImage)
+        public async Task<IActionResult> ProductImages([FromForm]ProductImage productImage, List<IFormFile> images)
         {
             if (ModelState.IsValid)
             {
-                await productImageServices.InsertProductImage(productImage);
+                var productImages = new List<ProductImage>();
+                if (images.Count > 0)
+                {
+                    foreach (var image in images)
+                    {
+                        string PathImage = await SaveImage(image);
+                        productImages.Add(new ProductImage
+                        {
+                            Image = PathImage,
+                            ProductId = productImage.ProductId,
+                            ProductVariationId = productImage.ProductVariationId
+                        });
+                    }
+                }
+                await productImageServices.InsertProductImages(productImages);
                 return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
-                    Message = new[] { "Add Success" },
+                    Message = new[] { $"Add Success {productImages.Count} items" },
                     Data = productImage
                 });
 
@@ -103,14 +119,16 @@ namespace ShoppingAPI.Controllers
 
         //update productImage
         [HttpPut("ProductImage")]
-        public async Task<IActionResult> PutProductImage(ProductImage productImage)
+        public async Task<IActionResult> PutProductImage([FromForm]ProductImage productImage, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
                 var ProductImageDb = await productImageServices.GetProductImageAsync(productImage.Id);
-
-                ProductImageDb.Image = productImage.Image;
-
+                if (imageFile!=null && imageFile.Length > 0)
+                {
+                    string PathImage = await SaveImage(imageFile);
+                    ProductImageDb.Image = PathImage;
+                }
                 await productImageServices.UpdateProductImage(ProductImageDb);
 
                 return Ok(new ResponseApi
@@ -135,6 +153,19 @@ namespace ShoppingAPI.Controllers
                 Success = true,
                 Message = new[] { "Delete Success" }
             });
+        }
+
+        private async Task<string> SaveImage(IFormFile image)
+        {
+            string extensionFile = Path.GetExtension(image.FileName);
+            string PathImage = SaveFileConfig.Image + $"{image.Name}-{DateTime.Now.ToBinary()}{extensionFile}";
+            string fullPath = Path.Combine(folderRoot, PathImage);
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            return PathImage;
         }
     }
 }

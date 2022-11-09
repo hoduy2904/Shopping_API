@@ -13,6 +13,7 @@ namespace ShoppingAPI.Services.Interfaces
         Task<ProductImage> GetProductImageAsync(int id);
         IQueryable<ProductImage> GetProductImages();
         Task InsertProductImage(ProductImage productImage);
+        Task InsertProductImages(IEnumerable<ProductImage> productImages);
         Task UpdateProductImage(ProductImage productImage);
         Task DeleteProductImage(int id);
         IQueryable<ProductImage> Where(Expression<Func<ProductImage, bool>> expression);

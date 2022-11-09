@@ -22,8 +22,10 @@ namespace ShoppingAPI
         }
         public void ConfigureServices(IServiceCollection Services, IConfiguration Configuration)
         {
+            //Start config file
             JwtSettingsConfig.ConfigurationJwtSettings(Configuration);
             PagingSettingsConfig.ConfigurationPagingSettings(Configuration);
+            SaveFileConfig.ConfigurationSaveFileSettings(Configuration);
 
             Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

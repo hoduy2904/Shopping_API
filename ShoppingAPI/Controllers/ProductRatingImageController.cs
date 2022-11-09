@@ -15,7 +15,7 @@ namespace ShoppingAPI.Controllers
     public class ProductRatingImageController : ControllerBase
     {
         private readonly string PathDirectory = Directory.GetCurrentDirectory();
-        private readonly string PathImageDirectory = "\\wwwroot\\Images\\";
+        private string folderRoot = Directory.GetCurrentDirectory() + "\\wwwroot";
         private readonly IProductRatingImageServices productRatingImageServices;
         public ProductRatingImageController(IProductRatingImageServices productRatingImageServices)
         {
@@ -123,8 +123,8 @@ namespace ShoppingAPI.Controllers
         {
             string extendsion = Path.GetExtension(image.FileName);
             var fileName = $"{Guid.NewGuid().ToString()}-{ProductRatingId}{extendsion}";
-            string uploadPath = PathImageDirectory + fileName;
-            string PathImage = Path.Combine(PathDirectory + PathImageDirectory, fileName);
+            string uploadPath = SaveFileConfig.Image + fileName;
+            string PathImage = Path.Combine(PathDirectory, fileName);
             using (var stream = new FileStream(PathImage, FileMode.Create))
             {
                 await image.CopyToAsync(stream);
