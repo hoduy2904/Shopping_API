@@ -37,11 +37,6 @@ namespace ShoppingAPI.Controllers
                 .GetCategories().OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
 
-            foreach (var item in categories)
-            {
-                item.Image = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + item.Image;
-            }
-
             return Ok(new ResponseWithPaging
             {
                 Status = (int)HttpStatusCode.OK,

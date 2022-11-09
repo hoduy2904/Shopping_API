@@ -54,7 +54,7 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> ProductImage(int id)
         {
             var productImage = await productImageServices.GetProductImageAsync(id);
-
+            productImage.Image = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + productImage.Image;
             if (productImage != null)
                 return Ok(new ResponseApi
                 {
@@ -158,8 +158,9 @@ namespace ShoppingAPI.Controllers
         private async Task<string> SaveImage(IFormFile image)
         {
             string extensionFile = Path.GetExtension(image.FileName);
-            string PathImage = SaveFileConfig.Image + $"{image.Name}-{DateTime.Now.ToBinary()}{extensionFile}";
-            string fullPath = Path.Combine(folderRoot, PathImage);
+            string newFileImage = $"{Guid.NewGuid()}{extensionFile}";
+            string PathImage = SaveFileConfig.Image + newFileImage;
+            string fullPath = Path.Combine(folderRoot + SaveFileConfig.Image, newFileImage);
             using (var stream = new FileStream(fullPath, FileMode.Create))
             {
                 await image.CopyToAsync(stream);
