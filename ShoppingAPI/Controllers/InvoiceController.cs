@@ -32,6 +32,19 @@ namespace ShoppingAPI.Controllers
         public async Task<IActionResult> Invoice(int id)
         {
             var invoice = await invoiceServices.GetInvoiceAsync(id);
+
+            if (invoice.UserId != this.UserId)
+                return Unauthorized();
+
+            //Check if has invoice for id
+            if (invoice == null)
+                return NotFound(new ResponseApi
+                {
+                    Message = new[] { $"Not found Invoice for id: {id}" },
+                    Status = NotFound().StatusCode,
+                    Success = false
+                });
+
             //Check if invoice for User or Admin
             if (invoice.UserId == UserId || Library.isAdmin(roleName))
                 return Ok(new ResponseApi
@@ -44,18 +57,21 @@ namespace ShoppingAPI.Controllers
         }
 
         //Get list Invoices from UserId
-        [HttpGet("{UserId}")]
-        public async Task<IActionResult> Invoices(int UserId, int? page, int? pageSize)
+        [HttpGet("[Action]")]
+        public async Task<IActionResult> Invoices(int? UserId, int? page, int? pageSize)
         {
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
             if (pageSize == null)
                 pageSize = PagingSettingsConfig.pageSize;
 
+            if (UserId == null)
+                UserId = this.UserId;
+
             //Check if is User or Admin get
             if (this.UserId == UserId || Library.isAdmin(roleName))
             {
-                var invoices = await invoiceServices.GetInvoicesByUserId(UserId)
+                var invoices = await invoiceServices.GetInvoicesByUserId(UserId.Value)
                     .OrderByDescending(x => x.Id)
                     .ToPagedList(page.Value, pageSize.Value);
 

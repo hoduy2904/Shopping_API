@@ -31,8 +31,10 @@ namespace ShoppingAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> ShoppingDeliveryAddresses(int? UserId, int? page, int? pageSize)
         {
-            if (Library.isAdmin(roleName))
-                this.UserId = UserId ?? this.UserId;
+            if (UserId == null)
+                UserId = this.UserId;
+            else if (!Library.isAdmin(roleName) && UserId != this.UserId)
+                return Unauthorized();
 
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
@@ -66,22 +68,22 @@ namespace ShoppingAPI.Controllers
             if (shoppingDeliveryAddress != null)
             {
                 //check if admin or user for Address user
-                if (Library.isAdmin(roleName) || UserId.Equals(shoppingDeliveryAddress.UserId.ToString()))
+                if (Library.isAdmin(roleName) || this.UserId == shoppingDeliveryAddress.UserId)
                     return Ok(new ResponseApi
                     {
                         Status = (int)HttpStatusCode.OK,
                         Data = shoppingDeliveryAddress,
                         Success = true
                     });
+                return Unauthorized();
 
-                return NotFound(new ResponseApi
-                {
-                    Status = (int)HttpStatusCode.NotFound,
-                    Success = false,
-                    Message = new[] { "Not found shoppingDeliveryAddress User" }
-                });
             }
-            return Unauthorized();
+            return NotFound(new ResponseApi
+            {
+                Status = (int)HttpStatusCode.NotFound,
+                Success = false,
+                Message = new[] { "Not found shoppingDeliveryAddress User" }
+            });
         }
 
         //Insert ShoppingDelivery Address by User
@@ -90,7 +92,11 @@ namespace ShoppingAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                shoppingDelivery.UserId = this.UserId;
+                if (Library.isAdmin(roleName))
+                {
+                    shoppingDelivery.UserId = this.UserId;
+                }
+
                 await shoppingDeliveryAddressServices.InsertShoppingDeliveryAddress(shoppingDelivery);
                 return Ok(new ResponseApi
                 {
@@ -110,7 +116,7 @@ namespace ShoppingAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (this.UserId == shoppingDelivery.UserId)
+                if (this.UserId == shoppingDelivery.UserId || Library.isAdmin(roleName))
                 {
                     var shoppingDeliveryAddressDb = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(shoppingDelivery.Id);
 
@@ -138,7 +144,7 @@ namespace ShoppingAPI.Controllers
         {
             var shoppingbyUser = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(id);
             //check if true user
-            if (shoppingbyUser.UserId == this.UserId)
+            if (shoppingbyUser.UserId == this.UserId || Library.isAdmin(roleName))
             {
                 await shoppingDeliveryAddressServices.DeleteShoppingDeliveryAddress(id);
                 return Ok(new ResponseApi

@@ -25,12 +25,12 @@ namespace ShoppingAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> InvoiceDetail(int id)
         {
-            var invoiceDetail = await invoiceDetailsServices.GetInvoiceDetailsAsync(id);
+            var invoiceDetailDb = await invoiceDetailsServices.GetInvoiceDetailsAsync(id);
             return Ok(new ResponseApi
             {
 
                 Status = Ok().StatusCode,
-                Data = invoiceDetail,
+                Data = invoiceDetailDb,
                 Success = true
             });
         }
