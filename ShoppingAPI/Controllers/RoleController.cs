@@ -25,8 +25,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Get all roles
-        [HttpGet, AllowAnonymous]
-        public async Task<IActionResult> Roles(int? page, int? pageSize)
+        [HttpGet("[Action]"), AllowAnonymous]
+        public async Task<IActionResult> getRoles(int? page, int? pageSize)
         {
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
@@ -49,8 +49,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Get Role from RoleId
-        [HttpGet("{id}"), AllowAnonymous]
-        public async Task<IActionResult> Role(int id)
+        [HttpGet("[Action]/{id}"), AllowAnonymous]
+        public async Task<IActionResult> getRole(int id)
         {
             var Role = await roleServices.GetRoleAsync(id);
 
@@ -71,8 +71,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Insert Role
-        [HttpPost]
-        public async Task<IActionResult> Role(Role role)
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertRole(Role role)
         {
             if (ModelState.IsValid)
             {
@@ -90,8 +90,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Update Role
-        [HttpPut("Role")]
-        public async Task<IActionResult> PutRole(Role role)
+        [HttpPut("[Action]")]
+        public async Task<IActionResult> editRole(Role role)
         {
             if (ModelState.IsValid)
             {
@@ -113,8 +113,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Delete Role from RoleId
-        [HttpDelete("Role")]
-        public async Task<IActionResult> DeleteRole(int id)
+        [HttpDelete("[Action]")]
+        public async Task<IActionResult> deleteRole(int id)
         {
             await roleServices.DeleteRole(id);
             return Ok(new ResponseApi

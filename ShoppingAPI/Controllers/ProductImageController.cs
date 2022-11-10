@@ -27,8 +27,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Get productImages with paging
-        [HttpGet, AllowAnonymous]
-        public async Task<IActionResult> ProductImages(int? page, int? pageSize)
+        [HttpGet("[Action]"), AllowAnonymous]
+        public async Task<IActionResult> getProductImages(int? page, int? pageSize)
         {
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
@@ -50,8 +50,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Get productImage from ProductImageId
-        [HttpGet("{id}"), AllowAnonymous]
-        public async Task<IActionResult> ProductImage(int id)
+        [HttpGet("[Action]/{id}"), AllowAnonymous]
+        public async Task<IActionResult> getProductImage(int id)
         {
             var productImage = await productImageServices.GetProductImageAsync(id);
             productImage.Image = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + productImage.Image;
@@ -71,7 +71,7 @@ namespace ShoppingAPI.Controllers
             });
         }
         //Get ProducImage from productId
-        [HttpGet("{ProductId}")]
+        [HttpGet("[Action]/{ProductId}")]
         public IActionResult ProductImageByProductId(int ProductId)
         {
             var productImage = productImageServices.Where(x => x.ProductId == ProductId && x.IsTrash == false).AsEnumerable();
@@ -85,8 +85,8 @@ namespace ShoppingAPI.Controllers
 
 
         //Insert ProductImage
-        [HttpPost]
-        public async Task<IActionResult> ProductImages([FromForm]ProductImage productImage, List<IFormFile> images)
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertProductImages([FromForm]ProductImage productImage, List<IFormFile> images)
         {
             if (ModelState.IsValid)
             {
@@ -118,8 +118,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //update productImage
-        [HttpPut("ProductImage")]
-        public async Task<IActionResult> PutProductImage([FromForm]ProductImage productImage, IFormFile? imageFile)
+        [HttpPut("[Action]")]
+        public async Task<IActionResult> editProductImage([FromForm]ProductImage productImage, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
@@ -143,8 +143,8 @@ namespace ShoppingAPI.Controllers
         }
         //Delete productImage from productImageId
 
-        [HttpDelete("ProductImage")]
-        public async Task<IActionResult> DeleteProductImage(int id)
+        [HttpDelete("[Action]")]
+        public async Task<IActionResult> deleteProductImage(int id)
         {
             await productImageServices.DeleteProductImage(id);
             return Ok(new ResponseApi

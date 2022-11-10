@@ -22,8 +22,8 @@ namespace ShoppingAPI.Controllers
             this.UserId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> InvoiceDetail(int id)
+        [HttpGet("[Action]/{id}")]
+        public async Task<IActionResult> getInvoiceDetail(int id)
         {
             var invoiceDetailDb = await invoiceDetailsServices.GetInvoiceDetailsAsync(id);
             return Ok(new ResponseApi
@@ -35,8 +35,8 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpGet("{InvoiceId}")]
-        public async Task<IActionResult> InvoiceDetails(int InvoiceId, int? page, int? pageSize)
+        [HttpGet("[Action]/{InvoiceId}")]
+        public async Task<IActionResult> getInvoiceDetails(int InvoiceId, int? page, int? pageSize)
         {
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
@@ -59,8 +59,8 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> InvoiceDetails(InvoicesDetails invoicesDetails)
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertInvoiceDetails(InvoicesDetails invoicesDetails)
         {
             await invoiceDetailsServices.InsertInvoiceDetailsAsync(invoicesDetails);
             return Ok(new ResponseApi
@@ -72,8 +72,8 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> InvoiceDetailsRange(IEnumerable<InvoicesDetails> invoicesDetails)
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertInvoiceDetailsRange(IEnumerable<InvoicesDetails> invoicesDetails)
         {
             await invoiceDetailsServices.InsertInvoiceDetailRangesAsync(invoicesDetails);
             return Ok(new ResponseApi
@@ -85,8 +85,8 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpPut("InvoiceDetails")]
-        public async Task<IActionResult> PutInvoiceDetails(InvoicesDetails invoicesDetails)
+        [HttpPut("[Action]")]
+        public async Task<IActionResult> editInvoiceDetails(InvoicesDetails invoicesDetails)
         {
             await invoiceDetailsServices.UpdateInvoiceDetailsAsync(invoicesDetails);
             return Ok(new ResponseApi
@@ -98,8 +98,8 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpDelete("InvoiceDetails")]
-        public async Task<IActionResult> DeleteInvoiceDetails(int id)
+        [HttpDelete("[Action]")]
+        public async Task<IActionResult> deleteInvoiceDetails(int id)
         {
             await invoiceDetailsServices.DeleteInvoiceDetailsAsync(id);
             return Ok(new ResponseApi

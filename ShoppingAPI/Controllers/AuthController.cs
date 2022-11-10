@@ -89,7 +89,7 @@ namespace ShoppingAPI.Controllers
         }
 
         //Logout
-        [HttpGet]
+        [HttpGet("[Action]")]
         public async Task<IActionResult> Logout()
         {
             //Get accessToken

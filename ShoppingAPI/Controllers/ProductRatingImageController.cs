@@ -22,8 +22,8 @@ namespace ShoppingAPI.Controllers
             this.productRatingImageServices = productRatingImageServices;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> ProductRatingImage(int id)
+        [HttpGet("[Action]/{id}")]
+        public async Task<IActionResult> getProductRatingImage(int id)
         {
             var productRatingImage = await productRatingImageServices.GetProductRatingImageAsync(id);
             return Ok(new ResponseApi
@@ -33,8 +33,8 @@ namespace ShoppingAPI.Controllers
                 Success = true
             });
         }
-        [HttpGet("{ProductRatingId}")]
-        public async Task<IActionResult> ProductRatingImages(int ProductRatingId, int? page, int? pageSize)
+        [HttpGet("[Action]/{ProductRatingId}")]
+        public async Task<IActionResult> getProductRatingImagesByPrId(int ProductRatingId, int? page, int? pageSize)
         {
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
@@ -57,7 +57,7 @@ namespace ShoppingAPI.Controllers
         }
         [HttpPost("[Action]")]
         [Authorize]
-        public async Task<IActionResult> ProductRatingImages(int ProductRatingId, List<IFormFile> images)
+        public async Task<IActionResult> insertProductRatingImages(int ProductRatingId, List<IFormFile> images)
         {
             var ProductRatingImages = new List<ProductRatingImage>();
             foreach (var image in images)
@@ -82,7 +82,7 @@ namespace ShoppingAPI.Controllers
 
         [HttpPut("[Action]")]
         [Authorize]
-        public async Task<IActionResult> PutProductRatingImages(List<ProductRatingImageRequest> productRatingImageRequests)
+        public async Task<IActionResult> editProductRatingImages(List<ProductRatingImageRequest> productRatingImageRequests)
         {
             var ProductRatingImages = new List<ProductRatingImage>();
             foreach (var productRatingImage in productRatingImageRequests)
@@ -106,9 +106,9 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpDelete]
+        [HttpDelete("[Action]")]
         [Authorize]
-        public async Task<IActionResult> DeleteProductRatingImages(int id)
+        public async Task<IActionResult> deleteProductRatingImages(int id)
         {
             await productRatingImageServices.DeleteProductRatingImageAsync(id);
             return Ok(new ResponseApi

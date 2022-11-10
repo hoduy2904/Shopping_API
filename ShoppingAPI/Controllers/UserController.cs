@@ -30,9 +30,9 @@ namespace ShoppingAPI.Controllers
             this.roleName = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value;
         }
 
-        [HttpGet]
+        [HttpGet("[Action]")]
         [Authorize(Roles = "Admin,SuperAdmin")]
-        public async Task<IActionResult> Users(int? page, int? pageSize)
+        public async Task<IActionResult> getUsers(int? page, int? pageSize)
         {
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
@@ -54,8 +54,8 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> User(int? id)
+        [HttpGet("[Action]")]
+        public async Task<IActionResult> getUser(int? id)
         {
             string roles = HttpContext.User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
             var UserId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
@@ -87,8 +87,8 @@ namespace ShoppingAPI.Controllers
 
         //Insert User
         [Authorize(Roles = "Admin,SuperAdmin")]
-        [HttpPost]
-        public async Task<IActionResult> User(User user, string? roleName)
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertUser(User user, string? roleName)
         {
             //Check if roleName null then assign by User
             if (string.IsNullOrEmpty(roleName))
@@ -127,8 +127,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Edit User
-        [HttpPut("User")]
-        public async Task<IActionResult> PutUser(User user)
+        [HttpPut("[Action]")]
+        public async Task<IActionResult> editUser(User user)
         {
             if (ModelState.IsValid)
             {
@@ -161,8 +161,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Delete User
-        [HttpDelete("User")]
-        public async Task<IActionResult> DeleteUser(int id)
+        [HttpDelete("[Action]")]
+        public async Task<IActionResult> deleteUser(int id)
         {
             //Check is User or Admin
             if (id == this.UserId || Library.isAdmin(roleName))

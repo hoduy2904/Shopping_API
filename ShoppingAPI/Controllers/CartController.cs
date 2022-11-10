@@ -27,8 +27,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Get list cart from UserId
-        [HttpGet]
-        public IActionResult Carts(int? UserId)
+        [HttpGet("[Action]")]
+        public IActionResult getCarts(int? UserId)
         {
             //Check if Admin
             if (Library.isAdmin(roleName) || UserId == null)
@@ -67,8 +67,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Insert cart
-        [HttpPost]
-        public async Task<IActionResult> Cart(Cart cart)
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertCart(Cart cart)
         {
             if (ModelState.IsValid)
             {
@@ -111,8 +111,8 @@ namespace ShoppingAPI.Controllers
         }
 
 
-        [HttpPut("Cart")]
-        public async Task<IActionResult> EditCart(Cart cart, int ProductVariationId)
+        [HttpPut("[Action]")]
+        public async Task<IActionResult> editCart(Cart cart, int ProductVariationId)
         {
             if (ModelState.IsValid)
             {
@@ -146,8 +146,8 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Cart(int id)
+        [HttpDelete("[Action]")]
+        public async Task<IActionResult> deleteCart(int id)
         {
             //Delete cart from id and UserId
             await cartServices.DeleteCartAsync(id, UserId);

@@ -28,8 +28,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Get invoice from InvoiceId
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Invoice(int id)
+        [HttpGet("[Action]/{id}")]
+        public async Task<IActionResult> getInvoice(int id)
         {
             var invoice = await invoiceServices.GetInvoiceAsync(id);
 
@@ -58,7 +58,7 @@ namespace ShoppingAPI.Controllers
 
         //Get list Invoices from UserId
         [HttpGet("[Action]")]
-        public async Task<IActionResult> Invoices(int? UserId, int? page, int? pageSize)
+        public async Task<IActionResult> getInvoices(int? UserId, int? page, int? pageSize)
         {
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
@@ -91,8 +91,8 @@ namespace ShoppingAPI.Controllers
 
         //Insert Invoice
 
-        [HttpPost("Invoice")]
-        public async Task<IActionResult> Invoice(Invoice invoice)
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertInvoice(Invoice invoice)
         {
             //isIs User Post for User Invoice
             if (invoice.UserId == this.UserId)
@@ -110,8 +110,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Update Invoice
-        [HttpPut("Invoice")]
-        public async Task<IActionResult> PutInvoice(Invoice invoice)
+        [HttpPut("[Action]")]
+        public async Task<IActionResult> editInvoice(Invoice invoice)
         {
             //isIs User Update for User Invoice
             if (invoice.UserId == this.UserId)
@@ -129,8 +129,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Delete Invoice 
-        [HttpDelete("Invoice")]
-        public async Task<IActionResult> DeleteInvoice(int id)
+        [HttpDelete("[Action]")]
+        public async Task<IActionResult> deleteInvoice(int id)
         {
             var invoice = await invoiceServices.GetInvoiceAsync(id);
             //Check is User delete for User invoice

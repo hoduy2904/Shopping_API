@@ -25,8 +25,8 @@ namespace ShoppingAPI.Controllers
 
         //Get all Categories with Paging
         [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> Categories(int? page, int? pageSize)
+        [HttpGet("[Action]")]
+        public async Task<IActionResult> getCategories(int? page, int? pageSize)
         {
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
@@ -49,8 +49,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Get single category
-        [HttpGet("{id}"), AllowAnonymous]
-        public async Task<IActionResult> Category(int id)
+        [HttpGet("[Action]/{id}"), AllowAnonymous]
+        public async Task<IActionResult> getCategory(int id)
         {
             var category = await categoryServices.GetCategoryAsync(id);
             //Check exists category from id
@@ -73,8 +73,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Insert category
-        [HttpPost]
-        public async Task<IActionResult> Category([FromForm] Category category, IFormFile? imageFile)
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertCategory([FromForm] Category category, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
@@ -112,8 +112,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Update category
-        [HttpPut("Category")]
-        public async Task<IActionResult> PutCategory([FromForm] Category category, IFormFile? imageFile)
+        [HttpPut("[Action]")]
+        public async Task<IActionResult> editCategory([FromForm] Category category, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
@@ -142,8 +142,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Delete Category from Id
-        [HttpDelete("Category")]
-        public async Task<IActionResult> DeleteCategory(int id)
+        [HttpDelete("[Action]")]
+        public async Task<IActionResult> deleteCategory(int id)
         {
             await categoryServices.DeleteCategory(id);
             return Ok(new ResponseApi

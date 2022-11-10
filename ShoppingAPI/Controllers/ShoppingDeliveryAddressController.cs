@@ -28,8 +28,8 @@ namespace ShoppingAPI.Controllers
             this.roleName = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ShoppingDeliveryAddresses(int? UserId, int? page, int? pageSize)
+        [HttpGet("[Action]")]
+        public async Task<IActionResult> getShoppingDeliveryAddresses(int? UserId, int? page, int? pageSize)
         {
             if (UserId == null)
                 UserId = this.UserId;
@@ -59,8 +59,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Get ShoppingDeliveryAddress from Id
-        [HttpGet("{id}")]
-        public async Task<IActionResult> ShoppingDeliveryAddress(int id)
+        [HttpGet("[Action]/{id}")]
+        public async Task<IActionResult> getShoppingDeliveryAddress(int id)
         {
             var shoppingDeliveryAddress = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(id);
 
@@ -87,8 +87,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Insert ShoppingDelivery Address by User
-        [HttpPost]
-        public async Task<IActionResult> shoppingDeliveryAddress(ShoppingDeliveryAddress shoppingDelivery)
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertShoppingDeliveryAddress(ShoppingDeliveryAddress shoppingDelivery)
         {
             if (ModelState.IsValid)
             {
@@ -111,8 +111,8 @@ namespace ShoppingAPI.Controllers
         }
         //Update Shopping DeliveryAddress by User
 
-        [HttpPut("ShoppingDeliveryAddress")]
-        public async Task<IActionResult> PutInfomationUser(ShoppingDeliveryAddress shoppingDelivery)
+        [HttpPut("[Action]")]
+        public async Task<IActionResult> editInfomationUser(ShoppingDeliveryAddress shoppingDelivery)
         {
             if (ModelState.IsValid)
             {
@@ -139,8 +139,8 @@ namespace ShoppingAPI.Controllers
 
         //Delete deleteShoppingDeliveryAddress
 
-        [HttpDelete("ShoppingDeliveryAddress")]
-        public async Task<IActionResult> DeleteShoppingDeliveryAddress(int id)
+        [HttpDelete("[Action]")]
+        public async Task<IActionResult> deleteShoppingDeliveryAddress(int id)
         {
             var shoppingbyUser = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(id);
             //check if true user

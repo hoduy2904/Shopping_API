@@ -23,8 +23,8 @@ namespace ShoppingAPI.Controllers
             this.productRatingServices = productRatingServices;
             this.UserId = ClaimUserId == null ? -1 : int.Parse(ClaimUserId.Value);
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> ProductRating(int id)
+        [HttpGet("[Action]/{id}")]
+        public async Task<IActionResult> getProductRating(int id)
         {
             var productRating = await productRatingServices.GetProductRatingAsync(id);
             return Ok(new ResponseApi
@@ -35,8 +35,8 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ProductRatings(int? page, int? pageSize)
+        [HttpGet("[Action]")]
+        public async Task<IActionResult> getProductRatings(int? page, int? pageSize)
         {
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
@@ -59,8 +59,8 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpGet("{ProductId}")]
-        public async Task<IActionResult> ProductRatings(int ProductId, int? page, int? pageSize)
+        [HttpGet("[Action]/{ProductId}")]
+        public async Task<IActionResult> getProductRatingsByPid(int ProductId, int? page, int? pageSize)
         {
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
@@ -83,9 +83,9 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpGet("{UserId}/{ProductId}/{ProductVariationId}")]
+        [HttpGet("[Action]/{UserId}/{ProductId}/{ProductVariationId}")]
         [Authorize]
-        public async Task<IActionResult> ProductRatings(int UserId, int ProductId, int ProductVariationid, int? page, int? pageSize)
+        public async Task<IActionResult> getProductRatingsByUidPidPvId(int UserId, int ProductId, int ProductVariationid, int? page, int? pageSize)
         {
             if (this.UserId == UserId)
             {
@@ -112,8 +112,8 @@ namespace ShoppingAPI.Controllers
             return Unauthorized();
         }
 
-        [HttpGet("{ProductId}/{ProductVariationId}")]
-        public async Task<IActionResult> ProductRatings(int ProductId, int ProductVariationid, int? page, int? pageSize)
+        [HttpGet("[Action]/{ProductId}/{ProductVariationId}")]
+        public async Task<IActionResult> getProductRatingsByPidPvId(int ProductId, int ProductVariationid, int? page, int? pageSize)
         {
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
@@ -136,9 +136,9 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpPost]
+        [HttpPost("[Action]")]
         [Authorize]
-        public async Task<IActionResult> ProductRating(ProductRating productRating)
+        public async Task<IActionResult> insertProductRating(ProductRating productRating)
         {
             if (ModelState.IsValid)
             {
@@ -157,7 +157,7 @@ namespace ShoppingAPI.Controllers
 
         [HttpPut("[Action]")]
         [Authorize]
-        public async Task<IActionResult> PutProductRating(ProductRating productRating)
+        public async Task<IActionResult> editProductRating(ProductRating productRating)
         {
             if (ModelState.IsValid)
             {
@@ -199,7 +199,7 @@ namespace ShoppingAPI.Controllers
 
         [HttpDelete("[Action]")]
         [Authorize]
-        public async Task<IActionResult> DeleteProductRating(int id)
+        public async Task<IActionResult> deleteProductRating(int id)
         {
             var productRating = await productRatingServices.GetProductRatingAsync(id);
             //Check is User of ProductRating

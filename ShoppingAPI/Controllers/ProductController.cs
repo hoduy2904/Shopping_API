@@ -25,8 +25,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Get all products with paging
-        [HttpGet, AllowAnonymous]
-        public async Task<IActionResult> Products(int? page, int? pageSize)
+        [HttpGet("[Action]"), AllowAnonymous]
+        public async Task<IActionResult> getProducts(int? page, int? pageSize)
         {
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
@@ -49,8 +49,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Get product
-        [HttpGet("{id}"), AllowAnonymous]
-        public async Task<IActionResult> Product(int id)
+        [HttpGet("[Action]/{id}"), AllowAnonymous]
+        public async Task<IActionResult> getProduct(int id)
         {
             var product = await productServices.GetProductAsync(id);
             if (product != null)
@@ -69,8 +69,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Insert Product
-        [HttpPost]
-        public async Task<IActionResult> Product(Product product)
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertProduct(Product product)
         {
             if (ModelState.IsValid)
             {
@@ -88,8 +88,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Update product
-        [HttpPut("Product")]
-        public async Task<IActionResult> PutProduct(Product product)
+        [HttpPut("[Action]")]
+        public async Task<IActionResult> editProduct(Product product)
         {
             if (ModelState.IsValid)
             {
@@ -112,8 +112,8 @@ namespace ShoppingAPI.Controllers
         }
 
         //Delete product from ProductId
-        [HttpDelete("Product")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        [HttpDelete("[Action]")]
+        public async Task<IActionResult> deleteProduct(int id)
         {
             await productServices.DeleteProduct(id);
             return Ok(new ResponseApi

@@ -77,8 +77,9 @@ namespace ShoppingAPI.Services.Services
                 Data = new
                 {
                     accessToken,
-                    acessToken_type="Bearer",
-                    accessToken_time=getInfomationToken.ValidTo,
+                    refreshToken,
+                    acessToken_type = "Bearer",
+                    accessToken_time = getInfomationToken.ValidTo,
                 }
             };
         }
