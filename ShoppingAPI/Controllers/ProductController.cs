@@ -33,9 +33,10 @@ namespace ShoppingAPI.Controllers
             if (pageSize == null)
                 pageSize = PagingSettingsConfig.pageSize;
 
-            var products = await productServices.GetProducts()
-                .OrderByDescending(od => od.Id)
-                .ToPagedList(page.Value, pageSize.Value);
+            var products = await productServices
+                                .GetProducts()
+                                .OrderByDescending(od => od.Id)
+                                .ToPagedList(page.Value, pageSize.Value);
 
             return Ok(new ResponseWithPaging
             {

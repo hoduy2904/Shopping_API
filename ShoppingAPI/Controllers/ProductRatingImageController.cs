@@ -45,6 +45,7 @@ namespace ShoppingAPI.Controllers
                 .GetProductRatingImagesByRatingId(ProductRatingId)
                 .OrderByDescending(x => x.Id)
                 .ToPagedList(page.Value, pageSize.Value);
+
             return Ok(new ResponseWithPaging
             {
                 Data = productRatingImages,

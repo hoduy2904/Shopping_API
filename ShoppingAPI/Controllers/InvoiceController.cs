@@ -18,13 +18,15 @@ namespace ShoppingAPI.Controllers
     public class InvoiceController : ControllerBase
     {
         private readonly IInvoiceServices invoiceServices;
+        private readonly IShoppingDeliveryAddressServices shoppingDeliveryAddressServices;
         private int UserId = -1;
         private string roleName = "Guest";
-        public InvoiceController(IInvoiceServices invoiceServices, IHttpContextAccessor httpContextAccessor)
+        public InvoiceController(IInvoiceServices invoiceServices, IHttpContextAccessor httpContextAccessor, IShoppingDeliveryAddressServices shoppingDeliveryAddressServices)
         {
             this.invoiceServices = invoiceServices;
             this.UserId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             this.roleName = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value;
+            this.shoppingDeliveryAddressServices = shoppingDeliveryAddressServices;
         }
 
         //Get invoice from InvoiceId
@@ -71,7 +73,8 @@ namespace ShoppingAPI.Controllers
             //Check if is User or Admin get
             if (this.UserId == UserId || Library.isAdmin(roleName))
             {
-                var invoices = await invoiceServices.GetInvoicesByUserId(UserId.Value)
+                var invoices = await invoiceServices
+                    .GetInvoicesByUserId(UserId.Value)
                     .OrderByDescending(x => x.Id)
                     .ToPagedList(page.Value, pageSize.Value);
 
@@ -89,24 +92,35 @@ namespace ShoppingAPI.Controllers
             return Unauthorized();
         }
 
-        //Insert Invoice
+        //Insert Invoice with DeliveryId
 
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertInvoice(Invoice invoice)
+        public async Task<IActionResult> insertInvoice(int DeliveryId)
         {
-            //isIs User Post for User Invoice
-            if (invoice.UserId == this.UserId)
+            //Get deliveryid
+            var deliveryId = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(DeliveryId);
+
+            //Check if true Userid
+            if (deliveryId.UserId == this.UserId)
             {
-                await invoiceServices.InsertInvoiceAsync(invoice);
+                var Invoice = new Invoice
+                {
+                    UserId = this.UserId,
+                    Address = deliveryId.Address,
+                    FullName = deliveryId.FullName,
+                    PhoneNumber = deliveryId.PhoneNumber
+                };
+                await invoiceServices.InsertInvoiceAsync(Invoice);
                 return Ok(new ResponseApi
                 {
                     Message = new[] { "Add Success" },
                     Status = Ok().StatusCode,
-                    Data = invoice,
+                    Data = Invoice,
                     Success = true
                 });
             }
-            return BadRequest();
+
+            return Unauthorized();
         }
 
         //Update Invoice

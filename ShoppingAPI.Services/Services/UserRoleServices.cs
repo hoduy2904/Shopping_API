@@ -21,7 +21,7 @@ namespace ShoppingAPI.Services.Services
         public async Task DeleteUserRole(int id)
         {
             var userRole = await repository.GetAsync(id);
-            await repository.DeleteAsync(userRole);
+            await repository.DeleteFromTrashAsync(userRole);
         }
 
         public async Task<UserRole> GetUserRoleAsync(int id)

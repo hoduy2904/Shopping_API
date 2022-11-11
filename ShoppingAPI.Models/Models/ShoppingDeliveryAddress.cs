@@ -11,6 +11,7 @@ namespace ShoppingAPI.Data.Models
         public string PhoneNumber { get; set; }
         [ForeignKey("UserId")]
         public User? User { get; set; }
+        public string FullName { get; set; }
         public bool IsDefault { get; set; }
     }
 }

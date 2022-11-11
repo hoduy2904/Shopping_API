@@ -20,6 +20,8 @@ namespace ShoppingAPI.REPO.Repository
         Task UpdateRangeAsync(IEnumerable<T> lstEntity);
         Task DeleteAsync(T entity);
         Task DeleteRangeAsync(IEnumerable<T> lstEntity);
+        Task DeleteFromTrashAsync(T entity);
+        Task DeleteFromTrashRangeAsync(IEnumerable<T> lstEntity);
         Task SavechangesAsync();
         IQueryable<T> Where(Expression<Func<T, bool>> preicate);
     }

@@ -35,9 +35,10 @@ namespace ShoppingAPI.Controllers
             if (pageSize == null)
                 pageSize = PagingSettingsConfig.pageSize;
 
-            var productImages = await productImageServices.GetProductImages()
-                .OrderByDescending(x => x.Id)
-                .ToPagedList(page.Value, pageSize.Value);
+            var productImages = await productImageServices
+                                    .GetProductImages()
+                                    .OrderByDescending(x => x.Id)
+                                    .ToPagedList(page.Value, pageSize.Value);
 
             return Ok(new ResponseWithPaging
             {
@@ -74,7 +75,9 @@ namespace ShoppingAPI.Controllers
         [HttpGet("[Action]/{ProductId}")]
         public IActionResult ProductImageByProductId(int ProductId)
         {
-            var productImage = productImageServices.Where(x => x.ProductId == ProductId && x.IsTrash == false).AsEnumerable();
+            var productImage = productImageServices
+                .Where(x => x.ProductId == ProductId && x.IsTrash == false)
+                .AsEnumerable();
             return Ok(new ResponseApi
             {
                 Status = (int)HttpStatusCode.OK,
@@ -86,7 +89,7 @@ namespace ShoppingAPI.Controllers
 
         //Insert ProductImage
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertProductImages([FromForm]ProductImage productImage, List<IFormFile> images)
+        public async Task<IActionResult> insertProductImages([FromForm] ProductImage productImage, List<IFormFile> images)
         {
             if (ModelState.IsValid)
             {
@@ -119,12 +122,12 @@ namespace ShoppingAPI.Controllers
 
         //update productImage
         [HttpPut("[Action]")]
-        public async Task<IActionResult> editProductImage([FromForm]ProductImage productImage, IFormFile? imageFile)
+        public async Task<IActionResult> editProductImage([FromForm] ProductImage productImage, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
                 var ProductImageDb = await productImageServices.GetProductImageAsync(productImage.Id);
-                if (imageFile!=null && imageFile.Length > 0)
+                if (imageFile != null && imageFile.Length > 0)
                 {
                     string PathImage = await SaveImage(imageFile);
                     ProductImageDb.Image = PathImage;

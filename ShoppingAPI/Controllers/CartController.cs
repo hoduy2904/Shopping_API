@@ -66,6 +66,37 @@ namespace ShoppingAPI.Controllers
             });
         }
 
+        [HttpGet("[Action]")]
+        public async Task<IActionResult> getCartsByIds([FromQuery]int[] ids)
+        {
+            var lstCart = new List<Cart>();
+            foreach (var id in ids)
+            {
+                var cart = await cartServices.GetCarts(this.UserId)
+                    .Include(pv => pv.ProductVariation)
+                .ThenInclude(p => p.Product)
+                .Include(pv => pv.ProductVariation)
+                .ThenInclude(pi => pi.ProductImages)
+                .FirstOrDefaultAsync(x => x.Id == id);
+                if (cart == null)
+                    continue;
+                lstCart.Add(cart);
+            }
+
+            return Ok(new ResponseApi
+            {
+                Status = Ok().StatusCode,
+                Data = new
+                {
+                    cart = lstCart,
+                    totalCart = cartServices.GetCarts(this.UserId).Count(),
+                    totalMoney = lstCart.Sum(x => x.Number * x.ProductVariation.PriceCurrent)
+                },
+                Success = true
+            });
+
+        }
+
         //Insert cart
         [HttpPost("[Action]")]
         public async Task<IActionResult> insertCart(Cart cart)

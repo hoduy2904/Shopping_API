@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.WebEncoders.Testing;
 using ShoppingAPI.Common.Config;
 using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
@@ -12,14 +14,16 @@ namespace ShoppingAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class InvoiceDetailsControler : ControllerBase
+    public class InvoiceDetailsController : ControllerBase
     {
         private readonly IInvoiceDetailsServices invoiceDetailsServices;
         private int UserId = -1;
-        public InvoiceDetailsControler(IInvoiceDetailsServices invoiceDetailsServices, IHttpContextAccessor httpContextAccessor)
+        private readonly ICartServices cartServices;
+        public InvoiceDetailsController(IInvoiceDetailsServices invoiceDetailsServices, IHttpContextAccessor httpContextAccessor, ICartServices cartServices)
         {
             this.invoiceDetailsServices = invoiceDetailsServices;
             this.UserId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            this.cartServices = cartServices;
         }
 
         [HttpGet("[Action]/{id}")]
@@ -72,9 +76,50 @@ namespace ShoppingAPI.Controllers
             });
         }
 
+        //Insert invoice with InvoiceId and Cartids
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertInvoiceDetailsRange(IEnumerable<InvoicesDetails> invoicesDetails)
+        public async Task<IActionResult> insertInvoiceDetailsRangeByCardIds(int invoiceId, [FromBody] int[] cartids)
         {
+
+            var lstinvoiceDetails = new List<InvoicesDetails>();
+            var carts = cartServices.GetCarts(this.UserId)
+                .Include(p => p.ProductVariation)
+                .ThenInclude(pi => pi.ProductImages)
+                .Include(p => p.Product);
+
+            foreach (var id in cartids)
+            {
+                var cart = carts.FirstOrDefault(x => x.Id == id);
+                if (cart == null)
+                    continue;
+
+                var invoiceDetails = new InvoicesDetails
+                {
+                    Image = cart.ProductVariation.ProductImages == null ? "" : cart.ProductVariation.ProductImages.FirstOrDefault().Image,
+                    InvoiceId = invoiceId,
+                    Numbers = cart.Number,
+                    ProductName = cart.Product.Name,
+                    Price = cart.ProductVariation.PriceCurrent,
+                    ProductId = cart.ProductId,
+                    ProductVariationId = cart.ProductVarationId,
+                };
+                lstinvoiceDetails.Add(invoiceDetails);
+            }
+
+            await invoiceDetailsServices.InsertInvoiceDetailRangesAsync(lstinvoiceDetails);
+            return Ok(new ResponseApi
+            {
+                Data = lstinvoiceDetails,
+                Message = new[] { "Add Success" },
+                Status = Ok().StatusCode,
+                Success = true
+            });
+        }
+
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertInvoiceDetailsRange(List<InvoicesDetails> invoicesDetails)
+        {
+
             await invoiceDetailsServices.InsertInvoiceDetailRangesAsync(invoicesDetails);
             return Ok(new ResponseApi
             {

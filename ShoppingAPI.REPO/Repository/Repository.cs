@@ -32,6 +32,18 @@ namespace ShoppingAPI.REPO.Repository
             await db.SaveChangesAsync();
         }
 
+        public async Task DeleteFromTrashAsync(T entity)
+        {
+            entities.Remove(entity);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task DeleteFromTrashRangeAsync(IEnumerable<T> lstEntity)
+        {
+            entities.RemoveRange(lstEntity);
+            await db.SaveChangesAsync();
+        }
+
         public async Task<T> GetAsync(int id)
         {
             var entity = await entities.FindAsync(id);

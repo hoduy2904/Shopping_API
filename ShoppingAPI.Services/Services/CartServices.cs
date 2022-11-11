@@ -23,7 +23,7 @@ namespace ShoppingAPI.Services.Services
         public async Task DeleteCartAsync(int id, int UserId)
         {
             var cart = await repository.Where(x => x.Id == id && x.UserId == UserId).SingleOrDefaultAsync();
-            await repository.DeleteAsync(cart);
+            await repository.DeleteFromTrashAsync(cart);
         }
 
         public async Task<Cart> GetCartAsync(int id)
@@ -70,7 +70,7 @@ namespace ShoppingAPI.Services.Services
 
         public async Task DeleteCartRange(IEnumerable<Cart> carts)
         {
-            await repository.DeleteRangeAsync(carts);
+            await repository.DeleteFromTrashRangeAsync(carts);
         }
 
         public IQueryable<Cart> Where(Expression<Func<Cart, bool>> expression)
