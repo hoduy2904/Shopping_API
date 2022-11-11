@@ -6,6 +6,7 @@ using ShoppingAPI.Common.Config;
 using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Model;
 using ShoppingAPI.Services.Interfaces;
 using System.Security.Claims;
 
@@ -138,11 +139,23 @@ namespace ShoppingAPI.Controllers
 
         [HttpPost("[Action]")]
         [Authorize]
-        public async Task<IActionResult> insertProductRating(ProductRating productRating)
+        public async Task<IActionResult> insertProductRating(ProductRatingModel productRatingModel)
         {
             if (ModelState.IsValid)
             {
-                productRating.UserId = this.UserId;
+                var productRating = new ProductRating
+                {
+                    IsTrash = productRatingModel.IsTrash,
+                    Description = productRatingModel.Description,
+                    isEdit = false,
+                    ProductId = productRatingModel.ProductId,
+                    ProductRatingId = productRatingModel.ProductRatingId,
+                    ProductRatingImage = productRatingModel.ProductRatingImage,
+                    ProductVariationId = productRatingModel.ProductVariationId,
+                    Rating = productRatingModel.Rating,
+                    UserId = productRatingModel.UserId,
+
+                };
 
                 await productRatingServices.InsertProductRatingAsync(productRating);
                 return Ok(new ResponseApi
@@ -157,11 +170,11 @@ namespace ShoppingAPI.Controllers
 
         [HttpPut("[Action]")]
         [Authorize]
-        public async Task<IActionResult> editProductRating(ProductRating productRating)
+        public async Task<IActionResult> editProductRating(ProductRatingModel productRatingModel)
         {
             if (ModelState.IsValid)
             {
-                var productRatingDb = await productRatingServices.GetProductRatingAsync(productRating.Id);
+                var productRatingDb = await productRatingServices.GetProductRatingAsync(productRatingModel.Id);
 
                 //Check is User 
                 if (productRatingDb.UserId != this.UserId)
@@ -181,9 +194,9 @@ namespace ShoppingAPI.Controllers
                 }
                 //if not
                 //Update infomation rating
-                productRatingDb.Description = productRating.Description;
+                productRatingDb.Description = productRatingModel.Description;
                 productRatingDb.isEdit = true;
-                productRatingDb.Rating = productRating.Rating;
+                productRatingDb.Rating = productRatingModel.Rating;
 
                 await productRatingServices.UpdateProductRatingAsync(productRatingDb);
 

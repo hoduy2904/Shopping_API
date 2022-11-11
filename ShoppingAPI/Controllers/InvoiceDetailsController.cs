@@ -6,6 +6,7 @@ using ShoppingAPI.Common.Config;
 using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Model;
 using ShoppingAPI.Services.Interfaces;
 using System.Security.Claims;
 
@@ -64,16 +65,29 @@ namespace ShoppingAPI.Controllers
         }
 
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertInvoiceDetails(InvoicesDetails invoicesDetails)
+        public async Task<IActionResult> insertInvoiceDetails(InvoiceDetailModel invoiceDetailModel)
         {
-            await invoiceDetailsServices.InsertInvoiceDetailsAsync(invoicesDetails);
+            var invoiceDetail = new InvoicesDetails
+            {
+                Image = invoiceDetailModel.Image,
+                InvoiceId = invoiceDetailModel.InvoiceId,
+                IsTrash = invoiceDetailModel.IsTrash,
+                Numbers = invoiceDetailModel.Numbers,
+                Price = invoiceDetailModel.Price,
+                ProductId = invoiceDetailModel.ProductId,
+                ProductName = invoiceDetailModel.ProductName,
+                ProductVariationId = invoiceDetailModel.ProductVariationId,
+            };
+
+            await invoiceDetailsServices.InsertInvoiceDetailsAsync(invoiceDetail);
             return Ok(new ResponseApi
             {
-                Data = invoicesDetails,
+                Data = invoiceDetail,
                 Message = new[] { "Add Success" },
                 Status = Ok().StatusCode,
                 Success = true
             });
+
         }
 
         //Insert invoice with InvoiceId and Cartids
@@ -82,6 +96,7 @@ namespace ShoppingAPI.Controllers
         {
 
             var lstinvoiceDetails = new List<InvoicesDetails>();
+
             var carts = cartServices.GetCarts(this.UserId)
                 .Include(p => p.ProductVariation)
                 .ThenInclude(pi => pi.ProductImages)
@@ -107,6 +122,12 @@ namespace ShoppingAPI.Controllers
             }
 
             await invoiceDetailsServices.InsertInvoiceDetailRangesAsync(lstinvoiceDetails);
+
+            foreach (var id in cartids)
+            {
+                await cartServices.DeleteCartAsync(id, this.UserId);
+            }
+
             return Ok(new ResponseApi
             {
                 Data = lstinvoiceDetails,
@@ -117,10 +138,26 @@ namespace ShoppingAPI.Controllers
         }
 
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertInvoiceDetailsRange(List<InvoicesDetails> invoicesDetails)
+        public async Task<IActionResult> insertInvoiceDetailsRange(List<InvoiceDetailModel> invoiceDetailModels)
         {
+            List<InvoicesDetails> invoicesDetails = new List<InvoicesDetails>();
 
+            foreach (var invoiceDetail in invoiceDetailModels)
+            {
+                invoicesDetails.Add(new InvoicesDetails
+                {
+                    ProductVariationId = invoiceDetail.ProductVariationId,
+                    Image = invoiceDetail.Image,
+                    InvoiceId = invoiceDetail.InvoiceId,
+                    IsTrash = invoiceDetail.IsTrash,
+                    Numbers = invoiceDetail.Numbers,
+                    ProductId = invoiceDetail.ProductId,
+                    Price = invoiceDetail.Price,
+                    ProductName = invoiceDetail.ProductName,
+                });
+            }
             await invoiceDetailsServices.InsertInvoiceDetailRangesAsync(invoicesDetails);
+
             return Ok(new ResponseApi
             {
                 Data = invoicesDetails,
@@ -131,8 +168,21 @@ namespace ShoppingAPI.Controllers
         }
 
         [HttpPut("[Action]")]
-        public async Task<IActionResult> editInvoiceDetails(InvoicesDetails invoicesDetails)
+        public async Task<IActionResult> editInvoiceDetails(InvoiceDetailModel invoiceDetailModel)
         {
+            var invoicesDetails = new InvoicesDetails
+            {
+                Id = invoiceDetailModel.Id,
+                ProductName = invoiceDetailModel.ProductName,
+                Price = invoiceDetailModel.Price,
+                ProductId = invoiceDetailModel.ProductId,
+                Numbers = invoiceDetailModel.Numbers,
+                Image = invoiceDetailModel.Image,
+                InvoiceId = invoiceDetailModel.InvoiceId,
+                IsTrash = invoiceDetailModel.IsTrash,
+                ProductVariationId = invoiceDetailModel.ProductVariationId,
+            };
+
             await invoiceDetailsServices.UpdateInvoiceDetailsAsync(invoicesDetails);
             return Ok(new ResponseApi
             {

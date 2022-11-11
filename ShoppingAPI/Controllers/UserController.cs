@@ -6,6 +6,7 @@ using ShoppingAPI.Common.Config;
 using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Model;
 using ShoppingAPI.Services.Interfaces;
 using System.Net;
 using System.Security.Claims;
@@ -88,17 +89,29 @@ namespace ShoppingAPI.Controllers
         //Insert User
         [Authorize(Roles = "Admin,SuperAdmin")]
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertUser(User user, string? roleName)
+        public async Task<IActionResult> insertUser(UserModel userModel)
         {
-            //Check if roleName null then assign by User
-            if (string.IsNullOrEmpty(roleName))
+            var user = new User
             {
-                roleName = "User";
+                Email = userModel.Email,
+                FristName = userModel.FristName,
+                IdentityCard = userModel.IdentityCard,
+                IsTrash = false,
+                LastName = userModel.LastName,
+                Sex = userModel.Sex,
+                Username = userModel.Username,
+                PasswordHash = userModel.Password
+            };
+
+            //Check if roleName null then assign by User
+            if (string.IsNullOrEmpty(userModel.RoleName))
+            {
+                userModel.RoleName = "User";
             }
 
             if (ModelState.IsValid)
             {
-                var role = roleServices.Where(x => x.Name.Equals(roleName)).FirstOrDefault();
+                var role = roleServices.Where(x => x.Name.Equals(userModel.RoleName)).FirstOrDefault();
 
                 //check role exists
                 if (role != null)
@@ -114,6 +127,7 @@ namespace ShoppingAPI.Controllers
                 }
 
                 await userServices.InsertUser(user);
+
                 return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
@@ -128,20 +142,25 @@ namespace ShoppingAPI.Controllers
 
         //Edit User
         [HttpPut("[Action]")]
-        public async Task<IActionResult> editUser(User user)
+        public async Task<IActionResult> editUser(UserModel userModel)
         {
             if (ModelState.IsValid)
             {
                 //Check is User or Admin
-                if (user.Id == this.UserId || Library.isAdmin(roleName))
+                if (userModel.Id == this.UserId || Library.isAdmin(roleName))
                 {
-                    var userDb = await userServices.GetUserAsync(user.Id);
+                    var userDb = await userServices.GetUserAsync(userModel.Id);
 
-                    userDb.FristName = user.FristName;
-                    userDb.LastName = user.LastName;
-                    userDb.Email = user.Email;
-                    userDb.IdentityCard = user.IdentityCard;
-                    userDb.Sex = user.Sex;
+                    userDb.FristName = userModel.FristName;
+                    userDb.LastName = userModel.LastName;
+                    userDb.Email = userModel.Email;
+                    userDb.IdentityCard = userModel.IdentityCard;
+                    userDb.Sex = userModel.Sex;
+
+                    if (!string.IsNullOrEmpty(userModel.Password))
+                    {
+                        userDb.PasswordHash = StringHashing.Hash(userModel.Password);
+                    }
 
 
                     await userServices.UpdateUser(userDb);

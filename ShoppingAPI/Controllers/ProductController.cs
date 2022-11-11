@@ -9,6 +9,7 @@ using System.Net;
 using ShoppingAPI.Common.Extensions;
 using Microsoft.EntityFrameworkCore;
 using ShoppingAPI.Common.Config;
+using ShoppingAPI.Model;
 
 namespace ShoppingAPI.Controllers
 {
@@ -71,10 +72,19 @@ namespace ShoppingAPI.Controllers
 
         //Insert Product
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertProduct(Product product)
+        public async Task<IActionResult> insertProduct(ProductModel productModel)
         {
             if (ModelState.IsValid)
             {
+                var product = new Product
+                {
+                    CategoryId = productModel.CategoryId,
+                    Description = productModel.Description,
+                    IsTrash = productModel.IsTrash,
+                    Name = productModel.Name,
+                    SKUS = productModel.SKUS,
+                };
+
                 await productServices.InsertProduct(product);
                 return Ok(new ResponseApi
                 {
@@ -90,14 +100,16 @@ namespace ShoppingAPI.Controllers
 
         //Update product
         [HttpPut("[Action]")]
-        public async Task<IActionResult> editProduct(Product product)
+        public async Task<IActionResult> editProduct(ProductModel productModel)
         {
             if (ModelState.IsValid)
             {
-                var productDb = await productServices.GetProductAsync(product.Id);
+                var productDb = await productServices.GetProductAsync(productModel.Id);
 
-                productDb.CategoryId = product.CategoryId;
-                productDb.Name = product.Name;
+                productDb.CategoryId = productModel.CategoryId;
+                productDb.Name = productModel.Name;
+                productDb.Description = productModel.Description;
+                productDb.IsTrash = productModel.IsTrash;
 
                 await productServices.UpdateProduct(productDb);
 

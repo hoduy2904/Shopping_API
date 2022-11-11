@@ -7,6 +7,7 @@ using ShoppingAPI.Common.Config;
 using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Model;
 using ShoppingAPI.Services.Interfaces;
 using System.Security.Claims;
 
@@ -125,11 +126,25 @@ namespace ShoppingAPI.Controllers
 
         //Update Invoice
         [HttpPut("[Action]")]
-        public async Task<IActionResult> editInvoice(Invoice invoice)
+        public async Task<IActionResult> editInvoice(InvoiceModel invoiceModel)
         {
             //isIs User Update for User Invoice
-            if (invoice.UserId == this.UserId)
+            if (invoiceModel.UserId == this.UserId)
             {
+                var invoice = new Invoice
+                {
+                    UserId = invoiceModel.UserId,
+                    Address = invoiceModel.Address,
+                    CompletionTime = invoiceModel.CompletionTime,
+                    DeliveryTime = invoiceModel.DeliveryTime,
+                    FullName = invoiceModel.FullName,
+                    IsTrash = invoiceModel.IsTrash,
+                    PaymentTime = invoiceModel.PaymentTime,
+                    PhoneNumber = invoiceModel.PhoneNumber,
+                    Id = invoiceModel.Id,
+                    Created = invoiceModel.Created,
+                };
+
                 await invoiceServices.UpdateInvoiceAsync(invoice);
                 return Ok(new ResponseApi
                 {

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using ShoppingAPI.Common;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Models;
 using ShoppingAPI.Services.Interfaces;
 using System.Security.Claims;
 
@@ -67,7 +68,7 @@ namespace ShoppingAPI.Controllers
         }
 
         [HttpGet("[Action]")]
-        public async Task<IActionResult> getCartsByIds([FromQuery]int[] ids)
+        public async Task<IActionResult> getCartsByIds([FromQuery] int[] ids)
         {
             var lstCart = new List<Cart>();
             foreach (var id in ids)
@@ -99,19 +100,27 @@ namespace ShoppingAPI.Controllers
 
         //Insert cart
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertCart(Cart cart)
+        public async Task<IActionResult> insertCart(CartModel cartModel)
         {
             if (ModelState.IsValid)
             {
                 //Get and check card exits
-                var cartDb = cartServices.GetCartByProduct(cart.ProductId, cart.ProductVarationId.Value, this.UserId);
+                var cartDb = cartServices.GetCartByProduct(cartModel.ProductId, cartModel.ProductVarationId, this.UserId);
 
                 //If not exists then add
                 if (cartDb == null)
                 {
-                    cart.UserId = this.UserId;
+                    var cart = new Cart
+                    {
+                        UserId = this.UserId,
+                        Number = cartModel.Number,
+                        ProductId = cartModel.ProductId,
+                        ProductVarationId = cartModel.ProductVarationId
+                    };
+
                     await cartServices.InsertCartAsync(cart);
                     int total = cartServices.GetCarts(this.UserId).Count();
+
                     return Ok(new ResponseApi
                     {
                         Success = true,
@@ -124,7 +133,7 @@ namespace ShoppingAPI.Controllers
                     });
                 }
                 //If exists increase Number for cart item
-                cartDb.Number += cart.Number;
+                cartDb.Number += cartModel.Number;
                 await cartServices.UpdateCartAsync(cartDb);
                 return Ok(new ResponseApi
                 {
@@ -143,16 +152,16 @@ namespace ShoppingAPI.Controllers
 
 
         [HttpPut("[Action]")]
-        public async Task<IActionResult> editCart(Cart cart, int ProductVariationId)
+        public async Task<IActionResult> editCart(CartModel cartModel, int ProductVariationId)
         {
             if (ModelState.IsValid)
             {
                 //Get and check cart exists
-                var cartDb = cartServices.GetCartByProduct(cart.ProductId, ProductVariationId, UserId);
+                var cartDb = cartServices.GetCartByProduct(cartModel.ProductId, ProductVariationId, UserId);
                 //if have cart then update cart
                 if (cartDb != null)
                 {
-                    cartDb.Number = cart.Number;
+                    cartDb.Number = cartModel.Number;
                     await cartServices.UpdateCartAsync(cartDb);
                     return Ok(new ResponseApi
                     {

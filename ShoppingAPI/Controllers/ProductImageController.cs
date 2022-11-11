@@ -6,6 +6,7 @@ using ShoppingAPI.Common.Config;
 using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Model;
 using ShoppingAPI.Services.Interfaces;
 using System.Data;
 using System.Net;
@@ -89,7 +90,7 @@ namespace ShoppingAPI.Controllers
 
         //Insert ProductImage
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertProductImages([FromForm] ProductImage productImage, List<IFormFile> images)
+        public async Task<IActionResult> insertProductImages([FromForm] ProductImageModel productImageModel, List<IFormFile> images)
         {
             if (ModelState.IsValid)
             {
@@ -102,8 +103,8 @@ namespace ShoppingAPI.Controllers
                         productImages.Add(new ProductImage
                         {
                             Image = PathImage,
-                            ProductId = productImage.ProductId,
-                            ProductVariationId = productImage.ProductVariationId
+                            ProductId = productImageModel.ProductId,
+                            ProductVariationId = productImageModel.ProductVariationId
                         });
                     }
                 }
@@ -113,7 +114,7 @@ namespace ShoppingAPI.Controllers
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
                     Message = new[] { $"Add Success {productImages.Count} items" },
-                    Data = productImage
+                    Data = productImages
                 });
 
             }
@@ -122,11 +123,11 @@ namespace ShoppingAPI.Controllers
 
         //update productImage
         [HttpPut("[Action]")]
-        public async Task<IActionResult> editProductImage([FromForm] ProductImage productImage, IFormFile? imageFile)
+        public async Task<IActionResult> editProductImage(int Id, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
-                var ProductImageDb = await productImageServices.GetProductImageAsync(productImage.Id);
+                var ProductImageDb = await productImageServices.GetProductImageAsync(Id);
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     string PathImage = await SaveImage(imageFile);

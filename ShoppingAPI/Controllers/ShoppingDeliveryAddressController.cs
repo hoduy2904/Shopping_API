@@ -6,6 +6,7 @@ using ShoppingAPI.Common.Config;
 using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Model;
 using ShoppingAPI.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
@@ -88,16 +89,27 @@ namespace ShoppingAPI.Controllers
 
         //Insert ShoppingDelivery Address by User
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertShoppingDeliveryAddress(ShoppingDeliveryAddress shoppingDelivery)
+        public async Task<IActionResult> insertShoppingDeliveryAddress(ShoppingDeliveryAddressModel shoppingDeliveryAddressModel)
         {
             if (ModelState.IsValid)
             {
+                var shoppingDelivery = new ShoppingDeliveryAddress
+                {
+                    IsTrash = shoppingDeliveryAddressModel.IsTrash,
+                    Address = shoppingDeliveryAddressModel.Address,
+                    FullName = shoppingDeliveryAddressModel.FullName,
+                    IsDefault = shoppingDeliveryAddressModel.IsDefault,
+                    PhoneNumber = shoppingDeliveryAddressModel.PhoneNumber,
+                    UserId = shoppingDeliveryAddressModel.UserId,
+                };
+
                 if (Library.isAdmin(roleName))
                 {
                     shoppingDelivery.UserId = this.UserId;
                 }
 
                 await shoppingDeliveryAddressServices.InsertShoppingDeliveryAddress(shoppingDelivery);
+
                 return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
@@ -112,18 +124,20 @@ namespace ShoppingAPI.Controllers
         //Update Shopping DeliveryAddress by User
 
         [HttpPut("[Action]")]
-        public async Task<IActionResult> editInfomationUser(ShoppingDeliveryAddress shoppingDelivery)
+        public async Task<IActionResult> editInfomationUser(ShoppingDeliveryAddressModel shoppingDeliveryAddressModel)
         {
             if (ModelState.IsValid)
             {
-                if (this.UserId == shoppingDelivery.UserId || Library.isAdmin(roleName))
+                if (this.UserId == shoppingDeliveryAddressModel.UserId || Library.isAdmin(roleName))
                 {
-                    var shoppingDeliveryAddressDb = await shoppingDeliveryAddressServices.GetShoppingDeliveryAddressAsync(shoppingDelivery.Id);
+                    var shoppingDeliveryAddressDb = await shoppingDeliveryAddressServices
+                        .GetShoppingDeliveryAddressAsync(shoppingDeliveryAddressModel.Id);
 
-                    shoppingDeliveryAddressDb.PhoneNumber = shoppingDelivery.PhoneNumber;
-                    shoppingDeliveryAddressDb.Address = shoppingDelivery.Address;
+                    shoppingDeliveryAddressDb.PhoneNumber = shoppingDeliveryAddressModel.PhoneNumber;
+                    shoppingDeliveryAddressDb.Address = shoppingDeliveryAddressModel.Address;
 
-                    await shoppingDeliveryAddressServices.UpdateShoppingDeliveryAddress(shoppingDeliveryAddressDb);
+                    await shoppingDeliveryAddressServices
+                        .UpdateShoppingDeliveryAddress(shoppingDeliveryAddressDb);
 
                     return Ok(new ResponseApi
                     {

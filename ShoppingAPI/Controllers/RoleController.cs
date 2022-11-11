@@ -6,6 +6,7 @@ using ShoppingAPI.Common.Config;
 using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Model;
 using ShoppingAPI.Services.Interfaces;
 using System.Data;
 using System.Net;
@@ -72,10 +73,16 @@ namespace ShoppingAPI.Controllers
 
         //Insert Role
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertRole(Role role)
+        public async Task<IActionResult> insertRole(RoleModel roleModel)
         {
             if (ModelState.IsValid)
             {
+                var role = new Role
+                {
+                    Name = roleModel.Name,
+                    IsTrash = roleModel.IsTrash
+                };
+
                 await roleServices.InsertRole(role);
                 return Ok(new ResponseApi
                 {
@@ -91,13 +98,13 @@ namespace ShoppingAPI.Controllers
 
         //Update Role
         [HttpPut("[Action]")]
-        public async Task<IActionResult> editRole(Role role)
+        public async Task<IActionResult> editRole(RoleModel roleModel)
         {
             if (ModelState.IsValid)
             {
-                var RoleDb = await roleServices.GetRoleAsync(role.Id);
+                var RoleDb = await roleServices.GetRoleAsync(roleModel.Id);
 
-                RoleDb.Name = role.Name;
+                RoleDb.Name = roleModel.Name;
 
                 await roleServices.UpdateRole(RoleDb);
 

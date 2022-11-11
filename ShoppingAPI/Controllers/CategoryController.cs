@@ -6,6 +6,7 @@ using ShoppingAPI.Common.Config;
 using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Models;
 using ShoppingAPI.Services.Interfaces;
 using System.Net;
 
@@ -74,10 +75,17 @@ namespace ShoppingAPI.Controllers
 
         //Insert category
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertCategory([FromForm] Category category, IFormFile? imageFile)
+        public async Task<IActionResult> insertCategory([FromForm] CategoryModel categoryModel, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
+                var category = new Category
+                {
+                    CategoryId = categoryModel.CategoryId,
+                    Name = categoryModel.Name,
+                    Image = categoryModel.Image
+                };
+
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     string PathImage = await SaveImage(imageFile);
@@ -113,19 +121,19 @@ namespace ShoppingAPI.Controllers
 
         //Update category
         [HttpPut("[Action]")]
-        public async Task<IActionResult> editCategory([FromForm] Category category, IFormFile? imageFile)
+        public async Task<IActionResult> editCategory([FromForm] CategoryModel categoryModel, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
-                var CategoryDb = await categoryServices.GetCategoryAsync(category.Id);
+                var CategoryDb = await categoryServices.GetCategoryAsync(categoryModel.Id);
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     string PathImage = await SaveImage(imageFile);
 
                     CategoryDb.Image = PathImage;
                 }
-                CategoryDb.Name = category.Name;
-                CategoryDb.CategoryId = category.CategoryId;
+                CategoryDb.Name = categoryModel.Name;
+                CategoryDb.CategoryId = categoryModel.CategoryId;
 
                 await categoryServices.UpdateCategory(CategoryDb);
 

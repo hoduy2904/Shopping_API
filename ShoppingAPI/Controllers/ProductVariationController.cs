@@ -5,6 +5,7 @@ using ShoppingAPI.Common.Config;
 using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Model;
 using ShoppingAPI.Services.Interfaces;
 using System.Data;
 using System.Net;
@@ -84,10 +85,21 @@ namespace ShoppingAPI.Controllers
 
         //Insert Product Variation
         [HttpPost("[Action]")]
-        public async Task<IActionResult> insertProductVariation(ProductVariation productVariation)
+        public async Task<IActionResult> insertProductVariation(ProductVariationModel productVariationModel)
         {
             if (ModelState.IsValid)
             {
+                var productVariation = new ProductVariation
+                {
+                    IsTrash = productVariationModel.IsTrash,
+                    Name = productVariationModel.Name,
+                    Number = productVariationModel.Number,
+                    PriceCurrent = productVariationModel.PriceCurrent,
+                    PriceOld = productVariationModel.PriceOld,
+                    ProductId = productVariationModel.ProductId,
+                    VariationId = productVariationModel.VariationId,
+                };
+
                 await productVariationServices.InsertProductVariation(productVariation);
                 return Ok(new ResponseApi
                 {
@@ -103,17 +115,17 @@ namespace ShoppingAPI.Controllers
 
         //Update Productvariation
         [HttpPut("[Action]")]
-        public async Task<IActionResult> editProductVariation(ProductVariation productVariation)
+        public async Task<IActionResult> editProductVariation(ProductVariationModel productVariationModel)
         {
             if (ModelState.IsValid)
             {
-                var ProductVariationDb = await productVariationServices.GetProductVariationAsync(productVariation.Id);
+                var ProductVariationDb = await productVariationServices.GetProductVariationAsync(productVariationModel.Id);
 
-                ProductVariationDb.Number = productVariation.Number;
-                ProductVariationDb.PriceCurrent = productVariation.PriceCurrent;
-                ProductVariationDb.Name = productVariation.Name;
-                ProductVariationDb.PriceOld = productVariation.PriceOld;
-                ProductVariationDb.VariationId = productVariation.VariationId;
+                ProductVariationDb.Number = productVariationModel.Number;
+                ProductVariationDb.PriceCurrent = productVariationModel.PriceCurrent;
+                ProductVariationDb.Name = productVariationModel.Name;
+                ProductVariationDb.PriceOld = productVariationModel.PriceOld;
+                ProductVariationDb.VariationId = productVariationModel.VariationId;
 
                 await productVariationServices.UpdateProductVariation(ProductVariationDb);
 
