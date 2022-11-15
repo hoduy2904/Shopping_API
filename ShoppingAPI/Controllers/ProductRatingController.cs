@@ -29,6 +29,8 @@ namespace ShoppingAPI.Controllers
             this.UserId = ClaimUserId == null ? -1 : int.Parse(ClaimUserId.Value);
             this.invoiceDetailsServices = invoiceDetailsServices;
         }
+
+        //Get one rating product from id
         [HttpGet("[Action]/{id}")]
         public async Task<IActionResult> getProductRating(int id)
         {
@@ -40,6 +42,8 @@ namespace ShoppingAPI.Controllers
                 Success = true
             });
         }
+
+        //Get all product ratings
 
         [HttpGet("[Action]")]
         public async Task<IActionResult> getProductRatings(int? page, int? pageSize)
@@ -65,14 +69,19 @@ namespace ShoppingAPI.Controllers
             });
         }
 
+        //Get all product rating from productId
         [HttpGet("[Action]/{ProductId}")]
         public async Task<IActionResult> getProductRatingsByPid(int ProductId, int? page, int? pageSize)
         {
+            //If page is null then get page Default
             if (page == null)
                 page = PagingSettingsConfig.pageDefault;
+            //If pageSize is null then get pageSize Default
+
             if (pageSize == null)
                 pageSize = PagingSettingsConfig.pageSize;
 
+            //Get product ratings and sort by Id Paging
             var productRatings = await productRatingServices
                 .GetProductRatingsByProductid(ProductId)
                 .OrderByDescending(x => x.Id)
@@ -89,6 +98,7 @@ namespace ShoppingAPI.Controllers
             });
         }
 
+        //Get ratings from userid , product id and product variationid
         [HttpGet("[Action]/{UserId}/{ProductId}/{ProductVariationId}")]
         [Authorize]
         public async Task<IActionResult> getProductRatingsByUidPidPvId(int UserId, int ProductId, int ProductVariationid, int? page, int? pageSize)
@@ -100,6 +110,7 @@ namespace ShoppingAPI.Controllers
                 if (pageSize == null)
                     pageSize = PagingSettingsConfig.pageSize;
 
+                
                 var productRatings = await productRatingServices
                     .GetProductRatings(UserId, ProductId, ProductVariationid)
                     .OrderByDescending(x => x.Id)
@@ -117,6 +128,8 @@ namespace ShoppingAPI.Controllers
             }
             return Unauthorized();
         }
+
+        //Get ratings from  product id and product variationid
 
         [HttpGet("[Action]/{ProductId}/{ProductVariationId}")]
         public async Task<IActionResult> getProductRatingsByPidPvId(int ProductId, int ProductVariationid, int? page, int? pageSize)
@@ -142,12 +155,14 @@ namespace ShoppingAPI.Controllers
             });
         }
 
+        //POST Product rating
         [HttpPost("[Action]")]
         [Authorize]
         public async Task<IActionResult> insertProductRating(ProductRatingModel productRatingModel)
         {
             if (ModelState.IsValid)
             {
+                //GET Invoice details valid (every invoice from product then only reviewed 1 time ) (Check user bought product)
                 var invoiceDetails = invoiceDetailsServices
                     .Where(x => x.ProductId == productRatingModel.ProductId
                 && x.ProductVariationId == productRatingModel.ProductVariationId)
@@ -155,14 +170,14 @@ namespace ShoppingAPI.Controllers
                     .Where(u => u.UserId == this.UserId)
                     .FirstOrDefault();
 
-
+                //Check if invoice detail not null then continue
                 if (invoiceDetails != null)
                 {
-
+                    //Check reviewer is exists
                     var isExits = productRatingServices
                         .GetProductRatings(productRatingModel.ProductId, productRatingModel.ProductVariationId.Value)
                         .Where(x => x.InvoiceId == productRatingModel.InvoiceId);
-
+                    //if not exists then continue
                     if (isExits == null)
                     {
                         var productRating = new ProductRating
@@ -187,6 +202,7 @@ namespace ShoppingAPI.Controllers
                         });
                     }
 
+                    //if reviewer exists then return badrequest
                     return BadRequest(new ResponseApi
                     {
                         Message = new[] { "You reviewed" },
