@@ -86,6 +86,7 @@ namespace ShoppingAPI.Controllers
                     Image = categoryModel.Image
                 };
 
+                //Check has image then add it
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     string PathImage = await SaveImage(imageFile);
@@ -126,6 +127,7 @@ namespace ShoppingAPI.Controllers
             if (ModelState.IsValid)
             {
                 var CategoryDb = await categoryServices.GetCategoryAsync(categoryModel.Id);
+                //Check has image then save local and replace url image
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     string PathImage = await SaveImage(imageFile);

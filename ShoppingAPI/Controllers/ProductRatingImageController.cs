@@ -60,16 +60,21 @@ namespace ShoppingAPI.Controllers
         [Authorize]
         public async Task<IActionResult> insertProductRatingImages(int ProductRatingId, List<IFormFile> images)
         {
+            //create list images
             var ProductRatingImages = new List<ProductRatingImage>();
+            //Get all list image from user request
             foreach (var image in images)
             {
+                //Save image to dictionary
                 string uploadPath = await UploadImage(ProductRatingId, image);
+                //add image to list
                 ProductRatingImages.Add(new ProductRatingImage
                 {
                     Image = uploadPath,
                     ProductRatingId = ProductRatingId
                 });
             }
+            //save to database
             await productRatingImageServices.InsertProductRatingImageRangeAsync(ProductRatingImages);
 
             return Ok(new ResponseApi

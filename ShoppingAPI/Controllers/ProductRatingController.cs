@@ -110,7 +110,7 @@ namespace ShoppingAPI.Controllers
                 if (pageSize == null)
                     pageSize = PagingSettingsConfig.pageSize;
 
-                
+
                 var productRatings = await productRatingServices
                     .GetProductRatings(UserId, ProductId, ProductVariationid)
                     .OrderByDescending(x => x.Id)
@@ -162,7 +162,7 @@ namespace ShoppingAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                //GET Invoice details valid (every invoice from product then only reviewed 1 time ) (Check user bought product)
+                //GET Invoice details valid (every invoice from product then only reviewed 1 time ) (Check user has been bought product)
                 var invoiceDetails = invoiceDetailsServices
                     .Where(x => x.ProductId == productRatingModel.ProductId
                 && x.ProductVariationId == productRatingModel.ProductVariationId)
