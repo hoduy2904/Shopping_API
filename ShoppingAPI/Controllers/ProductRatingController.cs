@@ -17,12 +17,17 @@ namespace ShoppingAPI.Controllers
     public class ProductRatingController : ControllerBase
     {
         private readonly IProductRatingServices productRatingServices;
+        private readonly IInvoiceDetailsServices invoiceDetailsServices;
         private int UserId = -1;
-        public ProductRatingController(IProductRatingServices productRatingServices, IHttpContextAccessor httpContextAccessor)
+        public ProductRatingController(IProductRatingServices productRatingServices,
+            IHttpContextAccessor httpContextAccessor,
+            IInvoiceDetailsServices invoiceDetailsServices
+            )
         {
             var ClaimUserId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             this.productRatingServices = productRatingServices;
             this.UserId = ClaimUserId == null ? -1 : int.Parse(ClaimUserId.Value);
+            this.invoiceDetailsServices = invoiceDetailsServices;
         }
         [HttpGet("[Action]/{id}")]
         public async Task<IActionResult> getProductRating(int id)
@@ -143,27 +148,52 @@ namespace ShoppingAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var productRating = new ProductRating
-                {
-                    IsTrash = productRatingModel.IsTrash,
-                    Description = productRatingModel.Description,
-                    isEdit = false,
-                    ProductId = productRatingModel.ProductId,
-                    ProductRatingId = productRatingModel.ProductRatingId,
-                    ProductRatingImage = productRatingModel.ProductRatingImage,
-                    ProductVariationId = productRatingModel.ProductVariationId,
-                    Rating = productRatingModel.Rating,
-                    UserId = productRatingModel.UserId,
+                var invoiceDetails = invoiceDetailsServices
+                    .Where(x => x.ProductId == productRatingModel.ProductId
+                && x.ProductVariationId == productRatingModel.ProductVariationId)
+                    .Select(iv => iv.Invoice)
+                    .Where(u => u.UserId == this.UserId)
+                    .FirstOrDefault();
 
-                };
 
-                await productRatingServices.InsertProductRatingAsync(productRating);
-                return Ok(new ResponseApi
+                if (invoiceDetails != null)
                 {
-                    Message = new[] { "Insert Success Rating" },
-                    Status = Ok().StatusCode,
-                    Success = true
-                });
+
+                    var isExits = productRatingServices
+                        .GetProductRatings(productRatingModel.ProductId, productRatingModel.ProductVariationId.Value)
+                        .Where(x => x.InvoiceId == productRatingModel.InvoiceId);
+
+                    if (isExits == null)
+                    {
+                        var productRating = new ProductRating
+                        {
+                            IsTrash = productRatingModel.IsTrash,
+                            Description = productRatingModel.Description,
+                            isEdit = false,
+                            ProductId = productRatingModel.ProductId,
+                            ProductRatingId = productRatingModel.ProductRatingId,
+                            ProductVariationId = productRatingModel.ProductVariationId,
+                            Rating = productRatingModel.Rating,
+                            UserId = this.UserId,
+
+                        };
+
+                        await productRatingServices.InsertProductRatingAsync(productRating);
+                        return Ok(new ResponseApi
+                        {
+                            Message = new[] { "Insert Success Rating" },
+                            Status = Ok().StatusCode,
+                            Success = true
+                        });
+                    }
+
+                    return BadRequest(new ResponseApi
+                    {
+                        Message = new[] { "You reviewed" },
+                        Status = BadRequest().StatusCode,
+                        Success = false
+                    });
+                }
             }
             return BadRequest();
         }

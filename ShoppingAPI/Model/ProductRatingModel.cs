@@ -9,8 +9,8 @@ namespace ShoppingAPI.Model
         public int? ProductVariationId { get; set; }
         public int Rating { get; set; }
         public bool isEdit { get; set; }
-        public int ProductRatingImage { get; set; }
         public int? ProductRatingId { get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
+        public int? InvoiceId { get; set; }
     }
 }

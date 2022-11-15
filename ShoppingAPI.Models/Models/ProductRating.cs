@@ -18,11 +18,14 @@ namespace ShoppingAPI.Data.Models
         public int? ProductVariationId { get; set; }
         public int Rating { get; set; }
         public bool isEdit { get; set; }
-        public int ProductRatingImage { get; set; }
         public int? ProductRatingId { get; set; }
+
+        public int? InvoiceId { get; set; }
         public int UserId { get; set; }
         [ForeignKey("UserId")]
         public User? User { get; set; }
+        [ForeignKey("InvoiceId")]
+        public Invoice? Invoice { get; set; }
         [ForeignKey("ProductId")]
         public Product? Product { get; set; }
         [ForeignKey("ProductVariationId")]

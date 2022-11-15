@@ -14,6 +14,7 @@ namespace ShoppingAPI.Data.Models
         public Invoice()
         {
             InvoicesDetails = new HashSet<InvoicesDetails>();
+            productRatings = new HashSet<ProductRating>();
         }
         public int UserId { get; set; }
         [StringLength(100)]
@@ -28,6 +29,7 @@ namespace ShoppingAPI.Data.Models
         public User? User { get; set; }
         public ICollection<InvoicesDetails> InvoicesDetails { get; set; }
         [NotMapped]
+        public ICollection<ProductRating> productRatings { get; set; }
         public double TotalMoney => InvoicesDetails.Sum(x => x.Total);
     }
 }
