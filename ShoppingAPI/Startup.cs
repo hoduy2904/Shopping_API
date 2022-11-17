@@ -9,7 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json.Serialization;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using ShoppingAPI.Common.Models;
+using ShoppingAPI.Common.Config;
 
 namespace ShoppingAPI
 {
@@ -22,7 +22,10 @@ namespace ShoppingAPI
         }
         public void ConfigureServices(IServiceCollection Services, IConfiguration Configuration)
         {
+            //Start config file
             JwtSettingsConfig.ConfigurationJwtSettings(Configuration);
+            PagingSettingsConfig.ConfigurationPagingSettings(Configuration);
+            SaveFileConfig.ConfigurationSaveFileSettings(Configuration);
 
             Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -31,7 +34,7 @@ namespace ShoppingAPI
 
             Services.AddDbContext<ShoppingContext>(options =>
             {
-                options.UseLazyLoadingProxies()
+                options
                 .UseSqlServer(Configuration.GetConnectionString("ShoppingContext"));
             });
 
@@ -41,6 +44,7 @@ namespace ShoppingAPI
             });
 
             Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             Services.AddScoped<ICartServices, CartServices>();
             Services.AddScoped<ICategoryServices, CategoryServices>();
             Services.AddScoped<IShoppingDeliveryAddressServices, ShoppingDeliveryAddressServices>();
@@ -51,6 +55,10 @@ namespace ShoppingAPI
             Services.AddScoped<IRoleServices, RoleServices>();
             Services.AddScoped<IUserRoleServices, UserRoleServices>();
             Services.AddScoped<IJwtServices, JwtServices>();
+            Services.AddScoped<IInvoiceServices, InvoiceServices>();
+            Services.AddScoped<IInvoiceDetailsServices, InvoiceDetailsServices>();
+            Services.AddScoped<IProductRatingServices, ProductRatingServices>();
+            Services.AddScoped<IProductRatingImageServices, ProductRatingImageServices>();
 
             //Jwt
             //Get Secret Key and Bytes

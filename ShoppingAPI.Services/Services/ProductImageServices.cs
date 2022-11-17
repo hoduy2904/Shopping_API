@@ -4,6 +4,7 @@ using ShoppingAPI.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.WebSockets;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -21,8 +22,8 @@ namespace ShoppingAPI.Services.Services
 
         public async Task DeleteProductImage(int id)
         {
-            var productImage =await repository.GetAsync(id);
-           await repository.DeleteAsync(productImage);
+            var productImage = await repository.GetAsync(id);
+            await repository.DeleteAsync(productImage);
         }
 
         public async Task<ProductImage> GetProductImageAsync(int id)
@@ -30,19 +31,28 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAsync(id);
         }
 
-        public async Task<IEnumerable<ProductImage>> GetProductImagesAsync()
+        public IQueryable<ProductImage> GetProductImages()
         {
-            return await repository.GetAllAsync();
+            return repository.GetAll();
         }
 
         public async Task InsertProductImage(ProductImage productImage)
         {
-           await repository.InsertAsync(productImage);
+            await repository.InsertAsync(productImage);
+        }
+
+        public async Task InsertProductImages(IEnumerable<ProductImage> productImages)
+        {
+            await repository.InsertRangeAsync(productImages);
         }
 
         public async Task UpdateProductImage(ProductImage productImage)
         {
-           await repository.UpdateAsync(productImage);
+            await repository.UpdateAsync(productImage);
+        }
+        public IQueryable<ProductImage> Where(Expression<Func<ProductImage, bool>> expression)
+        {
+            return repository.Where(expression);
         }
     }
 }

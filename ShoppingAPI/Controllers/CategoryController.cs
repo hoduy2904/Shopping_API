@@ -1,8 +1,12 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Models;
 using ShoppingAPI.Services.Interfaces;
 using System.Net;
 
@@ -13,35 +17,55 @@ namespace ShoppingAPI.Controllers
     [Authorize(Roles = "Admin,SuperAdmin")]
     public class CategoryController : ControllerBase
     {
+        private string folderRoot = Directory.GetCurrentDirectory() + "\\wwwroot";
         private readonly ICategoryServices categoryServices;
         public CategoryController(ICategoryServices categoryServices)
         {
             this.categoryServices = categoryServices;
         }
+
+        //Get all Categories with Paging
         [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> Categories()
+        [HttpGet("[Action]")]
+        public async Task<IActionResult> getCategories(int? page, int? pageSize)
         {
-            var categories = await categoryServices.GetCategoriesAsync();
-            return Ok(new ResultApi
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var categories = await categoryServices
+                .GetCategories().OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
+            return Ok(new ResponseWithPaging
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = categories
+                Data = categories,
+                PageCount = categories.PageCount,
+                PageNumber = categories.PageNumber,
+                TotalItems = categories.TotalItemCount
             });
         }
-        [HttpGet("{id}"), AllowAnonymous]
-        public async Task<IActionResult> Category(int id)
+
+        //Get single category
+        [HttpGet("[Action]/{id}"), AllowAnonymous]
+        public async Task<IActionResult> getCategory(int id)
         {
             var category = await categoryServices.GetCategoryAsync(id);
+            //Check exists category from id
+            //have result to category
             if (category != null)
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Data = category,
                     Success = true
                 });
-            return NotFound(new ResultApi
+
+            //if not exists return not found
+            return NotFound(new ResponseApi
             {
                 Status = (int)HttpStatusCode.NotFound,
                 Success = false,
@@ -49,13 +73,28 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Category(Category category)
+        //Insert category
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertCategory([FromForm] CategoryModel categoryModel, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
+                var category = new Category
+                {
+                    CategoryId = categoryModel.CategoryId,
+                    Name = categoryModel.Name,
+                    Image = categoryModel.Image
+                };
+
+                //Check has image then add it
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    string PathImage = await SaveImage(imageFile);
+                    category.Image = PathImage;
+                }
+
                 await categoryServices.InsertCategory(category);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -67,20 +106,40 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
-        [HttpPut("Category")]
-        public async Task<IActionResult> PutCategory(Category category)
+        private async Task<string> SaveImage(IFormFile image)
+        {
+            string extensionFile = Path.GetExtension(image.FileName);
+            string newFileImage = $"{Guid.NewGuid()}{extensionFile}";
+            string PathImage = SaveFileConfig.Image + newFileImage;
+            string fullPath = Path.Combine(folderRoot + SaveFileConfig.Image, newFileImage);
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            return PathImage;
+        }
+
+        //Update category
+        [HttpPut("[Action]")]
+        public async Task<IActionResult> editCategory([FromForm] CategoryModel categoryModel, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
-                var CategoryDb = await categoryServices.GetCategoryAsync(category.Id);
+                var CategoryDb = await categoryServices.GetCategoryAsync(categoryModel.Id);
+                //Check has image then save local and replace url image
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    string PathImage = await SaveImage(imageFile);
 
-                CategoryDb.Image = category.Image;
-                CategoryDb.Name = category.Name;
-                CategoryDb.CategoryId = category.CategoryId;
+                    CategoryDb.Image = PathImage;
+                }
+                CategoryDb.Name = categoryModel.Name;
+                CategoryDb.CategoryId = categoryModel.CategoryId;
 
                 await categoryServices.UpdateCategory(CategoryDb);
 
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -92,11 +151,12 @@ namespace ShoppingAPI.Controllers
 
         }
 
-        [HttpDelete("Category")]
-        public async Task<IActionResult> DeleteCategory(int id)
+        //Delete Category from Id
+        [HttpDelete("[Action]")]
+        public async Task<IActionResult> deleteCategory(int id)
         {
             await categoryServices.DeleteCategory(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,

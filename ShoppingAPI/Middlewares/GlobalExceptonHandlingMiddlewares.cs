@@ -22,7 +22,7 @@ namespace ShoppingAPI.Middlewares
             }
             catch (Exception ex)
             {
-                var resultApi = new ResultApi
+                var resultApi = new ResponseApi
                 {
                     Message = new[] { "Something error" },
                     Status = (int)HttpStatusCode.InternalServerError,

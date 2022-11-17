@@ -1,10 +1,12 @@
-﻿using ShoppingAPI.Data.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Data.Models;
 using ShoppingAPI.REPO;
 using ShoppingAPI.REPO.Repository;
 using ShoppingAPI.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,18 +21,25 @@ namespace ShoppingAPI.Services.Services
         }
         public async Task DeleteCategory(int id)
         {
-            var category =await repository.GetAsync(id);
-           await repository.DeleteAsync(category);
+            var category = await repository.GetAsync(id);
+            await repository.DeleteAsync(category);
         }
 
-        public async Task<IEnumerable<Category>> GetCategoriesAsync()
+        public IQueryable<Category> GetCategories()
         {
-           return await repository.GetAllAsync();
+            return repository.GetAll();
         }
 
         public async Task<Category> GetCategoryAsync(int id)
         {
-            return await repository.GetAsync(id);
+            var category = await repository
+                .Where(x => x.Id == id && x.IsTrash == false)
+                .Include(p => p.Products)
+                .ThenInclude(pi => pi.ProductImages)
+                .Include(p => p.Products)
+                .ThenInclude(pi => pi.ProductVariations)
+                .SingleOrDefaultAsync();
+            return category;
         }
 
         public async Task InsertCategory(Category category)
@@ -42,7 +51,10 @@ namespace ShoppingAPI.Services.Services
         public async Task UpdateCategory(Category category)
         {
             await repository.UpdateAsync(category);
-
+        }
+        public IQueryable<Category> Where(Expression<Func<Category, bool>> expression)
+        {
+            return repository.Where(expression);
         }
     }
 }

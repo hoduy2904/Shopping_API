@@ -7,10 +7,11 @@ namespace ShoppingAPI.Data.Models
     {
         public int UserId { get; set; }
         public string Address { get; set; }
-        [StringLength(12)]
+        [Column(TypeName = "varchar(12)")]
         public string PhoneNumber { get; set; }
         [ForeignKey("UserId")]
-        public virtual User? User { get; set; }
+        public User? User { get; set; }
+        public string FullName { get; set; }
         public bool IsDefault { get; set; }
     }
 }

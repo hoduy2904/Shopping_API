@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace ShoppingAPI.REPO.Repository
 {
@@ -31,6 +32,18 @@ namespace ShoppingAPI.REPO.Repository
             await db.SaveChangesAsync();
         }
 
+        public async Task DeleteFromTrashAsync(T entity)
+        {
+            entities.Remove(entity);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task DeleteFromTrashRangeAsync(IEnumerable<T> lstEntity)
+        {
+            entities.RemoveRange(lstEntity);
+            await db.SaveChangesAsync();
+        }
+
         public async Task<T> GetAsync(int id)
         {
             var entity = await entities.FindAsync(id);
@@ -39,9 +52,9 @@ namespace ShoppingAPI.REPO.Repository
             return entity;
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public IQueryable<T> GetAll()
         {
-            return await entities.Where(x => x.IsTrash == false).ToListAsync();
+            return entities.Where(x => x.IsTrash == false);
         }
 
         public async Task InsertAsync(T entity)
@@ -65,6 +78,24 @@ namespace ShoppingAPI.REPO.Repository
         public IQueryable<T> Where(Expression<Func<T, bool>> preicate)
         {
             return entities.Where(preicate);
+        }
+
+        public async Task InsertRangeAsync(IEnumerable<T> lstEntity)
+        {
+            await entities.AddRangeAsync(lstEntity);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task UpdateRangeAsync(IEnumerable<T> lstEntity)
+        {
+            entities.UpdateRange(lstEntity);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task DeleteRangeAsync(IEnumerable<T> lstEntity)
+        {
+            entities.RemoveRange(lstEntity);
+            await db.SaveChangesAsync();
         }
     }
 }

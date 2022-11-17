@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Common;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Model;
 using ShoppingAPI.Services.Interfaces;
 using System.Net;
 using System.Security.Claims;
@@ -12,60 +15,120 @@ namespace ShoppingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,SuperAdmin")]
+    [Authorize]
 
     public class UserController : ControllerBase
     {
         private readonly IUserServices userServices;
-        public UserController(IUserServices userServices)
+        private readonly IRoleServices roleServices;
+        private int UserId = -1;
+        private string roleName = "Guest";
+        public UserController(IUserServices userServices, IRoleServices roleServices, IHttpContextAccessor httpContextAccessor)
         {
+            this.roleServices = roleServices;
             this.userServices = userServices;
+            this.UserId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            this.roleName = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value;
         }
-        [HttpGet]
+
+        [HttpGet("[Action]")]
         [Authorize(Roles = "Admin,SuperAdmin")]
-        public async Task<IActionResult> Users()
+        public async Task<IActionResult> getUsers(int? page, int? pageSize)
         {
-            var users = await userServices.GetUsersAsync();
-            return Ok(new ResultApi
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var users = await userServices.GetUsers()
+                .OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
+            return Ok(new ResponseWithPaging
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = users
+                Data = users,
+                PageCount = users.PageCount,
+                PageNumber = users.PageNumber,
+                TotalItems = users.TotalItemCount
             });
         }
-        [AllowAnonymous]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> User(int id)
+
+        [HttpGet("[Action]")]
+        public async Task<IActionResult> getUser(int? id)
         {
             string roles = HttpContext.User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))?.Value ?? "";
             var UserId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
-            if (roles.Equals("SuperAdmin") || roles.Equals("Admin") || UserId.Equals(id.ToString()))
+            //Check if true user or Admin
+            if (Library.isAdmin(roles) || UserId.Equals(id.ToString()) || id == null)
             {
-                var user = await userServices.GetUserAsync(id);
+                if (id == null)
+                    id = int.Parse(UserId);
+                var user = await userServices.GetUserAsync(id.Value);
+
                 if (user != null)
-                    return Ok(new ResultApi
+                    return Ok(new ResponseApi
                     {
                         Status = (int)HttpStatusCode.OK,
                         Data = user,
                         Success = true
                     });
-                return NotFound(new ResultApi
+
+                return NotFound(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.NotFound,
                     Success = false,
                     Message = new[] { "Not found user" }
                 });
             }
+            //if not
             return Unauthorized();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> User(User user)
+        //Insert User
+        [Authorize(Roles = "Admin,SuperAdmin")]
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertUser(UserModel userModel)
         {
+            var user = new User
+            {
+                Email = userModel.Email,
+                FristName = userModel.FristName,
+                IdentityCard = userModel.IdentityCard,
+                IsTrash = false,
+                LastName = userModel.LastName,
+                Sex = userModel.Sex,
+                Username = userModel.Username,
+                PasswordHash = userModel.Password
+            };
+
+            //Check if roleName null then assign by User
+            if (string.IsNullOrEmpty(userModel.RoleName))
+            {
+                userModel.RoleName = "User";
+            }
+
             if (ModelState.IsValid)
             {
+                var role = roleServices.Where(x => x.Name.Equals(userModel.RoleName)).FirstOrDefault();
+
+                //check role exists
+                if (role != null)
+                {
+                    user.UserRoles = new List<UserRole>
+                    {
+                            new UserRole
+                            {
+                                UserId = user.Id,
+                                RoleId=role.Id
+                            }
+                    };
+                }
+
                 await userServices.InsertUser(user);
-                return Ok(new ResultApi
+
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -77,44 +140,62 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
-        [HttpPut("User")]
-        public async Task<IActionResult> PutUser(User user)
+        //Edit User
+        [HttpPut("[Action]")]
+        public async Task<IActionResult> editUser(UserModel userModel)
         {
             if (ModelState.IsValid)
             {
-                var userDb = await userServices.GetUserAsync(user.Id);
-
-                userDb.FristName = user.FristName;
-                userDb.LastName = user.LastName;
-                userDb.Email = user.Email;
-                userDb.IdentityCard = user.IdentityCard;
-                userDb.Sex = user.Sex;
-
-
-                await userServices.UpdateUser(userDb);
-
-                return Ok(new ResultApi
+                //Check is User or Admin
+                if (userModel.Id == this.UserId || Library.isAdmin(roleName))
                 {
-                    Status = (int)HttpStatusCode.OK,
-                    Success = true,
-                    Message = new[] { "Edit success" },
-                    Data = userDb
-                });
+                    var userDb = await userServices.GetUserAsync(userModel.Id);
+
+                    userDb.FristName = userModel.FristName;
+                    userDb.LastName = userModel.LastName;
+                    userDb.Email = userModel.Email;
+                    userDb.IdentityCard = userModel.IdentityCard;
+                    userDb.Sex = userModel.Sex;
+
+                    if (!string.IsNullOrEmpty(userModel.Password))
+                    {
+                        userDb.PasswordHash = StringHashing.Hash(userModel.Password);
+                    }
+
+
+                    await userServices.UpdateUser(userDb);
+
+                    return Ok(new ResponseApi
+                    {
+                        Status = (int)HttpStatusCode.OK,
+                        Success = true,
+                        Message = new[] { "Edit success" },
+                        Data = userDb
+                    });
+                }
+                //if not
+                return Unauthorized();
             }
             return BadRequest();
         }
 
-        [HttpDelete("User")]
-        public async Task<IActionResult> DeleteUser(int id)
+        //Delete User
+        [HttpDelete("[Action]")]
+        public async Task<IActionResult> deleteUser(int id)
         {
-            await userServices.DeleteUser(id);
-            return Ok(new ResultApi
+            //Check is User or Admin
+            if (id == this.UserId || Library.isAdmin(roleName))
             {
-                Status = (int)HttpStatusCode.OK,
-                Success = true,
-                Message = new[] { "Delete Success" }
-            });
-
+                await userServices.DeleteUser(id);
+                return Ok(new ResponseApi
+                {
+                    Status = (int)HttpStatusCode.OK,
+                    Success = true,
+                    Message = new[] { "Delete Success" }
+                });
+            }
+            //if not
+            return Unauthorized();
         }
     }
 }

@@ -1,11 +1,9 @@
-﻿using ShoppingAPI.Data.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ShoppingAPI.Common.Models;
+using ShoppingAPI.Data.Models;
 using ShoppingAPI.REPO.Repository;
 using ShoppingAPI.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace ShoppingAPI.Services.Services
 {
@@ -20,12 +18,12 @@ namespace ShoppingAPI.Services.Services
         public async Task DeleteProductVariation(int id)
         {
             var productvariation = await repository.GetAsync(id);
-           await repository.DeleteAsync(productvariation);
+            await repository.DeleteAsync(productvariation);
         }
 
-        public async Task<IEnumerable<ProductVariation>> GetProductVariatiesAsync()
+        public IQueryable<ProductVariation> GetProductVariaties()
         {
-            return await repository.GetAllAsync();
+            return repository.GetAll();
         }
 
         public async Task<ProductVariation> GetProductVariationAsync(int id)
@@ -33,14 +31,32 @@ namespace ShoppingAPI.Services.Services
             return await repository.GetAsync(id);
         }
 
+        public async Task<ProductVariationResponse> getProductVariationNumber(int ProductId, int ProductVariationId)
+        {
+            var productVRes = await repository.Where(x => x.IsTrash == false
+            && x.ProductId == ProductId
+            && x.Id == ProductVariationId)
+                .Include(r => r.InvoicesDetails)
+                .Select(r => new ProductVariationResponse
+                {
+                    ProductVariations = r.ProductVariations,
+                    Numbers = r.Number - r.InvoicesDetails.Sum(x => x.Numbers),
+                }).FirstOrDefaultAsync();
+            return productVRes;
+        }
+
         public async Task InsertProductVariation(ProductVariation productVariation)
         {
-           await repository.InsertAsync(productVariation);
+            await repository.InsertAsync(productVariation);
         }
 
         public async Task UpdateProductVariation(ProductVariation productVariation)
         {
-           await repository.UpdateAsync(productVariation);
+            await repository.UpdateAsync(productVariation);
+        }
+        public IQueryable<ProductVariation> Where(Expression<Func<ProductVariation, bool>> expression)
+        {
+            return repository.Where(expression);
         }
     }
 }

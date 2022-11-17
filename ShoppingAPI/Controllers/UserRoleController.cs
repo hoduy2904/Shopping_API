@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingAPI.Common.Config;
+using ShoppingAPI.Common.Extensions;
 using ShoppingAPI.Common.Models;
 using ShoppingAPI.Data.Models;
+using ShoppingAPI.Model;
 using ShoppingAPI.Services.Interfaces;
 using System.Data;
 using System.Net;
@@ -21,29 +24,46 @@ namespace ShoppingAPI.Controllers
             this.userRoleServices = userRoleServices;
         }
 
-        [HttpGet, AllowAnonymous]
-        public async Task<IActionResult> UserRoles()
+        //Get UserRoles
+        [HttpGet("[Action]"), AllowAnonymous]
+        public async Task<IActionResult> getUserRoles(int? page, int? pageSize)
         {
-            var userRoles = await userRoleServices.GetUserRolesAsync();
-            return Ok(new ResultApi
+            if (page == null)
+                page = PagingSettingsConfig.pageDefault;
+            if (pageSize == null)
+                pageSize = PagingSettingsConfig.pageSize;
+
+            var userRoles = await userRoleServices
+                .GetUserRoles()
+                .OrderByDescending(x => x.Id)
+                .ToPagedList(page.Value, pageSize.Value);
+
+            return Ok(new ResponseWithPaging
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,
-                Data = userRoles
+                Data = userRoles,
+                PageCount = userRoles.PageCount,
+                PageNumber = userRoles.PageNumber,
+                TotalItems = userRoles.TotalItemCount
             });
         }
-        [HttpGet("{id}"), AllowAnonymous]
-        public async Task<IActionResult> UserRole(int id)
+
+        //Get UserRole
+        [HttpGet("[Action]/{id}"), AllowAnonymous]
+        public async Task<IActionResult> getUserRole(int id)
         {
             var userRole = await userRoleServices.GetUserRoleAsync(id);
+
             if (userRole != null)
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Data = userRole,
                     Success = true
                 });
-            return NotFound(new ResultApi
+
+            return NotFound(new ResponseApi
             {
                 Status = NotFound().StatusCode,
                 Success = false,
@@ -51,13 +71,20 @@ namespace ShoppingAPI.Controllers
             });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UserRole(UserRole userRole)
+        //Insert UserRole
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> insertUserRole(UserRoleModel userRoleModel)
         {
             if (ModelState.IsValid)
             {
+                var userRole = new UserRole
+                {
+                    RoleId = userRoleModel.RoleId,
+                    UserId = userRoleModel.UserId,
+                };
+
                 await userRoleServices.InsertUserRole(userRole);
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -69,16 +96,17 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
-        [HttpPut("UserRole")]
-        public async Task<IActionResult> PutUserRole(UserRole userRole)
+        //Update UserRole
+        [HttpPut("[Action]")]
+        public async Task<IActionResult> editUserRole(UserRoleModel userRoleModel)
         {
             if (ModelState.IsValid)
             {
-                var userRoleDb = await userRoleServices.GetUserRoleAsync(userRole.Id);
+                var userRoleDb = await userRoleServices.GetUserRoleAsync(userRoleModel.Id);
 
-                userRoleDb.RoleId = userRole.RoleId;
+                userRoleDb.RoleId = userRoleModel.RoleId;
 
-                return Ok(new ResultApi
+                return Ok(new ResponseApi
                 {
                     Status = (int)HttpStatusCode.OK,
                     Success = true,
@@ -89,11 +117,12 @@ namespace ShoppingAPI.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("UserRole")]
-        public async Task<IActionResult> DeleteUserRole(int id)
+        //delete userole
+        [HttpDelete("[Action]")]
+        public async Task<IActionResult> deleteUserRole(int id)
         {
             await userRoleServices.DeleteUserRole(id);
-            return Ok(new ResultApi
+            return Ok(new ResponseApi
             {
                 Status = (int)HttpStatusCode.OK,
                 Success = true,

@@ -1,15 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShoppingAPI.Data.Models
 {
-    public class ProductVariation :BaseModels
+    public class ProductVariation : BaseModels
     {
         public ProductVariation()
         {
-            ProductVariations=new HashSet<ProductVariation>();
+            ProductVariations = new HashSet<ProductVariation>();
             ProductImages = new HashSet<ProductImage>();
-            Carts=new HashSet<Cart>();
+            Carts = new HashSet<Cart>();
+            InvoicesDetails = new HashSet<InvoicesDetails>();
+            ProductRatings = new HashSet<ProductRating>();
         }
+        [StringLength(50)]
         public string? Name { get; set; }
         public int ProductId { get; set; }
         public int Number { get; set; }
@@ -17,11 +21,13 @@ namespace ShoppingAPI.Data.Models
         public double PriceCurrent { get; set; }
         public int? VariationId { get; set; }
         [ForeignKey("VariationId")]
-        public virtual ProductVariation? ProductVariate { get; set; }
-        public virtual ICollection<ProductVariation> ProductVariations { get; set; }
+        public ProductVariation? ProductVariate { get; set; }
+        public ICollection<ProductVariation> ProductVariations { get; set; }
         [ForeignKey("ProductId")]
-        public virtual Product? Product { get; set; }
-        public virtual ICollection<ProductImage> ProductImages { get; set; }
-        public virtual ICollection<Cart> Carts { get; set; }
+        public Product? Product { get; set; }
+        public ICollection<ProductImage> ProductImages { get; set; }
+        public ICollection<Cart> Carts { get; set; }
+        public ICollection<InvoicesDetails> InvoicesDetails { get; set; }
+        public ICollection<ProductRating> ProductRatings { get; set; }
     }
 }

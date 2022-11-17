@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShoppingAPI.Common.Models
+namespace ShoppingAPI.Common.Config
 {
     public static class JwtSettingsConfig
     {
@@ -14,9 +14,9 @@ namespace ShoppingAPI.Common.Models
         public static string SecretKey { get; set; } = "";
         public static void ConfigurationJwtSettings(IConfiguration configuration)
         {
-            AccessTokenTime=configuration["JwtSettings:AccessTokenTime"];
-            RefreshTokenTime= configuration["JwtSettings:RefreshTokenTime"];
-            SecretKey= configuration["JwtSettings:SecretKey"];
+            AccessTokenTime = configuration["JwtSettings:AccessTokenTime"];
+            RefreshTokenTime = configuration["JwtSettings:RefreshTokenTime"];
+            SecretKey = configuration["JwtSettings:SecretKey"];
         }
     }
 }

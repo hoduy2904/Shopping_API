@@ -39,16 +39,10 @@ namespace ShoppingAPI.REPO.Migrations
                     b.Property<int>("Number")
                         .HasColumnType("int");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductVarationId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProductVariationId")
+                    b.Property<int?>("ProductVarationId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
@@ -58,7 +52,7 @@ namespace ShoppingAPI.REPO.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("ProductVariationId");
+                    b.HasIndex("ProductVarationId");
 
                     b.HasIndex("UserId");
 
@@ -97,6 +91,100 @@ namespace ShoppingAPI.REPO.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("ShoppingAPI.Data.Models.Invoice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CompletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeliveryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsTrash")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PaymentTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("varchar(12)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("invoices");
+                });
+
+            modelBuilder.Entity("ShoppingAPI.Data.Models.InvoicesDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("InvoiceId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsTrash")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Numbers")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int?>("ProductVariationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductVariationId");
+
+                    b.ToTable("InvoicesDetails");
+                });
+
             modelBuilder.Entity("ShoppingAPI.Data.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -122,6 +210,10 @@ namespace ShoppingAPI.REPO.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("SKUS")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
 
@@ -163,6 +255,91 @@ namespace ShoppingAPI.REPO.Migrations
                     b.ToTable("ProductImages");
                 });
 
+            modelBuilder.Entity("ShoppingAPI.Data.Models.ProductRating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("InvoiceId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsTrash")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProductRatingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductRatingImage")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProductVariationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("isEdit")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductRatingId");
+
+                    b.HasIndex("ProductVariationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ProductRatings");
+                });
+
+            modelBuilder.Entity("ShoppingAPI.Data.Models.ProductRatingImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsTrash")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProductRatingId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductRatingId");
+
+                    b.ToTable("ProductRatingImages");
+                });
+
             modelBuilder.Entity("ShoppingAPI.Data.Models.ProductVariation", b =>
                 {
                     b.Property<int>("Id")
@@ -178,7 +355,8 @@ namespace ShoppingAPI.REPO.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("Number")
                         .HasColumnType("int");
@@ -220,22 +398,23 @@ namespace ShoppingAPI.REPO.Migrations
 
                     b.Property<string>("IPAdress")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<bool>("IsTrash")
                         .HasColumnType("bit");
 
                     b.Property<string>("Refresh")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(200)");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(max)");
 
                     b.Property<string>("TokenId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -263,9 +442,13 @@ namespace ShoppingAPI.REPO.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Roles");
 
@@ -273,7 +456,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 10, 28, 11, 20, 6, 351, DateTimeKind.Local).AddTicks(9529),
+                            Created = new DateTime(2022, 11, 15, 13, 20, 41, 269, DateTimeKind.Local).AddTicks(9241),
                             IsTrash = false,
                             Name = "SuperAdmin"
                         });
@@ -294,6 +477,10 @@ namespace ShoppingAPI.REPO.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDefault")
                         .HasColumnType("bit");
 
@@ -302,8 +489,7 @@ namespace ShoppingAPI.REPO.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                        .HasColumnType("varchar(12)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -327,31 +513,33 @@ namespace ShoppingAPI.REPO.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("FristName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("IdentityCard")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(18)");
 
                     b.Property<bool>("IsTrash")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(200)");
 
                     b.Property<bool>("Sex")
                         .HasColumnType("bit");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
 
@@ -364,7 +552,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 10, 28, 11, 20, 6, 352, DateTimeKind.Local).AddTicks(357),
+                            Created = new DateTime(2022, 11, 15, 13, 20, 41, 270, DateTimeKind.Local).AddTicks(287),
                             IsTrash = false,
                             LastName = "Admin",
                             PasswordHash = "21232f297a57a5a743894a0e4a801fc3",
@@ -405,7 +593,7 @@ namespace ShoppingAPI.REPO.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 10, 28, 11, 20, 6, 352, DateTimeKind.Local).AddTicks(432),
+                            Created = new DateTime(2022, 11, 15, 13, 20, 41, 270, DateTimeKind.Local).AddTicks(363),
                             IsTrash = false,
                             RoleId = 1,
                             UserId = 1
@@ -420,9 +608,9 @@ namespace ShoppingAPI.REPO.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShoppingAPI.Data.Models.ProductVariation", null)
+                    b.HasOne("ShoppingAPI.Data.Models.ProductVariation", "ProductVariation")
                         .WithMany("Carts")
-                        .HasForeignKey("ProductVariationId");
+                        .HasForeignKey("ProductVarationId");
 
                     b.HasOne("ShoppingAPI.Data.Models.User", "User")
                         .WithMany("Carts")
@@ -431,6 +619,8 @@ namespace ShoppingAPI.REPO.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+
+                    b.Navigation("ProductVariation");
 
                     b.Navigation("User");
                 });
@@ -444,10 +634,42 @@ namespace ShoppingAPI.REPO.Migrations
                     b.Navigation("CategoryParrent");
                 });
 
+            modelBuilder.Entity("ShoppingAPI.Data.Models.Invoice", b =>
+                {
+                    b.HasOne("ShoppingAPI.Data.Models.User", "User")
+                        .WithMany("Invoices")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ShoppingAPI.Data.Models.InvoicesDetails", b =>
+                {
+                    b.HasOne("ShoppingAPI.Data.Models.Invoice", "Invoice")
+                        .WithMany("InvoicesDetails")
+                        .HasForeignKey("InvoiceId");
+
+                    b.HasOne("ShoppingAPI.Data.Models.Product", "Product")
+                        .WithMany("InvoicesDetails")
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("ShoppingAPI.Data.Models.ProductVariation", "ProductVariation")
+                        .WithMany("InvoicesDetails")
+                        .HasForeignKey("ProductVariationId");
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ProductVariation");
+                });
+
             modelBuilder.Entity("ShoppingAPI.Data.Models.Product", b =>
                 {
                     b.HasOne("ShoppingAPI.Data.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -470,6 +692,54 @@ namespace ShoppingAPI.REPO.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("ProductVariation");
+                });
+
+            modelBuilder.Entity("ShoppingAPI.Data.Models.ProductRating", b =>
+                {
+                    b.HasOne("ShoppingAPI.Data.Models.Invoice", "Invoice")
+                        .WithMany()
+                        .HasForeignKey("InvoiceId");
+
+                    b.HasOne("ShoppingAPI.Data.Models.Product", "Product")
+                        .WithMany("ProductRatings")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ShoppingAPI.Data.Models.ProductRating", "ProductRatingReply")
+                        .WithMany()
+                        .HasForeignKey("ProductRatingId");
+
+                    b.HasOne("ShoppingAPI.Data.Models.ProductVariation", "ProductVariation")
+                        .WithMany("ProductRatings")
+                        .HasForeignKey("ProductVariationId");
+
+                    b.HasOne("ShoppingAPI.Data.Models.User", "User")
+                        .WithMany("ProductRatings")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ProductRatingReply");
+
+                    b.Navigation("ProductVariation");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ShoppingAPI.Data.Models.ProductRatingImage", b =>
+                {
+                    b.HasOne("ShoppingAPI.Data.Models.ProductRating", "ProductRating")
+                        .WithMany("productRatingImages")
+                        .HasForeignKey("ProductRatingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductRating");
                 });
 
             modelBuilder.Entity("ShoppingAPI.Data.Models.ProductVariation", b =>
@@ -533,22 +803,42 @@ namespace ShoppingAPI.REPO.Migrations
             modelBuilder.Entity("ShoppingAPI.Data.Models.Category", b =>
                 {
                     b.Navigation("Categories");
+
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("ShoppingAPI.Data.Models.Invoice", b =>
+                {
+                    b.Navigation("InvoicesDetails");
                 });
 
             modelBuilder.Entity("ShoppingAPI.Data.Models.Product", b =>
                 {
                     b.Navigation("Carts");
 
+                    b.Navigation("InvoicesDetails");
+
                     b.Navigation("ProductImages");
 
+                    b.Navigation("ProductRatings");
+
                     b.Navigation("ProductVariations");
+                });
+
+            modelBuilder.Entity("ShoppingAPI.Data.Models.ProductRating", b =>
+                {
+                    b.Navigation("productRatingImages");
                 });
 
             modelBuilder.Entity("ShoppingAPI.Data.Models.ProductVariation", b =>
                 {
                     b.Navigation("Carts");
 
+                    b.Navigation("InvoicesDetails");
+
                     b.Navigation("ProductImages");
+
+                    b.Navigation("ProductRatings");
 
                     b.Navigation("ProductVariations");
                 });
@@ -561,6 +851,10 @@ namespace ShoppingAPI.REPO.Migrations
             modelBuilder.Entity("ShoppingAPI.Data.Models.User", b =>
                 {
                     b.Navigation("Carts");
+
+                    b.Navigation("Invoices");
+
+                    b.Navigation("ProductRatings");
 
                     b.Navigation("RefreshTokens");
 
